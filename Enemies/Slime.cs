@@ -1,49 +1,51 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class Slime : MonoBehaviour, IKnockBackable, IEnemyAI
+public enum CustomSlimeAnimationState { Idle,Walk,Attack,Damage,Death }
+public class Slime : EnemyControllerBase
 {
-    Transform player;
-
-    public NavMeshAgent Agent { get; private set; }
-    public Rigidbody Rb { get; private set; }
-    public float KnockbackTime { get; private set; }
-    public float KnockbackDistance { get; private set; }
-
     public GameObject body;
-    public SlimeAnimationState currentState; 
+    public CustomSlimeAnimationState currentState; 
     public Animator animator;
-
-    //public Transform[] waypoints;
-    //private int m_CurrentWaypointIndex;
 
     public Face faces;
     private Material faceMaterial;
 
-    private void Awake()
-    {
-        Agent = GetComponent<NavMeshAgent>();
-        Rb = GetComponent<Rigidbody>();
-        KnockbackTime = 2.5f;
-        KnockbackDistance = 0.0f;
-    }
-
     void Start()
     {
         faceMaterial = body.GetComponent<Renderer>().materials[1];
-        player = PlayerManager.Instance;
     }
 
-    //public void WalkToNextDestination()
-    //{
-    //    currentState = SlimeAnimationState.Walk;
-    //    m_CurrentWaypointIndex = (m_CurrentWaypointIndex + 1) % waypoints.Length;
-    //    Agent.SetDestination(waypoints[m_CurrentWaypointIndex].position);
-    //    SetFace(faces.WalkFace);
-    //}
+    protected override bool ShouldAttack()
+    {
+        return currentState == CustomSlimeAnimationState.Attack;
+    }
 
-    //public void CancelGoNextDestination() => CancelInvoke(nameof(WalkToNextDestination));
+    public override void RestartAgent()
+    {
+        ai.EnableAgent();
+    }
+
+    public override void DisableAgent()
+    {
+        ai.DisableAgent();
+    }
+
+    public override void SetDamageState()
+    {
+        if (health.GetIsDead()) // TODO: use OnDeath event
+        {
+            currentState = CustomSlimeAnimationState.Death;
+        }
+        else
+        {
+            currentState = CustomSlimeAnimationState.Damage;
+        }
+    }
+
+    public override void WarpAgent(Vector3 pos, float distanceRange)
+    {
+        ai.WarpAgent(pos, distanceRange);
+    }
 
     void SetFace(Texture tex)
     {
@@ -52,20 +54,21 @@ public class Slime : MonoBehaviour, IKnockBackable, IEnemyAI
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && currentState != CustomSlimeAnimationState.Damage && currentState != CustomSlimeAnimationState.Death)
         {
-            currentState = SlimeAnimationState.Attack;
+            currentState = CustomSlimeAnimationState.Attack;
         }
     }
 
-    void Update()
+    protected override void Update()
     {
-        if (Agent.enabled)
+        base.Update();
+
+        if (ai.IsAgentEnabled())
         {
-            Agent.SetDestination(player.position);
-            if (currentState == SlimeAnimationState.Idle)
+            if (currentState == CustomSlimeAnimationState.Idle)
             {
-                currentState = SlimeAnimationState.Walk;
+                currentState = CustomSlimeAnimationState.Walk;
             }
         }
 
@@ -73,68 +76,60 @@ public class Slime : MonoBehaviour, IKnockBackable, IEnemyAI
 
         switch (currentState)
         {
-            case SlimeAnimationState.Idle:
-
+            case CustomSlimeAnimationState.Idle:
                 if (animatorState.IsName("Idle")) return;
-                StopAgent();
+
+                ai.StopAgent();
+
+                animator.SetFloat("Speed", 0);
+
                 SetFace(faces.Idleface);
                 break;
 
-            case SlimeAnimationState.Walk:
+            case CustomSlimeAnimationState.Walk:
+                if (animatorState.IsName("Walk") || !ai.IsAgentEnabled()) return;
 
-                if (animatorState.IsName("Walk")) return;
+                ai.StartAgent();
 
-                StartAgent();
+                // set Speed parameter synchronized with agent root motion moverment
+                animator.SetFloat("Speed", ai.GetVelocity());
+
                 SetFace(faces.WalkFace);
-
                 break;
 
-            case SlimeAnimationState.Jump:
-
-                if (animatorState.IsName("Jump")) return;
-
-                StopAgent();
-                SetFace(faces.jumpFace);
-                animator.Play("Jump");
-
-                break;
-
-            case SlimeAnimationState.Attack:
-
+            case CustomSlimeAnimationState.Attack:
                 if (animatorState.IsName("Attack")) return;
-                StopAgent();
-                SetFace(faces.attackFace);
+
+                ai.StopAgent();
+
+                animator.SetFloat("Speed", 0);
                 animator.Play("Attack");
 
+                SetFace(faces.attackFace);
                 break;
-            case SlimeAnimationState.Damage:
 
-                // Do nothing when animtion is playing
-                if (animatorState.IsName("Damage0")
-                     || animator.GetCurrentAnimatorStateInfo(0).IsName("Damage1")
-                     || animator.GetCurrentAnimatorStateInfo(0).IsName("Damage2")) return;
+            case CustomSlimeAnimationState.Damage:
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage1")) return;
 
-                StopAgent();
-                animator.Play("Damage2");
+                ai.StopAgent();
+
+                animator.SetFloat("Speed", 0);
+                animator.Play("Damage1");
+
                 SetFace(faces.damageFace);
                 break;
 
+            case CustomSlimeAnimationState.Death:
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage2")) return;
+
+                ai.StopAgent();
+
+                animator.SetFloat("Speed", 0);
+                animator.Play("Damage2");
+
+                SetFace(faces.damageFace);
+                break;
         }
-    }
-
-    public void StartAgent()
-    {
-        Agent.isStopped = false;
-        Agent.updateRotation = true;
-        // set Speed parameter synchronized with agent root motion moverment
-        animator.SetFloat("Speed", Agent.velocity.magnitude);
-    }
-
-    public void StopAgent()
-    {
-        Agent.isStopped = true;
-        animator.SetFloat("Speed", 0);
-        Agent.updateRotation = false;
     }
 
     // Animation Event
@@ -142,18 +137,24 @@ public class Slime : MonoBehaviour, IKnockBackable, IEnemyAI
     {
         if (message.Equals("AnimationDamageEnded"))
         {
-            currentState = SlimeAnimationState.Walk;
+            if (health.GetIsDead())
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                currentState = CustomSlimeAnimationState.Walk;
+            }
         }
 
         if (message.Equals("AnimationAttackEnded"))
         {
-            Debug.Log("animation attack ended");
-            currentState = SlimeAnimationState.Walk;
+            currentState = CustomSlimeAnimationState.Walk;
         }
 
         if (message.Equals("AnimationJumpEnded"))
         {
-            currentState = SlimeAnimationState.Walk;
+            currentState = CustomSlimeAnimationState.Walk;
         }
     }
 
@@ -161,29 +162,8 @@ public class Slime : MonoBehaviour, IKnockBackable, IEnemyAI
     {
         // apply root motion to AI
         Vector3 position = animator.rootPosition;
-        position.y = Agent.nextPosition.y;
+        position.y = ai.GetAgentY();
         transform.position = position;
-        Agent.nextPosition = transform.position;
-    }
-
-    public void ApplyKnockback(Vector3 direction, float force)
-    {
-        currentState = SlimeAnimationState.Damage;
-        //StartCoroutine(KnockbackRoutine(direction, force));
-    }
-
-    public IEnumerator KnockbackRoutine(Vector3 direction, float force)
-    {
-        currentState = SlimeAnimationState.Damage;
-
-        Agent.enabled = false;
-        Rb.isKinematic = false;
-
-        Rb.AddForce(direction.normalized * force, ForceMode.Impulse);
-
-        yield return new WaitForSeconds(KnockbackTime); // TODO: formula for knockback time?
-
-        Rb.isKinematic = true;
-        Agent.enabled = true;
+        ai.SetAgentNextPosition(transform.position);
     }
 }

@@ -1,34 +1,35 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.AI;
-using Unity.VisualScripting;
 
 public enum GhostAnimationState { Idle,Walk,Attack,Damage }
-public class Ghost: MonoBehaviour, IKnockBackable, IEnemyAI
+public class Ghost : EnemyControllerBase
 {
-    Transform player;
-
-    public NavMeshAgent Agent { get; private set; }
-    public Rigidbody Rb { get; private set; }
-    public float KnockbackTime { get; private set; }
-    public float KnockbackDistance { get; private set; }
-
     public GameObject body;
-    public GhostAnimationState currentState; 
+    public GhostAnimationState currentState;
     public Animator animator;
 
-    private void Awake()
+    protected override bool ShouldAttack()
     {
-        Agent = GetComponent<NavMeshAgent>();
-        Rb = GetComponent<Rigidbody>();
-        KnockbackTime = 1f;
-        KnockbackDistance = 30f;
+        return false;
     }
 
-    void Start()
+    public override void RestartAgent()
     {
-        player = PlayerManager.Instance;
+        ai.EnableAgent();
+    }
+
+    public override void DisableAgent()
+    {
+        ai.DisableAgent();
+    }
+
+    public override void SetDamageState()
+    {
+        currentState = GhostAnimationState.Damage;
+    }
+
+    public override void WarpAgent(Vector3 pos, float distanceRange)
+    {
+        ai.WarpAgent(pos, distanceRange);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -39,11 +40,10 @@ public class Ghost: MonoBehaviour, IKnockBackable, IEnemyAI
         }
     }
 
-    void Update()
+    protected override void Update()
     {
-        if (Agent.enabled)
+        if (ai.IsAgentEnabled())
         {
-            Agent.SetDestination(player.position);
             if (currentState == GhostAnimationState.Idle)
             {
                 currentState = GhostAnimationState.Walk;
@@ -55,30 +55,28 @@ public class Ghost: MonoBehaviour, IKnockBackable, IEnemyAI
         switch (currentState)
         {
             case GhostAnimationState.Idle:
-
                 if (animatorState.IsName("Idle")) return;
-                StopAgent();
+
+                ai.StopAgent();
                 break;
 
             case GhostAnimationState.Walk:
-
                 if (animatorState.IsName("move")) return;
 
-                StartAgent();
+                ai.StartAgent();
                 break;
 
             case GhostAnimationState.Attack:
-
                 if (animatorState.IsName("attack")) return;
-                StopAgent();
+
+                ai.StopAgent();
                 animator.Play("attack");
                 break;
 
             case GhostAnimationState.Damage:
-
                 if (animatorState.IsName("surprised")) return;
 
-                StopAgent();
+                ai.StopAgent();
                 animator.Play("surprised");
                 break;
 
@@ -88,41 +86,5 @@ public class Ghost: MonoBehaviour, IKnockBackable, IEnemyAI
         {
             currentState = GhostAnimationState.Walk;
         }
-    }
-
-    public void StartAgent()
-    {
-        Agent.isStopped = false;
-        Agent.updateRotation = true;
-    }
-
-    public void StopAgent()
-    {
-        Agent.isStopped = true;
-        Agent.updateRotation = false;
-    }
-
-    public void ApplyKnockback(Vector3 direction, float force)
-    {
-        currentState = GhostAnimationState.Damage;
-        StopAgent();
-        Agent.enabled = false;
-        transform.position = transform.position + direction * KnockbackDistance;
-        StartCoroutine(KnockbackRoutine(direction, force));
-    }
-
-    public IEnumerator KnockbackRoutine(Vector3 direction, float force)
-    {
-        float time = 0;
-        Vector3 originalPos = transform.position;
-        Vector3 endingPos = transform.position + direction * KnockbackDistance;
-
-        while (time < KnockbackTime) // TODO: formula for knockback time?
-        {
-            //transform.position = Vector3.Lerp(originalPos, endingPos, time / KnockbackTime);
-            time += Time.deltaTime;
-            yield return null;
-        }
-        Agent.enabled = true;
     }
 }
