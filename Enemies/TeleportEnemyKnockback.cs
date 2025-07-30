@@ -26,7 +26,9 @@ public class TeleportEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
         controllerBase.DisableAgent();
         controllerBase.SetDamageState();
 
-        Vector3 roughPos = transform.position + direction * knockbackDistance;
+        Vector3 randomPos = new(Random.value, 0, Random.value);
+        randomPos.Normalize();
+        Vector3 roughPos = transform.position +  randomPos * knockbackDistance;
         roughPos.y = 100f;
         float maxDistance = 200f;
 
