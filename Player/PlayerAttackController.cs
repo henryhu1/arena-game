@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
 
 public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 {

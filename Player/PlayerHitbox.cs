@@ -14,7 +14,8 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
 
     void Awake()
     {
-        StartTime = 0.5f;
+        BaseDamage = 10f;
+        StartTime = 0.6f;
         EndTime = 0.8f;
         Force = 7.5f;
         DamagedTargets = new HashSet<GameObject>();
@@ -38,11 +39,18 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         if (!Hitbox.enabled) return; // only active during damage window
         if (other.CompareTag("Enemy") && !DamagedTargets.Contains(other.gameObject))
         {
-            // other.GetComponent<EnemyHealth>().TakeDamage(BaseDamage);
             DamagedTargets.Add(other.gameObject);
+
+            // Damage and death check
+            if (other.TryGetComponent(out EnemyHealth enemyHealth))
+            {
+                enemyHealth.TakeDamage(BaseDamage);
+            }
+
             Transform enemyTransform = other.gameObject.transform;
             Vector3 knockbackDirection = (enemyTransform.position - player.position).normalized;
-            other.gameObject.GetComponent<IKnockBackable>().ApplyKnockback(knockbackDirection, Force);
+            IEnemyKnockbackable knockback = other.gameObject.GetComponent<IEnemyKnockbackable>();
+            knockback?.ApplyKnockback(knockbackDirection, Force);
         }
     }
 
