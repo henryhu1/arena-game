@@ -6,7 +6,7 @@ public class NormalEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
     public EnemyStats stats { get; set; }
     private EnemyControllerBase controllerBase;
 
-    private Coroutine buffer;
+    private Coroutine knockedBackStunBuffer;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
@@ -19,11 +19,11 @@ public class NormalEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
         controllerBase.DisableAgent();
         controllerBase.SetDamageState();
 
-        if (buffer != null)
+        if (knockedBackStunBuffer != null)
         {
-            StopCoroutine(buffer);
+            StopCoroutine(knockedBackStunBuffer);
         }
-        buffer = StartCoroutine(KnockbackRoutine(direction, force));
+        knockedBackStunBuffer = StartCoroutine(KnockbackRoutine(direction, force));
     }
 
     public IEnumerator KnockbackRoutine(Vector3 direction, float force)
@@ -33,6 +33,6 @@ public class NormalEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
         yield return new WaitForSeconds(stats.knockbackTime); // TODO: formula for knockback time?
 
         controllerBase.RestartAgent();
-        buffer = null;
+        knockedBackStunBuffer = null;
     }
 }
