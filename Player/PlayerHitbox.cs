@@ -49,8 +49,9 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
 
             Transform enemyTransform = other.gameObject.transform;
             Vector3 knockbackDirection = (enemyTransform.position - player.position).normalized;
-            IEnemyKnockbackable knockback = other.gameObject.GetComponent<IEnemyKnockbackable>();
-            knockback?.ApplyKnockback(knockbackDirection, Force);
+            if (other.gameObject.TryGetComponent(out IEnemyKnockbackable knockback)) {
+                knockback.ApplyKnockback(knockbackDirection, Force);
+            };
         }
     }
 

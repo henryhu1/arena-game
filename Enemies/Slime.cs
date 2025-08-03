@@ -15,11 +15,6 @@ public class Slime : EnemyControllerBase
         faceMaterial = body.GetComponent<Renderer>().materials[1];
     }
 
-    protected override bool ShouldAttack()
-    {
-        return currentState == CustomSlimeAnimationState.Attack;
-    }
-
     public override void RestartAgent()
     {
         ai.EnableAgent();
@@ -42,6 +37,16 @@ public class Slime : EnemyControllerBase
         }
     }
 
+    public override void SetAttackState()
+    {
+        currentState = CustomSlimeAnimationState.Attack;
+    }
+
+    public override bool CanAttack()
+    {
+        return currentState != CustomSlimeAnimationState.Damage && currentState != CustomSlimeAnimationState.Death;
+    }
+
     public override void WarpAgent(Vector3 pos, float distanceRange)
     {
         ai.WarpAgent(pos, distanceRange);
@@ -52,13 +57,13 @@ public class Slime : EnemyControllerBase
         faceMaterial.SetTexture("_MainTex", tex);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player") && currentState != CustomSlimeAnimationState.Damage && currentState != CustomSlimeAnimationState.Death)
-        {
-            currentState = CustomSlimeAnimationState.Attack;
-        }
-    }
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     if (other.CompareTag("Player") && currentState != CustomSlimeAnimationState.Damage && currentState != CustomSlimeAnimationState.Death)
+    //     {
+    //         currentState = CustomSlimeAnimationState.Attack;
+    //     }
+    // }
 
     protected override void Update()
     {

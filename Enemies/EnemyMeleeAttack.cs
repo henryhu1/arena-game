@@ -1,0 +1,95 @@
+using System.Collections;
+using UnityEngine;
+
+public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
+{
+    private EnemyStats stats;
+    private EnemyControllerBase controllerBase;
+
+    private float attackCooldownTimer;
+    private bool isAttacking;
+    private bool hasDealtDamage;
+
+    private Transform playerTransform;
+    private PlayerHealth playerHealth;
+    private int playerLayer;
+
+    public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
+    {
+        this.controllerBase = controllerBase;
+        this.stats = stats;
+    }
+
+    private void Start()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) {
+            playerTransform = player.transform;
+            player.TryGetComponent(out playerHealth);
+        }
+        playerLayer = LayerMask.GetMask("Player"); // Ensure player is on "Player" layer
+    }
+
+    private void Update()
+    {
+        if (playerTransform == null) return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+
+        attackCooldownTimer -= Time.deltaTime;
+
+        if (distanceToPlayer <= stats.attackRange &&
+            attackCooldownTimer <= 0f &&
+            !isAttacking &&
+            controllerBase.CanAttack())
+        {
+            StartCoroutine(PerformAttack());
+        }
+    }
+
+    public IEnumerator PerformAttack()
+    {
+        isAttacking = true;
+        hasDealtDamage = false;
+        controllerBase.SetAttackState();
+
+        yield return new WaitForSeconds(stats.attackStart);
+
+        // Damage window starts
+        float damageWindow = stats.attackEnd - stats.attackStart;
+        float elapsed = 0f;
+
+        while (elapsed < damageWindow)
+        {
+            if (!hasDealtDamage)
+            {
+                if (Physics.CheckSphere(transform.position, stats.attackRange, playerLayer))
+                {
+                    if (playerHealth != null)
+                    {
+                        playerHealth.TakeDamage(stats.damage);
+                        hasDealtDamage = true;
+                    }
+                    break;
+                }
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        attackCooldownTimer = stats.attackCooldown;
+        isAttacking = false;
+    }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        if (stats != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, stats.attackRange);
+        }
+    }
+#endif
+}

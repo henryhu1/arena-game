@@ -1,6 +1,6 @@
-using UnityEngine;
+using System.Collections;
 
-public interface IAttackBehavior
+public interface IEnemyAttackBehavior : IEnemyComponent
 {
-    void Attack();
+    IEnumerator PerformAttack();
 }

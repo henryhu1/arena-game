@@ -7,11 +7,6 @@ public class Ghost : EnemyControllerBase
     public GhostAnimationState currentState;
     public Animator animator;
 
-    protected override bool ShouldAttack()
-    {
-        return false;
-    }
-
     public override void RestartAgent()
     {
         ai.EnableAgent();
@@ -27,18 +22,28 @@ public class Ghost : EnemyControllerBase
         currentState = GhostAnimationState.Damage;
     }
 
+    public override void SetAttackState()
+    {
+        currentState = GhostAnimationState.Attack;
+    }
+
+    public override bool CanAttack()
+    {
+        return currentState != GhostAnimationState.Damage;
+    }
+
     public override void WarpAgent(Vector3 pos, float distanceRange)
     {
         ai.WarpAgent(pos, distanceRange);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            currentState = GhostAnimationState.Attack;
-        }
-    }
+    // private void OnTriggerEnter(Collider other)
+    // {
+    //     if (other.CompareTag("Player"))
+    //     {
+    //         currentState = GhostAnimationState.Attack;
+    //     }
+    // }
 
     protected override void Update()
     {

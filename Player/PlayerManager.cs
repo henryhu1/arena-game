@@ -6,6 +6,7 @@ public class PlayerManager : MonoBehaviour, ICameraFocusable
     public Transform FocusPoint { get; set; }
     public bool WantsFocus { get; set; }
 
+    public PlayerHealth health { get; private set; }
     public PlayerInputHandler inputHandler { get; private set; }
     public PlayerMovementController movementController { get; private set; }
     public PlayerAnimationController animationController { get; private set; }
@@ -26,6 +27,7 @@ public class PlayerManager : MonoBehaviour, ICameraFocusable
         FocusPoint = FocusPointGameObject.transform;
         WantsFocus = true;
 
+        health = GetComponent<PlayerHealth>();
         inputHandler = GetComponent<PlayerInputHandler>();
         movementController = GetComponent<PlayerMovementController>();
         animationController = GetComponent<PlayerAnimationController>();
@@ -37,6 +39,7 @@ public class PlayerManager : MonoBehaviour, ICameraFocusable
 
     void InitializeAll()
     {
+        health.Initialize(this);
         inputHandler.Initialize(this);
         movementController.Initialize(this);
         animationController.Initialize(this);

@@ -7,7 +7,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
     protected EnemyAI ai;
     protected EnemyHealth health;
     protected IEnemyKnockbackable knockback;
-    protected IAttackBehavior attack;
+    protected IEnemyAttackBehavior attack;
 
     protected virtual void Awake()
     {
@@ -17,7 +17,7 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
         knockback = GetComponent<IEnemyKnockbackable>();
 
-        attack = GetComponent<IAttackBehavior>();
+        attack = GetComponent<IEnemyAttackBehavior>();
 
         InitializeAll();
     }
@@ -27,20 +27,21 @@ public abstract class EnemyControllerBase : MonoBehaviour
         ai.Initialize(this, enemyStats);
         health.Initialize(this, enemyStats);
         knockback.Initialize(this, enemyStats);
+        attack.Initialize(this, enemyStats);
     }
 
     protected virtual void Update()
     {
-        if (ShouldAttack())
-            attack?.Attack();
+        // if (ShouldAttack())
+        //     attack?.Attack();
     }
-
-    protected abstract bool ShouldAttack();
 
     public abstract void RestartAgent();
     public abstract void DisableAgent();
 
     public abstract void SetDamageState();
+    public abstract void SetAttackState();
+    public abstract bool CanAttack();
 
     public abstract void WarpAgent(Vector3 pos, float distanceRange);
 }

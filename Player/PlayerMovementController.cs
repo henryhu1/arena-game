@@ -1,11 +1,14 @@
 using System.Collections;
 using UnityEngine;
 
-public class PlayerMovementController : MonoBehaviour
+public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
     private CharacterController controller;
+
+    public VoidEventChannelSO OnTakeDamage;
+    public VoidEventChannelSO OnFreeFromDamage;
 
     private Vector2 movement;
     private bool isSprinting;
@@ -14,6 +17,7 @@ public class PlayerMovementController : MonoBehaviour
     // private bool jumpAirTime;
     // private bool jumpHeightReached;
     private bool isFalling;
+    private bool isPreventedFromMoving;
 
     [Header("Movement Settings")]
     [SerializeField] private float gravity = -19.62f;
@@ -45,6 +49,10 @@ public class PlayerMovementController : MonoBehaviour
     {
         return this.movement != Vector2.zero;
     }
+
+    private void PlayerHealth_OnTakeDamage() { isPreventedFromMoving = true; }
+
+    private void PlayerHealth_OnFreeFromDamage() { isPreventedFromMoving = false; }
 
     public Vector3 GetVelocity() { return this.velocity; }
 
@@ -78,10 +86,31 @@ public class PlayerMovementController : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+
+        isPreventedFromMoving = false;
+    }
+
+    private void Start()
+    {
+        OnTakeDamage.OnEventRaised += PlayerHealth_OnTakeDamage;
+        OnFreeFromDamage.OnEventRaised += PlayerHealth_OnFreeFromDamage;
+    }
+
+    private void OnDestroy()
+    {
+        OnTakeDamage.OnEventRaised -= PlayerHealth_OnTakeDamage;
+        OnFreeFromDamage.OnEventRaised -= PlayerHealth_OnFreeFromDamage;
     }
 
     private void FixedUpdate()
     {
+        if (isPreventedFromMoving)
+        {
+            velocity.x = 0;
+            velocity.z = 0;
+            return;
+        }
+
         Vector3 cameraDirection = GetCameraLookDirection();
         Vector2 flattenedForward = new(cameraDirection.x, cameraDirection.z);
         Vector2 sidewaysToCamera = -Vector2.Perpendicular(flattenedForward);

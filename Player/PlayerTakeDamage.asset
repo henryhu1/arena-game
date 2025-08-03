@@ -9,15 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22bfad66367c6394dbebaadda320b6a7, type: 3}
-  m_Name: GhostStats
+  m_Script: {fileID: 11500000, guid: 8d0896c0a45f1a146b22b04f83cefb48, type: 3}
+  m_Name: PlayerTakeDamage
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  moveSpeed: 15
-  damage: 10
-  attackRange: 2
-  attackCooldown: 1.5
-  attackStart: 0.1
-  attackEnd: 0.4
-  knockbackTime: 1
-  knockbackDistance: 30

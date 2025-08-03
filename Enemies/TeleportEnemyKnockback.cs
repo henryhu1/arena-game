@@ -6,19 +6,10 @@ public class TeleportEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
     public EnemyStats stats { get; set; }
     private EnemyControllerBase controllerBase;
 
-    private float knockbackTime;
-    private float knockbackDistance;
-
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
         this.controllerBase = controllerBase;
         this.stats = stats;
-    }
-
-    private void Start()
-    {
-        knockbackTime = stats.knockbackTime;
-        knockbackDistance = stats.knockbackDistance;
     }
 
     public void ApplyKnockback(Vector3 direction, float force)
@@ -28,7 +19,7 @@ public class TeleportEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
 
         Vector3 randomPos = new(Random.value, 0, Random.value);
         randomPos.Normalize();
-        Vector3 roughPos = transform.position +  randomPos * knockbackDistance;
+        Vector3 roughPos = transform.position +  randomPos * stats.knockbackDistance;
         roughPos.y = 100f;
         float maxDistance = 200f;
 
@@ -41,7 +32,7 @@ public class TeleportEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
     {
         transform.rotation = Quaternion.LookRotation(-direction);
 
-        yield return new WaitForSeconds(knockbackTime); // TODO: formula for knockback time?
+        yield return new WaitForSeconds(stats.knockbackTime); // TODO: formula for knockback time?
 
         controllerBase.RestartAgent();
     }
