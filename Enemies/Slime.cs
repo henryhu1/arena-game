@@ -27,14 +27,7 @@ public class Slime : EnemyControllerBase
 
     public override void SetDamageState()
     {
-        if (health.GetIsDead()) // TODO: use OnDeath event
-        {
-            currentState = CustomSlimeAnimationState.Death;
-        }
-        else
-        {
-            currentState = CustomSlimeAnimationState.Damage;
-        }
+        currentState = CustomSlimeAnimationState.Damage;
     }
 
     public override void SetAttackState()
@@ -47,9 +40,15 @@ public class Slime : EnemyControllerBase
         return currentState != CustomSlimeAnimationState.Damage && currentState != CustomSlimeAnimationState.Death;
     }
 
-    public override void WarpAgent(Vector3 pos, float distanceRange)
+    public override void WarpAgent(Vector3 pos)
     {
-        ai.WarpAgent(pos, distanceRange);
+        ai.WarpAgent(pos);
+    }
+
+    public override void HandleDeath()
+    {
+        currentState = CustomSlimeAnimationState.Death;
+        base.HandleDeath();
     }
 
     void SetFace(Texture tex)
@@ -142,11 +141,7 @@ public class Slime : EnemyControllerBase
     {
         if (message.Equals("AnimationDamageEnded"))
         {
-            if (health.GetIsDead())
-            {
-                Destroy(gameObject);
-            }
-            else
+            if (!health.GetIsDead())
             {
                 currentState = CustomSlimeAnimationState.Walk;
             }

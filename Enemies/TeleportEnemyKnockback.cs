@@ -20,10 +20,7 @@ public class TeleportEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
         Vector3 randomPos = new(Random.value, 0, Random.value);
         randomPos.Normalize();
         Vector3 roughPos = transform.position +  randomPos * stats.knockbackDistance;
-        roughPos.y = 100f;
-        float maxDistance = 200f;
-
-        controllerBase.WarpAgent(roughPos, maxDistance);
+        controllerBase.WarpAgent(roughPos);
 
         StartCoroutine(KnockbackRoutine(direction, force));
     }

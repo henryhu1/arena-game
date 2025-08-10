@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum GhostAnimationState { Idle,Walk,Attack,Damage }
+public enum GhostAnimationState { Idle,Walk,Attack,Damage,Death }
 public class Ghost : EnemyControllerBase
 {
     public GameObject body;
@@ -32,9 +32,15 @@ public class Ghost : EnemyControllerBase
         return currentState != GhostAnimationState.Damage;
     }
 
-    public override void WarpAgent(Vector3 pos, float distanceRange)
+    public override void WarpAgent(Vector3 pos)
     {
-        ai.WarpAgent(pos, distanceRange);
+        ai.WarpAgent(pos);
+    }
+
+    public override void HandleDeath()
+    {
+        currentState = GhostAnimationState.Death;
+        base.HandleDeath();
     }
 
     // private void OnTriggerEnter(Collider other)
@@ -83,6 +89,13 @@ public class Ghost : EnemyControllerBase
 
                 ai.StopAgent();
                 animator.Play("surprised");
+                break;
+
+            case GhostAnimationState.Death:
+                if (animatorState.IsName("dissolve")) return;
+
+                ai.StopAgent();
+                animator.Play("dissolve");
                 break;
 
         }

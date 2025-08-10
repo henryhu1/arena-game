@@ -5,6 +5,7 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
 {
     Transform player;
 
+    // TODO: make ScriptableObject for hitbox data
     public float BaseDamage { get; private set; }
     public float StartTime { get; private set; }
     public float EndTime { get; private set; }
@@ -44,14 +45,8 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
             // Damage and death check
             if (other.TryGetComponent(out EnemyHealth enemyHealth))
             {
-                enemyHealth.TakeDamage(BaseDamage);
+                enemyHealth.TakeDamage(BaseDamage, player.position, Force);
             }
-
-            Transform enemyTransform = other.gameObject.transform;
-            Vector3 knockbackDirection = (enemyTransform.position - player.position).normalized;
-            if (other.gameObject.TryGetComponent(out IEnemyKnockbackable knockback)) {
-                knockback.ApplyKnockback(knockbackDirection, Force);
-            };
         }
     }
 

@@ -1,8 +1,10 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class EnemyControllerBase : MonoBehaviour
 {
     public EnemyStats enemyStats;
+    public EnemySpawnData spawnData;
 
     protected EnemyAI ai;
     protected EnemyHealth health;
@@ -43,5 +45,25 @@ public abstract class EnemyControllerBase : MonoBehaviour
     public abstract void SetAttackState();
     public abstract bool CanAttack();
 
-    public abstract void WarpAgent(Vector3 pos, float distanceRange);
+    public abstract void WarpAgent(Vector3 pos);
+
+    public void ApplyKnockback(Vector3 direction, float force)
+    {
+        knockback.ApplyKnockback(direction, force);
+    }
+
+    public virtual void HandleDeath()
+    {
+        // animator.SetTrigger("Die");
+        StartCoroutine(WaitForDeathAnimationAndDespawn());
+    }
+
+    private IEnumerator WaitForDeathAnimationAndDespawn()
+    {
+        // Wait for the animation to finish based on its length
+        yield return new WaitForSeconds(enemyStats.DeathClipLength);
+
+        // Then despawn via pooling
+        EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
+    }
 }

@@ -19,15 +19,25 @@ public class EnemySpawnData : ScriptableObject
 
     public int currentAlive = 0;
 
+    private void OnEnable()
+    {
+#if UNITY_EDITOR
+        if (!Application.isPlaying) return;
+#endif
+        ResetCurrentAlive();
+    }
+
     public int GetMaxAliveForRound(int round)
     {
         if (maxIncreaseType == EnemyMaxAliveIncrease.ADDITIVE)
         {
-            return Mathf.RoundToInt(baseMaxAlive + increaseRate * round);
+            return Mathf.FloorToInt(baseMaxAlive + increaseRate * round);
         }
         else
         {
-            return Mathf.RoundToInt(baseMaxAlive * Mathf.Pow(increaseRate, round));
+            return Mathf.FloorToInt(baseMaxAlive * Mathf.Pow(increaseRate, round));
         }
     }
+
+    public void ResetCurrentAlive() => currentAlive = 0;
 }

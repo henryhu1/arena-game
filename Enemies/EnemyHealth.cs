@@ -8,7 +8,8 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
     private float currentHealth;
     private bool isDead = false;
 
-    public VoidEventChannelSO OnDeath;
+    [Header("Events")]
+    [SerializeField] private EnemyDeathEventChannelSO deathEvent;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
@@ -21,16 +22,22 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
         currentHealth = stats.maxHealth;
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float damagePoints, Vector3 playerPos, float force)
     {
         if (isDead) return;
 
-        currentHealth -= amount;
+        currentHealth -= damagePoints;
 
         if (currentHealth <= 0)
         {
             isDead = true;
-            // OnDeath.RaiseEvent();
+            controllerBase.HandleDeath();
+            deathEvent.RaiseEvent(controllerBase);
+        }
+        else
+        {
+            Vector3 knockbackDirection = (transform.position - playerPos).normalized;
+            controllerBase.ApplyKnockback(knockbackDirection, force);
         }
     }
 
