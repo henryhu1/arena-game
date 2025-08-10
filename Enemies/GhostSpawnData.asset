@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyPrefab: {fileID: 7091114742822057317, guid: 54d59f235b49dac4ea7df7cadbbaa53f, type: 3}
   minDistanceFromPlayer: 200
   maxDistanceFromPlayer: 400
-  baseMaxAlive: 3
+  baseMaxAlive: 1
   maxIncreaseType: 0
-  increaseRate: 1
-  currentAlive: 0
+  increaseRate: 0.2
+  currentAlive: 4

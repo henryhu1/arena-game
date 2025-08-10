@@ -21,3 +21,4 @@ MonoBehaviour:
   attackEnd: 0.4
   knockbackTime: 2.5
   knockbackDistance: 0
+  deathClip: {fileID: 3450929205030471022, guid: eb340672e17c0af4089e561b61cdc548, type: 3}

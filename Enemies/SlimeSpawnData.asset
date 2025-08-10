@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnStrategy: {fileID: 11400000, guid: 68fb6a3b6f6bcd340b2eba991e9a4697, type: 2}
   enemyPrefab: {fileID: 334908607158566940, guid: 1f1b6b1a68f25ae49bd34c0db5304c4a, type: 3}
-  minDistanceFromPlayer: 150
-  maxDistanceFromPlayer: 300
+  minDistanceFromPlayer: 100
+  maxDistanceFromPlayer: 200
   baseMaxAlive: 3
   maxIncreaseType: 1
   increaseRate: 1.4
-  currentAlive: 0
+  currentAlive: 3
