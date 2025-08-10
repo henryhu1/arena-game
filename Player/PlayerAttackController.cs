@@ -8,6 +8,7 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
     private CharacterController controller;
 
     private bool isAttacking;
+    private bool isDamaging;
 
     [Header("Hitbox Use")]
     [SerializeField] private PlayerHitbox hitbox;
@@ -55,6 +56,11 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
                 {
                     isAttacking = false;
                 }
+                if (isDamaging && manager.health.GetIsGettingDamaged())
+                {
+                    isAttacking = false;
+                    isDamaging = false;
+                }
             }
             else
             {
@@ -72,12 +78,14 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
             yield return null;
 
         hitbox.StartAttack();
+        isDamaging = true;
 
         // Wait until it reaches the end time
         while (stateInfo.normalizedTime < hitbox.EndTime)
             yield return null;
 
         hitbox.EndAttack();
+        isDamaging = false;
     }
 
 }
