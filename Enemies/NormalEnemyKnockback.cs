@@ -4,6 +4,8 @@ using UnityEngine;
 public class NormalEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
 {
     public EnemyStats stats { get; set; }
+    public bool isStunned { get; set; }
+
     private EnemyControllerBase controllerBase;
 
     private Coroutine knockedBackStunBuffer;
@@ -28,11 +30,13 @@ public class NormalEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
 
     public IEnumerator KnockbackRoutine(Vector3 direction, float force)
     {
+        isStunned = true;
         transform.rotation = Quaternion.LookRotation(-direction);
 
         yield return new WaitForSeconds(stats.knockbackTime); // TODO: formula for knockback time?
 
         controllerBase.RestartAgent();
         knockedBackStunBuffer = null;
+        isStunned = false;
     }
 }

@@ -37,7 +37,9 @@ public class Slime : EnemyControllerBase
 
     public override bool CanAttack()
     {
-        return currentState != CustomSlimeAnimationState.Damage && currentState != CustomSlimeAnimationState.Death;
+        return base.CanAttack() &&
+            currentState != CustomSlimeAnimationState.Damage &&
+            currentState != CustomSlimeAnimationState.Death;
     }
 
     public override void WarpAgent(Vector3 pos)

@@ -29,7 +29,7 @@ public class Ghost : EnemyControllerBase
 
     public override bool CanAttack()
     {
-        return currentState != GhostAnimationState.Damage;
+        return base.CanAttack() && currentState != GhostAnimationState.Damage;
     }
 
     public override void WarpAgent(Vector3 pos)

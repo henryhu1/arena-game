@@ -43,7 +43,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     public abstract void SetDamageState();
     public abstract void SetAttackState();
-    public abstract bool CanAttack();
+    public virtual bool CanAttack() { return !knockback.isStunned; }
 
     public abstract void WarpAgent(Vector3 pos);
 
@@ -54,7 +54,6 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     public virtual void HandleDeath()
     {
-        // animator.SetTrigger("Die");
         StartCoroutine(WaitForDeathAnimationAndDespawn());
     }
 
