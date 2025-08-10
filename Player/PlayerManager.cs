@@ -1,11 +1,10 @@
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour, ICameraFocusable
+public class PlayerManager : MonoBehaviour
 {
     public static Transform Instance { get; private set; }
-    public Transform FocusPoint { get; set; }
-    public bool WantsFocus { get; set; }
 
+    [Header("Player Components")]
     public PlayerHealth health { get; private set; }
     public PlayerInputHandler inputHandler { get; private set; }
     public PlayerMovementController movementController { get; private set; }
@@ -14,9 +13,9 @@ public class PlayerManager : MonoBehaviour, ICameraFocusable
     public PlayerAttackController attackController { get; private set; }
 
     [Header("Camera Focus Point")]
-    public GameObject FocusPointGameObject;
+    public CameraFocus focusPoint;
 
-    [Header("Player Model Components")]
+    [Header("Player Model")]
     public Transform modelTransform;
 
     [SerializeField] private CharacterController controller;
@@ -24,8 +23,7 @@ public class PlayerManager : MonoBehaviour, ICameraFocusable
     private void Awake()
     {
         Instance = transform;
-        FocusPoint = FocusPointGameObject.transform;
-        WantsFocus = true;
+        focusPoint.SetWantsFocus();
 
         health = GetComponent<PlayerHealth>();
         inputHandler = GetComponent<PlayerInputHandler>();
@@ -55,7 +53,7 @@ public class PlayerManager : MonoBehaviour, ICameraFocusable
             {
                 if (movementController.GetIsFalling())
                 {
-                    WantsFocus = true;
+                    focusPoint.SetWantsFocus();
                 }
             }
         }

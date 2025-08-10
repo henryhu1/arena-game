@@ -155,7 +155,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
                 {
                     isFalling = false;
                     isJumping = false;
-                    manager.WantsFocus = true;
+                    manager.focusPoint.SetWantsFocus();
                     manager.modelTransform.rotation = Quaternion.LookRotation(GetCameraLookDirection());
                 }
             }
@@ -173,7 +173,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 
     private IEnumerator PrepareJump()
     {
-        manager.WantsFocus = false;
+        manager.focusPoint.StopWantingFocus();
 
         isJumping = true;
 

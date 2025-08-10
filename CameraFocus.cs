@@ -1,8 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraFocus : MonoBehaviour
+public class CameraFocus : MonoBehaviour, ICameraFocusable
 {
-    [SerializeField] private ICameraFocusable objectInFocus;
+    private Transform focusPoint;
+    private bool wantsFocus;
+
+    private void Awake() { focusPoint = transform; }
+
+    public void SetWantsFocus() { wantsFocus = true; }
+
+    public void StopWantingFocus() { wantsFocus = false; }
+
+    public bool DoesWantFocus() { return wantsFocus; }
+
+    public Vector3 GetFocusPointPosition() { return focusPoint.position; }
 }

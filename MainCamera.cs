@@ -1,8 +1,6 @@
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEngine.GraphicsBuffer;
 
 public class MainCamera : MonoBehaviour
 {
@@ -10,7 +8,7 @@ public class MainCamera : MonoBehaviour
 
     private const float k_verticalRotationLimit = 40;
 
-    [SerializeField] private ICameraFocusable objectToOrbit;
+    private CameraFocus objectToOrbit;
     [SerializeField] private float sensitivity = 0.1f;
     [SerializeField] private float radius = 10;
     [SerializeField] private float followSpeed = 10;
@@ -33,14 +31,14 @@ public class MainCamera : MonoBehaviour
 
     private void Start()
     {
-        var focusableObjects = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ICameraFocusable>();
+        var focusableObjects = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<CameraFocus>();
         objectToOrbit = focusableObjects.FirstOrDefault();
         collisionLayers = LayerMask.GetMask("Ground");
     }
 
     void Update()
     {
-        Vector3 followingObjectPosition = objectToOrbit.FocusPoint.position;
+        Vector3 followingObjectPosition = objectToOrbit.GetFocusPointPosition();
         transform.RotateAround(followingObjectPosition, Vector3.up, rotation.x * sensitivity);
 
         int vertical = isInverted ? -1 : 1;
@@ -52,7 +50,7 @@ public class MainCamera : MonoBehaviour
         currentPitch = newPitch;
 
         Vector3 cameraPosition = followingObjectPosition - (transform.forward * radius);
-        if (!objectToOrbit.WantsFocus)
+        if (!objectToOrbit.DoesWantFocus())
         {
             if (Mathf.Abs(followingObjectPosition.y - transform.position.y) < verticalFollowSlack) {
                 cameraPosition.y = transform.position.y;
