@@ -113,8 +113,7 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
             Vector3 worldMove = transform.TransformDirection(jumpDirection);
             if (worldMove.sqrMagnitude > k_jumpChangeInDirectionThreshold)
             {
-                Vector3 lookDirection = new(worldMove.x, 0, worldMove.z);
-                manager.modelTransform.rotation = Quaternion.LookRotation(lookDirection);
+                manager.modelTransform.rotation = Quaternion.LookRotation(worldMove);
             }
             ChangeAnimationState(PlayerAnimations.JUMP_WHILE_RUNNING);
         }
