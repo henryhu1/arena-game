@@ -26,7 +26,7 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
 
     public bool GetIsGettingDamaged() { return isGettingDamaged; }
 
-    private IEnumerator AfterDamageImmunity()
+    private IEnumerator DamageImmunityBuffer()
     {
         yield return new WaitForSeconds(damageStunTime);
         isGettingDamaged = false;
@@ -41,13 +41,13 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
 
         if (healthPoints <= 0)
         {
-
+            // TODO: player death
         }
         else
         {
             isGettingDamaged = true;
             OnTakeDamage.RaiseEvent();
-            StartCoroutine(AfterDamageImmunity());
+            StartCoroutine(DamageImmunityBuffer());
         }
     }
 }
