@@ -1,14 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
-public class NormalEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
+public class EnemyKnockback : MonoBehaviour, IEnemyComponent
 {
-    public EnemyStats stats { get; set; }
-    public bool isStunned { get; set; }
-
-    private EnemyControllerBase controllerBase;
-
-    private Coroutine knockedBackStunBuffer;
+    [SerializeField] protected EnemyStats stats;
+    protected EnemyControllerBase controllerBase;
+    protected Coroutine knockedBackStunBuffer;
+    protected bool isStunned;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
@@ -16,7 +14,9 @@ public class NormalEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
         this.stats = stats;
     }
 
-    public void ApplyKnockback(Vector3 direction, float force)
+    public bool GetIsStunned() { return isStunned; }
+
+    public virtual void ApplyKnockback(Vector3 direction, float force)
     {
         controllerBase.DisableAgent();
         controllerBase.SetDamageState();
@@ -28,7 +28,7 @@ public class NormalEnemyKnockback : MonoBehaviour, IEnemyKnockbackable
         knockedBackStunBuffer = StartCoroutine(KnockbackRoutine(direction, force));
     }
 
-    public IEnumerator KnockbackRoutine(Vector3 direction, float force)
+    protected IEnumerator KnockbackRoutine(Vector3 direction, float force)
     {
         isStunned = true;
         transform.rotation = Quaternion.LookRotation(-direction);

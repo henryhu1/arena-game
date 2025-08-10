@@ -8,7 +8,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     protected EnemyAI ai;
     protected EnemyHealth health;
-    protected IEnemyKnockbackable knockback;
+    protected EnemyKnockback knockback;
     protected IEnemyAttackBehavior attack;
 
     protected virtual void Awake()
@@ -17,7 +17,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
         health = GetComponent<EnemyHealth>();
 
-        knockback = GetComponent<IEnemyKnockbackable>();
+        knockback = GetComponent<EnemyKnockback>();
 
         attack = GetComponent<IEnemyAttackBehavior>();
 
@@ -43,7 +43,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     public abstract void SetDamageState();
     public abstract void SetAttackState();
-    public virtual bool CanAttack() { return !knockback.isStunned; }
+    public virtual bool CanAttack() { return !knockback.GetIsStunned(); }
 
     public abstract void WarpAgent(Vector3 pos);
 
