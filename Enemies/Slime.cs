@@ -78,6 +78,7 @@ public class Slime : EnemyControllerBase
             if (currentState == CustomSlimeAnimationState.Idle)
             {
                 currentState = CustomSlimeAnimationState.Walk;
+                animator.Play("Locomotion", 0, Random.value);
             }
         }
 
