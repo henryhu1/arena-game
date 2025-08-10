@@ -15,11 +15,14 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
         this.stats = stats;
     }
 
-    private void Start()
+    private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = stats.moveSpeed;
+    }
 
+    private void Start()
+    {
         player = PlayerManager.Instance;
     }
 
@@ -42,11 +45,12 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
 
     public void SetAgentNextPosition(Vector3 pos) { agent.nextPosition = pos; }
 
-    public void WarpAgent(Vector3 pos, float distanceRange)
+    public void WarpAgent(Vector3 pos)
     {
-        if (NavMesh.SamplePosition(pos, out NavMeshHit hit, distanceRange, NavMesh.AllAreas))
+        Vector3 positionOnNavMesh = EnemyPositionUtils.GetPositionOnNavMesh(pos);
+        if (positionOnNavMesh != Vector3.negativeInfinity)
         {
-            agent.Warp(hit.position);
+            agent.Warp(positionOnNavMesh);
         }
         else
         {
