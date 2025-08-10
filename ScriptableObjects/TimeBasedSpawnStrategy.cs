@@ -23,7 +23,7 @@ public class TimeBasedSpawnStrategySO : EnemySpawnStrategy
         float rate = spawnRateOverTime.Evaluate(time);
         spawnCooldown -= deltaTime;
 
-        if (spawnCooldown <= 0f && data.currentAlive < data.GetMaxAliveForRound(1))
+        if (spawnCooldown <= 0f && data.currentAlive < data.GetMaxAliveForRound(GameRoundManager.Instance.CurrentRound))
         {
             int count = Mathf.RoundToInt(spawnCountOverTime.Evaluate(time));
             for (int i = 0; i < count; i++)

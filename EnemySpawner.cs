@@ -8,14 +8,11 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private List<EnemySpawnData> spawnConfigs;
 
     [SerializeField] private FloatReference timeElapsed;
-    [SerializeField] private float spawnCheckInterval = 2f;
 
     [Header("Events")]
     [SerializeField] private EnemyDeathEventChannelSO deathEventChannel;
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
     [SerializeField] private IntEventChannelSO roundStartedEventChannel;
-
-    private float timer;
 
     private Transform player;
 
@@ -51,18 +48,11 @@ public class EnemySpawner : MonoBehaviour
 
     private void Update()
     {
-        timer += Time.deltaTime;
-
-        // if (timer >= spawnCheckInterval)
-        // {
-        //     timer = 0f;
-        //     SpawnEnemies();
-        // }
-
-        // foreach (var strategy in activeStrategies.Values)
-        // {
-        //     strategy.UpdateStrategy(Time.deltaTime);
-        // }
+        foreach (var strategy in activeStrategies.Values)
+        {
+            if (strategy is not TimeBasedSpawnStrategySO) continue;
+            strategy.UpdateStrategy(Time.deltaTime);
+        }
     }
 
     private void OnDestroy()
@@ -70,30 +60,6 @@ public class EnemySpawner : MonoBehaviour
         deathEventChannel.OnEnemyDied -= HandleEnemyDeath;
         roundStartedEventChannel.OnEventRaised -= SpawnWave;
     }
-
-    // private void SpawnEnemies()
-    // {
-    //     foreach (var spawnData in spawnConfigs)
-    //     {
-    //         if (spawnData.currentAlive >= spawnData.maxAlive) continue;
-
-    //         float time = timeElapsed.Value;
-
-    //         float rate = spawnData.spawnRateOverTime.Evaluate(time);
-    //         if (Random.value > rate) continue; // Skip this type this cycle
-
-    //         int count = Mathf.RoundToInt(spawnData.spawnCountOverTime.Evaluate(time));
-    //         int availableSlots = spawnData.maxAlive - spawnData.currentAlive;
-    //         int finalCount = Mathf.Min(spawnCount, availableSlots);
-
-    //         for (int i = 0; i < finalCount; i++)
-    //         {
-    //             Vector3 spawnPos = GetRandomSpawnPosition(spawnData.minDistanceFromPlayer, spawnData.maxDistanceFromPlayer);
-    //             Instantiate(spawnData.enemyPrefab, spawnPos, Quaternion.identity);
-    //             spawnData.currentAlive++;
-    //         }
-    //     }
-    // }
 
     public void SpawnWave(int round)
     {
