@@ -46,9 +46,9 @@ public enum PlayerAnimations
     [AnimationName("Jump_Up")] JUMP_UP,
     [AnimationName("JumpWhileRunning")] JUMP_WHILE_RUNNING,
     [AnimationName("FallingLoop")] FALLING_LOOP,
-
     [AnimationName("PunchRight")] PUNCH_RIGHT,
     [AnimationName("PunchLeft")] PUNCH_LEFT,
     [AnimationName("MeleeAttack_OneHanded")] MELEE_ATTACK_ONE_HANDED,
     [AnimationName("GetHit")] GET_HIT,
+    [AnimationName("Death")] DEATH,
 }

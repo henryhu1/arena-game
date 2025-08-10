@@ -7,8 +7,9 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 
     private CharacterController controller;
 
-    public VoidEventChannelSO OnTakeDamage;
-    public VoidEventChannelSO OnFreeFromDamage;
+    [SerializeField] private VoidEventChannelSO OnTakeDamage;
+    [SerializeField] private VoidEventChannelSO OnFreeFromDamage;
+    [SerializeField] private VoidEventChannelSO OnDeath;
 
     private Vector2 movement;
     private bool isSprinting;
@@ -53,6 +54,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     private void PlayerHealth_OnTakeDamage() { isPreventedFromMoving = true; }
 
     private void PlayerHealth_OnFreeFromDamage() { isPreventedFromMoving = false; }
+    private void PlayerHealth_OnDeath() { isPreventedFromMoving = true; }
 
     public Vector3 GetVelocity() { return this.velocity; }
 
@@ -94,20 +96,21 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     {
         OnTakeDamage.OnEventRaised += PlayerHealth_OnTakeDamage;
         OnFreeFromDamage.OnEventRaised += PlayerHealth_OnFreeFromDamage;
+        OnDeath.OnEventRaised += PlayerHealth_OnDeath;
     }
 
     private void OnDestroy()
     {
         OnTakeDamage.OnEventRaised -= PlayerHealth_OnTakeDamage;
         OnFreeFromDamage.OnEventRaised -= PlayerHealth_OnFreeFromDamage;
+        OnDeath.OnEventRaised += PlayerHealth_OnDeath;
     }
 
     private void FixedUpdate()
     {
         if (isPreventedFromMoving)
         {
-            velocity.x = 0;
-            velocity.z = 0;
+            if (velocity != Vector3.zero) velocity = Vector3.zero;
             return;
         }
 
@@ -128,6 +131,11 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 
     private void Update()
     {
+        if (isPreventedFromMoving)
+        {
+            return;
+        }
+
         // move player controller and player
         controller.Move(Time.deltaTime * velocity);
         transform.position = controller.transform.position;

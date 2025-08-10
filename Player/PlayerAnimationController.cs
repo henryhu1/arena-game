@@ -6,7 +6,8 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
 
     private CharacterController controller;
     [SerializeField] private Animator animator;
-    public VoidEventChannelSO OnTakeDamage;
+    [SerializeField] private VoidEventChannelSO OnTakeDamage;
+    [SerializeField] private VoidEventChannelSO OnDeath;
 
     private PlayerAnimations currentState;
     const float k_animationCrossFade = 0.1f;
@@ -25,11 +26,13 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
     private void Start()
     {
         OnTakeDamage.OnEventRaised += ChangeAnimationForDamage;
+        OnDeath.OnEventRaised += ChangeAnimationForDeath;
     }
 
     private void OnDestroy()
     {
         OnTakeDamage.OnEventRaised -= ChangeAnimationForDamage;
+        OnDeath.OnEventRaised -= ChangeAnimationForDeath;
     }
 
     public AnimatorStateInfo GetAnimatorState()
@@ -39,7 +42,7 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
 
     private void Update()
     {
-        if (manager.health.GetIsGettingDamaged())
+        if (manager.health.GetIsGettingDamaged() || manager.health.GetIsDead())
         {
             return;
         }
@@ -126,5 +129,10 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
     public void ChangeAnimationForDamage()
     {
         ChangeAnimationState(PlayerAnimations.GET_HIT);
+    }
+
+    public void ChangeAnimationForDeath()
+    {
+        ChangeAnimationState(PlayerAnimations.DEATH);
     }
 }
