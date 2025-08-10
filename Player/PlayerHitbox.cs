@@ -5,20 +5,13 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
 {
     Transform player;
 
-    // TODO: make ScriptableObject for hitbox data
-    public float BaseDamage { get; private set; }
-    public float StartTime { get; private set; }
-    public float EndTime { get; private set; }
-    public float Force { get; private set; }
-    public Collider Hitbox { get; private set; }
-    public HashSet<GameObject> DamagedTargets { get; set; }
+    [Header("Values")]
+    [SerializeField] private HitboxValues values;
+    private Collider Hitbox;
+    private HashSet<GameObject> DamagedTargets { get; set; }
 
     void Awake()
     {
-        BaseDamage = 10f;
-        StartTime = 0.6f;
-        EndTime = 0.8f;
-        Force = 7.5f;
         DamagedTargets = new HashSet<GameObject>();
         Hitbox = GetComponent<Collider>();
         Hitbox.enabled = false;
@@ -45,10 +38,13 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
             // Damage and death check
             if (other.TryGetComponent(out EnemyHealth enemyHealth))
             {
-                enemyHealth.TakeDamage(BaseDamage, player.position, Force);
+                enemyHealth.TakeDamage(values.baseDamage, player.position, values.force);
             }
         }
     }
+
+    public float GetDamageStartTime() { return values.startTime; }
+    public float GetDamageEndTime() { return values.endTime; }
 
     public void StartAttack()
     {

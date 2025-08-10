@@ -69,19 +69,19 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
         }
     }
 
-    private IEnumerator DamageWindow(IHitboxable hitbox)
+    private IEnumerator DamageWindow(PlayerHitbox hitbox)
     {
         AnimatorStateInfo stateInfo = manager.animationController.GetAnimatorState();
 
         // Wait until the attack reaches the start time
-        while (stateInfo.normalizedTime < hitbox.StartTime)
+        while (stateInfo.normalizedTime < hitbox.GetDamageStartTime())
             yield return null;
 
         hitbox.StartAttack();
         isDamaging = true;
 
         // Wait until it reaches the end time
-        while (stateInfo.normalizedTime < hitbox.EndTime)
+        while (stateInfo.normalizedTime < hitbox.GetDamageEndTime())
             yield return null;
 
         hitbox.EndAttack();
