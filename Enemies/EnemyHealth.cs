@@ -17,9 +17,15 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
         this.stats = stats;
     }
 
-    private void Start()
+    private void Awake()
     {
         currentHealth = stats.maxHealth;
+    }
+
+    public void ResetHealth()
+    {
+        currentHealth = stats.maxHealth;
+        isDead = false;
     }
 
     public void TakeDamage(float damagePoints, Vector3 playerPos, float force)

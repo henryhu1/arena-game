@@ -51,6 +51,11 @@ public class Ghost : EnemyControllerBase
     //     }
     // }
 
+    private void OnEnable()
+    {
+        currentState = GhostAnimationState.Idle;
+    }
+
     protected override void Update()
     {
         if (ai.IsAgentEnabled())

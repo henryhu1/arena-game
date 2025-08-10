@@ -64,6 +64,11 @@ public class Slime : EnemyControllerBase
     //     }
     // }
 
+    private void OnEnable()
+    {
+        currentState = CustomSlimeAnimationState.Idle;
+    }
+
     protected override void Update()
     {
         base.Update();

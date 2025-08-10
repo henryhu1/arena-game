@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public abstract class EnemyControllerBase : MonoBehaviour
+public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 {
     public EnemyStats enemyStats;
     public EnemySpawnData spawnData;
@@ -65,5 +65,17 @@ public abstract class EnemyControllerBase : MonoBehaviour
 
         // Then despawn via pooling
         EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
+    }
+
+    public void OnSpawned(Vector3 pos)
+    {
+        health.ResetHealth();
+        ai.EnableAgent();
+        ai.WarpAgent(pos);
+    }
+
+    public void OnDespawned()
+    {
+
     }
 }

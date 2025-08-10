@@ -25,14 +25,19 @@ public class ObjectPool
     public GameObject Get(Vector3 position, Quaternion rotation)
     {
         GameObject obj = pool.Count > 0 ? pool.Dequeue() : Object.Instantiate(prefab, parent);
-        // TODO: reset state of pooled object (enemy state)
         obj.transform.SetPositionAndRotation(position, rotation);
         obj.SetActive(true);
+        if (obj.TryGetComponent(out IPoolable poolObj)) {
+            poolObj.OnSpawned(position);
+        }
         return obj;
     }
 
     public void Return(GameObject obj)
     {
+        if (obj.TryGetComponent(out IPoolable poolObj)) {
+            poolObj.OnDespawned();
+        }
         obj.SetActive(false);
         pool.Enqueue(obj);
     }
