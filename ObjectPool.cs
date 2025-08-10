@@ -12,9 +12,11 @@ public class ObjectPool
         this.prefab = prefab;
         this.parent = parent;
 
+        this.prefab.SetActive(false);
+
         for (int i = 0; i < initialSize; i++)
         {
-            GameObject obj = Object.Instantiate(prefab, parent);
+            GameObject obj = Object.Instantiate(this.prefab, parent);
             obj.SetActive(false);
             pool.Enqueue(obj);
         }
@@ -23,6 +25,7 @@ public class ObjectPool
     public GameObject Get(Vector3 position, Quaternion rotation)
     {
         GameObject obj = pool.Count > 0 ? pool.Dequeue() : Object.Instantiate(prefab, parent);
+        // TODO: reset state of pooled object (enemy state)
         obj.transform.SetPositionAndRotation(position, rotation);
         obj.SetActive(true);
         return obj;

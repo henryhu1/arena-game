@@ -5,10 +5,13 @@ public class GameRoundManager : MonoBehaviour
 {
     public static GameRoundManager Instance { get; private set; }
 
-    public int CurrentRound { get; private set; } = 1;
+    public int CurrentRound { get; private set; } = 0;
     public float timeBetweenRounds = 5f;
 
-    public EnemySpawner spawner;
+    [Header("Events")]
+    [SerializeField] private IntEventChannelSO roundStartedEventChannel;
+    [SerializeField] private IntEventChannelSO roundEndedEventChannel;
+    [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
 
     private void Awake()
     {
@@ -20,23 +23,27 @@ public class GameRoundManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(RoundLoop());
+        allWaveEnemiesDefeatedEventChannel.OnEventRaised += IncrementRound;
+        IncrementRound();
     }
 
-    private IEnumerator RoundLoop()
+    private void OnDestroy()
     {
-        while (true)
-        {
-            Debug.Log($"Wave {CurrentRound} starting.");
-            spawner.SpawnWave(CurrentRound);
+        allWaveEnemiesDefeatedEventChannel.OnEventRaised -= IncrementRound;
+    }
 
-            // Wait until all enemies are dead
-            yield return new WaitUntil(() => spawner.TotalWaveEnemiesAlive == 0);
+    public void IncrementRound()
+    {
+        Debug.Log($"Wave {CurrentRound} completed. Next wave in {timeBetweenRounds} seconds...");
+        roundEndedEventChannel.RaiseEvent(CurrentRound);
+        StartCoroutine(BetweenRoundsBuffer());
+    }
 
-            Debug.Log($"Wave {CurrentRound} completed. Next wave in {timeBetweenRounds} seconds...");
-            yield return new WaitForSeconds(timeBetweenRounds);
-
-            CurrentRound++;
-        }
+    private IEnumerator BetweenRoundsBuffer()
+    {
+        yield return new WaitForSeconds(timeBetweenRounds);
+        Debug.Log($"Wave {CurrentRound} starting.");
+        CurrentRound++;
+        roundStartedEventChannel.RaiseEvent(CurrentRound);
     }
 }

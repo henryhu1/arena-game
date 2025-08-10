@@ -18,4 +18,6 @@ public class GameManager : MonoBehaviour
     {
         timeElapsed.variable.Value += Time.deltaTime;
     }
+
+    public float GetGameTimeElapsed() { return timeElapsed.Value; }
 }

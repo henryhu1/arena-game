@@ -3,10 +3,18 @@ using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour
 {
+    public static EnemySpawner Instance { get; private set; }
+
     [SerializeField] private List<EnemySpawnData> spawnConfigs;
 
     [SerializeField] private FloatReference timeElapsed;
     [SerializeField] private float spawnCheckInterval = 2f;
+
+    [Header("Events")]
+    [SerializeField] private EnemyDeathEventChannelSO deathEventChannel;
+    [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
+    [SerializeField] private IntEventChannelSO roundStartedEventChannel;
+
     private float timer;
 
     private Transform player;
@@ -16,17 +24,29 @@ public class EnemySpawner : MonoBehaviour
 
     public int TotalWaveEnemiesAlive { get; private set; } = 0;
 
-    private void Start()
+    private void Awake()
     {
-        player = PlayerManager.Instance;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(Instance);
+        }
+        Instance = this;
 
         foreach (var data in spawnConfigs)
         {
-            data.currentAlive = 0;
+            data.ResetCurrentAlive();
             var strategy = Instantiate(data.spawnStrategy);
             strategy.Initialize(this, data);
             activeStrategies[data] = strategy;
         }
+    }
+
+    private void Start()
+    {
+        player = PlayerManager.Instance;
+
+        deathEventChannel.OnEnemyDied += HandleEnemyDeath;
+        roundStartedEventChannel.OnEventRaised += SpawnWave;
     }
 
     private void Update()
@@ -39,10 +59,16 @@ public class EnemySpawner : MonoBehaviour
         //     SpawnEnemies();
         // }
 
-        foreach (var strategy in activeStrategies.Values)
-        {
-            strategy.UpdateStrategy(Time.deltaTime);
-        }
+        // foreach (var strategy in activeStrategies.Values)
+        // {
+        //     strategy.UpdateStrategy(Time.deltaTime);
+        // }
+    }
+
+    private void OnDestroy()
+    {
+        deathEventChannel.OnEnemyDied -= HandleEnemyDeath;
+        roundStartedEventChannel.OnEventRaised -= SpawnWave;
     }
 
     // private void SpawnEnemies()
@@ -106,15 +132,34 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
+    private void HandleEnemyDeath(EnemyControllerBase enemy)
+    {
+        enemy.spawnData.currentAlive--;
+        if (enemy.spawnData.spawnStrategy is WaveBasedSpawnStrategy)
+        {
+            TotalWaveEnemiesAlive--;
+            if (TotalWaveEnemiesAlive == 0)
+            {
+                allWaveEnemiesDefeatedEventChannel.RaiseEvent();
+            }
+        }
+    }
+
     private Vector3 GetRandomSpawnPosition(float minDist, float maxDist)
     {
         Vector2 offset2D = Random.insideUnitCircle.normalized * Random.Range(minDist, maxDist);
         Vector3 offset = new(offset2D.x, 0f, offset2D.y);
-        return player.position + offset;
+        Vector3 roughPos = player.position + offset;
+        Vector3 spawnPos = EnemyPositionUtils.GetPositionOnNavMesh(roughPos);
+        if (spawnPos != Vector3.negativeInfinity)
+        {
+            return spawnPos;
+        }
+        return roughPos;
     }
 
-    public void DespawnEnemy(EnemySpawnData data)
+    public void DespawnEnemy(GameObject obj, EnemySpawnData data)
     {
-        ObjectPoolManager.Instance.Despawn(gameObject, data.enemyPrefab);
+        ObjectPoolManager.Instance.Despawn(obj, data.enemyPrefab);
     }
 }
