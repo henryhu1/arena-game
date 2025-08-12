@@ -59,4 +59,12 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerComponent
             manager.attackController.SetIsAttacking(true);
         }
     }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            manager.interactHandler.InteractWithClosestInteraction();
+        }
+    }
 }

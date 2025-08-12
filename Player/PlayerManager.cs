@@ -1,5 +1,11 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerHealth))]
+[RequireComponent(typeof(PlayerInputHandler))]
+[RequireComponent(typeof(PlayerMovementController))]
+[RequireComponent(typeof(PlayerAnimationController))]
+[RequireComponent(typeof(PlayerInteractHandler))]
+[RequireComponent(typeof(PlayerAttackController))]
 public class PlayerManager : MonoBehaviour
 {
     public static Transform Instance { get; private set; }
@@ -9,7 +15,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerInputHandler inputHandler { get; private set; }
     public PlayerMovementController movementController { get; private set; }
     public PlayerAnimationController animationController { get; private set; }
-    public PlayerEquipables equipables { get; private set; }
+    public PlayerInteractHandler interactHandler { get; private set; }
     public PlayerAttackController attackController { get; private set; }
 
     [Header("Camera Focus Point")]
@@ -29,7 +35,7 @@ public class PlayerManager : MonoBehaviour
         inputHandler = GetComponent<PlayerInputHandler>();
         movementController = GetComponent<PlayerMovementController>();
         animationController = GetComponent<PlayerAnimationController>();
-        equipables = GetComponent<PlayerEquipables>();
+        interactHandler = GetComponent<PlayerInteractHandler>();
         attackController = GetComponent<PlayerAttackController>();
 
         InitializeAll();
@@ -41,7 +47,7 @@ public class PlayerManager : MonoBehaviour
         inputHandler.Initialize(this);
         movementController.Initialize(this);
         animationController.Initialize(this);
-        equipables.Initialize(this);
+        interactHandler.Initialize(this);
         attackController.Initialize(this);
     }
 
