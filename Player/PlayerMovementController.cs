@@ -51,7 +51,11 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
         return this.movement != Vector2.zero;
     }
 
-    private void PlayerHealth_OnTakeDamage() { isPreventedFromMoving = true; }
+    private void PlayerHealth_OnTakeDamage()
+    {
+        isPreventedFromMoving = true;
+        velocity = -transform.forward * 2; // TODO: pass direction and push back value
+    }
 
     private void PlayerHealth_OnFreeFromDamage() { isPreventedFromMoving = false; }
     private void PlayerHealth_OnDeath() { isPreventedFromMoving = true; }
@@ -110,7 +114,6 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     {
         if (isPreventedFromMoving)
         {
-            if (velocity != Vector3.zero) velocity = Vector3.zero;
             return;
         }
 
@@ -131,14 +134,14 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 
     private void Update()
     {
+        // move player controller and player
+        controller.Move(Time.deltaTime * velocity);
+        transform.position = controller.transform.position;
+
         if (isPreventedFromMoving)
         {
             return;
         }
-
-        // move player controller and player
-        controller.Move(Time.deltaTime * velocity);
-        transform.position = controller.transform.position;
 
         Vector3 cameraDirection = GetCameraLookDirection();
         // make player face the same direction as the camera
