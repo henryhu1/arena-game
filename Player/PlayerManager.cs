@@ -17,12 +17,14 @@ public class PlayerManager : MonoBehaviour
     public PlayerAnimationController animationController { get; private set; }
     public PlayerInteractHandler interactHandler { get; private set; }
     public PlayerAttackController attackController { get; private set; }
+    public PlayerInventoryHandler inventoryHandler { get; private set; }
 
     [Header("Camera Focus Point")]
     public CameraFocus focusPoint;
 
     [Header("Player Model")]
     public Transform modelTransform;
+    public GameObject gripPoint;
 
     [SerializeField] private CharacterController controller;
 
@@ -37,6 +39,7 @@ public class PlayerManager : MonoBehaviour
         animationController = GetComponent<PlayerAnimationController>();
         interactHandler = GetComponent<PlayerInteractHandler>();
         attackController = GetComponent<PlayerAttackController>();
+        inventoryHandler = GetComponent<PlayerInventoryHandler>();
 
         InitializeAll();
     }
@@ -49,6 +52,7 @@ public class PlayerManager : MonoBehaviour
         animationController.Initialize(this);
         interactHandler.Initialize(this);
         attackController.Initialize(this);
+        inventoryHandler.Initialize(this);
     }
 
     private void Update()
@@ -63,5 +67,11 @@ public class PlayerManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    // TODO: move to new player component
+    public void EquipItem(CollectableItem item)
+    {
+        inventoryHandler.HoldItem(item);
     }
 }

@@ -82,7 +82,7 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
                 else if (movement.x > 0)
                     ChangeAnimationState(PlayerAnimations.STRAFE_RIGHT);
                 else if (manager.attackController.GetIsAttacking())
-                    ChangeAnimationState(PlayerAnimations.PUNCH_LEFT);
+                    ChangeAnimationForAttack();
                 else
                     ChangeAnimationState(PlayerAnimations.IDLE);
             }
@@ -134,5 +134,22 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
     public void ChangeAnimationForDeath()
     {
         ChangeAnimationState(PlayerAnimations.DEATH);
+    }
+
+    public void ChangeAnimationForAttack()
+    {
+        if (manager.inventoryHandler.IsHoldingWeapon())
+        {
+            ChangeAnimationState(PlayerAnimations.MELEE_ATTACK_ONE_HANDED);
+        }
+        else
+        {
+            ChangeAnimationState(PlayerAnimations.PUNCH_LEFT);
+        }
+    }
+
+    public bool IsAttackAnimation(AnimatorStateInfo state)
+    {
+        return state.IsName(PlayerAnimations.PUNCH_LEFT.GetAnimationName()) || state.IsName(PlayerAnimations.MELEE_ATTACK_ONE_HANDED.GetAnimationName());
     }
 }

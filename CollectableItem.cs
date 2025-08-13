@@ -10,8 +10,7 @@ public class CollectableItem : Interactable
         if (interactor.TryGetComponent(out PlayerManager playerManager))
         {
             playerManager.interactHandler.RemoveFromNearbyInteractables(this);
-            // playerManager.Collect(this); TODO: collectable item effects
+            playerManager.inventoryHandler.HoldItem(this);
         }
-        Destroy(gameObject);
     }
 }

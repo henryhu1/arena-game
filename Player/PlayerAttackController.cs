@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+// TODO: projectile attacks
 public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
@@ -47,8 +48,9 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
             {
                 StartCoroutine(DamageWindow(hitbox));
 
+                // TODO: find a way to decouple animatorState from attack controller
                 AnimatorStateInfo animatorState = manager.animationController.GetAnimatorState();
-                if (animatorState.IsName(PlayerAnimations.PUNCH_LEFT.GetAnimationName()) && animatorState.normalizedTime >= 1f)
+                if (manager.animationController.IsAttackAnimation(animatorState) && animatorState.normalizedTime >= 1f)
                 {
                     isAttacking = false;
                 }
