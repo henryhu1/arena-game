@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class Weapon : CollectableItem
 {
+    [Header("Values")]
+    [SerializeField] private WeaponData data;
+
+    [Header("Events")]
+    [SerializeField] private WeaponEventChannelSO weaponGetEvent;
+
     private Collider itemCollider;
     private Rigidbody itemRigidbody;
 
@@ -16,13 +22,12 @@ public class Weapon : CollectableItem
         base.Interact(interactor);
         if (interactor.TryGetComponent(out PlayerManager playerManager))
         {
-            // playerManager.Collect(this); TODO: collectable item effects
             transform.SetParent(playerManager.gripPoint.transform);
-            transform.localPosition = Vector3.zero;
-            transform.localRotation = Quaternion.identity;
-
+            transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             itemCollider.enabled = false;
             itemRigidbody.isKinematic = true;
+
+            weaponGetEvent.RaiseEvent(data);
         }
     }
 }

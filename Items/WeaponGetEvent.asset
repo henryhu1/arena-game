@@ -9,11 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e0b79f28fb895f4b9222a1cd499743b, type: 3}
-  m_Name: PlayerHitboxValues
+  m_Script: {fileID: 11500000, guid: f39535023e02d5341aa0b1ec7ad4ed4a, type: 3}
+  m_Name: WeaponGetEvent
   m_EditorClassIdentifier: 
-  baseDamage: 10
-  startTime: 0.4
-  endTime: 0.65
-  force: 7.5
-  size: {x: 0.7, y: 1.7, z: 1}

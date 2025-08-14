@@ -1,12 +1,10 @@
 using UnityEngine;
 
+// TODO: add more subclasses
 public class CollectableItem : Interactable
 {
-    public string itemName;
-
     public override void Interact(GameObject interactor)
     {
-        Debug.Log($"Picked up {itemName}");
         if (interactor.TryGetComponent(out PlayerManager playerManager))
         {
             playerManager.interactHandler.RemoveFromNearbyInteractables(this);
