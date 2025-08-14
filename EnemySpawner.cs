@@ -10,7 +10,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private FloatReference timeElapsed;
 
     [Header("Events")]
-    [SerializeField] private EnemyDeathEventChannelSO deathEventChannel;
+    [SerializeField] private EnemyEventChannelSO deathEventChannel;
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
     [SerializeField] private IntEventChannelSO roundStartedEventChannel;
 
@@ -42,7 +42,7 @@ public class EnemySpawner : MonoBehaviour
     {
         player = PlayerManager.Instance;
 
-        deathEventChannel.OnEnemyDied += HandleEnemyDeath;
+        deathEventChannel.OnEnemyEvent += HandleEnemyDeath;
         roundStartedEventChannel.OnEventRaised += SpawnWave;
     }
 
@@ -57,7 +57,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void OnDestroy()
     {
-        deathEventChannel.OnEnemyDied -= HandleEnemyDeath;
+        deathEventChannel.OnEnemyEvent -= HandleEnemyDeath;
         roundStartedEventChannel.OnEventRaised -= SpawnWave;
     }
 

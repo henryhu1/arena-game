@@ -9,7 +9,7 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
     private bool isDead = false;
 
     [Header("Events")]
-    [SerializeField] private EnemyDeathEventChannelSO deathEvent;
+    [SerializeField] private EnemyEventChannelSO deathEvent;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
