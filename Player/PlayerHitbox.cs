@@ -8,17 +8,12 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
     [Header("Values")]
     [SerializeField] private HitboxValues values;
 
-    [Header("Events")]
-    [SerializeField] private WeaponEventChannelSO getWeaponEvent;
-
     private BoxCollider Hitbox;
 
     private HashSet<GameObject> DamagedTargets { get; set; }
 
-    private float damageValue;
-    private float forceValue;
-    private float damageStartTime;
-    private float damageEndTime;
+    private float damageValue = 0;
+    private float forceValue = 0;
 
     void Awake()
     {
@@ -27,22 +22,24 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         Hitbox.size = values.size;
         Hitbox.enabled = false;
 
+        AddToHitboxValues();
+    }
+
+    private void AddToHitboxValues()
+    {
         damageValue = values.baseDamage;
         forceValue = values.force;
-        damageStartTime = values.startTime;
-        damageEndTime = values.endTime;
+    }
+
+    private void AddToHitboxValues(WeaponData weaponData)
+    {
+        damageValue += weaponData.damage;
+        forceValue += weaponData.knockbackForce;
     }
 
     void Start()
     {
         player = PlayerManager.Instance;
-
-        getWeaponEvent.OnWeaponEvent += ApplyWeapon;
-    }
-
-    void OnDestroy()
-    {
-        getWeaponEvent.OnWeaponEvent -= ApplyWeapon;
     }
 
     void Update()
@@ -67,18 +64,11 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
 
     public void ApplyWeapon(WeaponData weaponData)
     {
-        Debug.Log($"using {weaponData.name} weapon values");
         Hitbox.size = weaponData.hitboxSize;
         Hitbox.center = new Vector3(Hitbox.center.x, Hitbox.center.y, weaponData.hitboxSize.z / 2);
 
-        damageValue += weaponData.damage;
-        forceValue += weaponData.knockbackForce;
-        damageStartTime = values.weaponStartTime;
-        damageEndTime = values.weaponEndTime;
+        AddToHitboxValues(weaponData);
     }
-
-    public float GetDamageStartTime() { return damageStartTime; }
-    public float GetDamageEndTime() { return damageEndTime; }
 
     public void StartAttack()
     {
