@@ -10,6 +10,9 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private bool isAttacking;
     private bool isDamaging;
+
+    private Coroutine attackingRoutine;
+
     private AttackType currentAttack;
 
     [Header("Hitbox Use")]
@@ -39,9 +42,20 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
         getWeaponEvent.OnWeaponEvent -= UseWeapon;
     }
 
-    public bool SetIsAttacking(bool isAttacking)
+    public void StartAttacking()
     {
-        return this.isAttacking = isAttacking;
+        if (manager.health.GetIsDead() || attackingRoutine != null) return;
+
+        isAttacking = true;
+        attackingRoutine = StartCoroutine(DamageWindow(hitbox));
+    }
+
+    private void StopAttacking()
+    {
+        hitbox.EndAttack();
+        isDamaging = false;
+        isAttacking = false;
+        attackingRoutine = null;
     }
 
     public bool GetIsAttacking()
@@ -63,54 +77,52 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
         {
             if (manager.movementController.GetIsJumpInitiated())
             {
-                isAttacking = false;
+                StopAttacking();
             }
 
             if (isAttacking)
             {
-                StartCoroutine(DamageWindow(hitbox));
-
                 // TODO: find a way to decouple animatorState from attack controller
                 AnimatorStateInfo animatorState = manager.animationController.GetAnimatorState();
                 // TODO: use events to end attack
                 if (manager.animationController.IsAttackAnimation() && animatorState.normalizedTime >= 1f)
                 {
-                    isAttacking = false;
+                    StopAttacking();
                 }
                 if (isAttacking && !manager.movementController.GetMovement().Equals(Vector2.zero))
                 {
-                    isAttacking = false;
+                    StopAttacking();
                 }
                 if (isDamaging && manager.health.GetIsGettingDamaged())
                 {
-                    isAttacking = false;
-                    isDamaging = false;
+                    StopAttacking();
                 }
-            }
-            else
-            {
-                hitbox.EndAttack();
             }
         }
     }
 
     private IEnumerator DamageWindow(PlayerHitbox hitbox)
     {
-        AnimatorStateInfo stateInfo = manager.animationController.GetAnimatorState();
+        float time = 0;
         AttackAnimationSO animation = manager.animationController.GetAttackAnimation(currentAttack);
 
         // Wait until the attack reaches the start time
-        while (stateInfo.normalizedTime < animation.attackStartTime)
+        while (time < animation.attackStartTime)
+        {
+            time += Time.deltaTime;
             yield return null;
+        }
 
         hitbox.StartAttack();
         isDamaging = true;
 
         // Wait until it reaches the end time
-        while (stateInfo.normalizedTime < animation.attackEndTime)
+        while (time < animation.attackEndTime)
+        {
+            time += Time.deltaTime;
             yield return null;
+        }
 
-        hitbox.EndAttack();
-        isDamaging = false;
+        StopAttacking();
     }
 }

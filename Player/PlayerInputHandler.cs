@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// TODO: create events for movement?
+//   Input actions level or script level?
 public class PlayerInputHandler : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
@@ -56,7 +58,7 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerComponent
             manager.movementController.GetMovement().Equals(Vector2.zero)
            )
         {
-            manager.attackController.SetIsAttacking(true);
+            manager.attackController.StartAttacking();
         }
     }
 
