@@ -5,6 +5,8 @@ public class WeaponData : ScriptableObject
 {
     public string weaponName = "Weapon";
 
+    public AttackType attackType;
+
     [Header("Stats")]
     public float damage = 10f;
     public float knockbackForce = 5f;

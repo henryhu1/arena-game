@@ -62,7 +62,7 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         }
     }
 
-    public void ApplyWeapon(WeaponData weaponData)
+    public void ApplyWeaponData(WeaponData weaponData)
     {
         Hitbox.size = weaponData.hitboxSize;
         Hitbox.center = new Vector3(Hitbox.center.x, Hitbox.center.y, weaponData.hitboxSize.z / 2);

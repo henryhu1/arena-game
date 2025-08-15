@@ -8,7 +8,12 @@ public class AnimationNameAttribute : Attribute
     {
         Name = name;
     }
-} 
+}
+
+public class AttackAnimationAttribute : Attribute
+{
+    public AttackAnimationAttribute() {}
+}
 
 public static class PlayerAnimationsExtensions
 {
@@ -26,6 +31,12 @@ public static class PlayerAnimationsExtensions
     {
         var animationName = GetAttribute<AnimationNameAttribute>(value);
         return animationName?.Name;
+    }
+
+    public static bool IsAttackAnimation(this Enum value)
+    {
+        var isAttackAnimation = GetAttribute<AttackAnimationAttribute>(value);
+        return isAttackAnimation != null;
     }
 }
 
@@ -47,8 +58,8 @@ public enum PlayerAnimations
     [AnimationName("JumpWhileRunning")] JUMP_WHILE_RUNNING,
     [AnimationName("FallingLoop")] FALLING_LOOP,
     [AnimationName("PunchRight")] PUNCH_RIGHT,
-    [AnimationName("PunchLeft")] PUNCH_LEFT,
-    [AnimationName("MeleeAttack_OneHanded")] MELEE_ATTACK_ONE_HANDED,
+    [AnimationName("PunchLeft"), AttackAnimation] PUNCH_LEFT,
+    [AnimationName("MeleeAttack_OneHanded"), AttackAnimation] MELEE_ATTACK_ONE_HANDED,
     [AnimationName("GetHit")] GET_HIT,
     [AnimationName("Death")] DEATH,
 }

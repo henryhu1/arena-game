@@ -10,10 +10,13 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private bool isAttacking;
     private bool isDamaging;
+    private AttackType currentAttack;
 
     [Header("Hitbox Use")]
     [SerializeField] private PlayerHitbox hitbox;
-    [SerializeField] private GameObject gripPoint;
+
+    [Header("Events")]
+    [SerializeField] private WeaponEventChannelSO getWeaponEvent;
 
     public void Initialize(PlayerManager manager)
     {
@@ -23,6 +26,17 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        currentAttack = AttackType.MELEE;
+    }
+
+    void Start()
+    {
+        getWeaponEvent.OnWeaponEvent += UseWeapon;
+    }
+
+    void OnDestroy()
+    {
+        getWeaponEvent.OnWeaponEvent -= UseWeapon;
     }
 
     public bool SetIsAttacking(bool isAttacking)
@@ -33,6 +47,14 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
     public bool GetIsAttacking()
     {
         return this.isAttacking;
+    }
+
+    public AttackType GetAttackType() { return currentAttack; }
+
+    private void UseWeapon(WeaponData weaponData)
+    {
+        hitbox.ApplyWeaponData(weaponData);
+        currentAttack = weaponData.attackType;
     }
 
     private void Update()
@@ -50,7 +72,8 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
                 // TODO: find a way to decouple animatorState from attack controller
                 AnimatorStateInfo animatorState = manager.animationController.GetAnimatorState();
-                if (manager.animationController.IsAttackAnimation(animatorState) && animatorState.normalizedTime >= 1f)
+                // TODO: use events to end attack
+                if (manager.animationController.IsAttackAnimation() && animatorState.normalizedTime >= 1f)
                 {
                     isAttacking = false;
                 }
@@ -74,20 +97,20 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
     private IEnumerator DamageWindow(PlayerHitbox hitbox)
     {
         AnimatorStateInfo stateInfo = manager.animationController.GetAnimatorState();
+        AttackAnimationSO animation = manager.animationController.GetAttackAnimation(currentAttack);
 
         // Wait until the attack reaches the start time
-        while (stateInfo.normalizedTime < hitbox.GetDamageStartTime())
+        while (stateInfo.normalizedTime < animation.attackStartTime)
             yield return null;
 
         hitbox.StartAttack();
         isDamaging = true;
 
         // Wait until it reaches the end time
-        while (stateInfo.normalizedTime < hitbox.GetDamageEndTime())
+        while (stateInfo.normalizedTime < animation.attackEndTime)
             yield return null;
 
         hitbox.EndAttack();
         isDamaging = false;
     }
-
 }

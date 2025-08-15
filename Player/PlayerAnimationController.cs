@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
@@ -6,6 +7,14 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
 
     private CharacterController controller;
     [SerializeField] private Animator animator;
+
+    [Header("Attack Animations")]
+    [SerializeField] private AttackAnimationSO meleeAttack;
+    [SerializeField] private AttackAnimationSO swingAttack;
+    [SerializeField] private AttackAnimationSO castAttack;
+    [SerializeField] private AttackAnimationSO bowAttack;
+
+    [Header("Events")]
     [SerializeField] private VoidEventChannelSO OnTakeDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
 
@@ -13,9 +22,19 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
     const float k_animationCrossFade = 0.1f;
     const float k_jumpChangeInDirectionThreshold = 0.1f;
 
+    private Dictionary<AttackType, AttackAnimationSO> attackAnimations;
+
     public void Initialize(PlayerManager manager)
     {
         this.manager = manager;
+
+        attackAnimations = new()
+        {
+            { AttackType.MELEE, meleeAttack },
+            { AttackType.SWING, swingAttack },
+            { AttackType.CAST, castAttack },
+            { AttackType.BOW, bowAttack },
+        };
     }
 
     private void Awake()
@@ -38,6 +57,11 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
     public AnimatorStateInfo GetAnimatorState()
     {
         return animator.GetCurrentAnimatorStateInfo(0);
+    }
+
+    public AttackAnimationSO GetAttackAnimation(AttackType type)
+    {
+        return attackAnimations[type];
     }
 
     private void Update()
@@ -138,18 +162,13 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
 
     public void ChangeAnimationForAttack()
     {
-        if (manager.inventoryHandler.IsHoldingWeapon())
-        {
-            ChangeAnimationState(PlayerAnimations.MELEE_ATTACK_ONE_HANDED);
-        }
-        else
-        {
-            ChangeAnimationState(PlayerAnimations.PUNCH_LEFT);
-        }
+        AttackType currentAttack = manager.attackController.GetAttackType();
+        PlayerAnimations animationName = attackAnimations[currentAttack].animationName;
+        ChangeAnimationState(animationName);
     }
 
-    public bool IsAttackAnimation(AnimatorStateInfo state)
+    public bool IsAttackAnimation()
     {
-        return state.IsName(PlayerAnimations.PUNCH_LEFT.GetAnimationName()) || state.IsName(PlayerAnimations.MELEE_ATTACK_ONE_HANDED.GetAnimationName());
+        return currentState.IsAttackAnimation();
     }
 }
