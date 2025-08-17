@@ -11,7 +11,7 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private Coroutine attackingRoutine;
 
-    private AttackType currentAttack;
+    private WeaponData holdingWeapon;
 
     [Header("Hitbox Use")]
     [SerializeField] private PlayerHitbox hitbox;
@@ -56,12 +56,20 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
         return this.isAttacking;
     }
 
-    public AttackType GetAttackType() { return currentAttack; }
+    public AttackType GetAttackType()
+    {
+        if (holdingWeapon == null)
+        {
+            return AttackType.MELEE;
+        }
+
+        return holdingWeapon.attackType;
+    }
 
     private void UseWeapon(WeaponData weaponData)
     {
         hitbox.ApplyWeaponData(weaponData);
-        currentAttack = weaponData.attackType;
+        holdingWeapon = weaponData;
     }
 
     private void Update()
@@ -97,7 +105,15 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
     private IEnumerator DamageWindow(PlayerHitbox hitbox)
     {
         float time = 0;
-        AttackAnimationSO animation = manager.animationController.GetAttackAnimation(currentAttack);
+        AttackAnimationSO animation;
+        if (holdingWeapon != null)
+        {
+            animation = manager.animationController.GetAttackAnimation(holdingWeapon.attackType);
+        }
+        else
+        {
+            animation = manager.animationController.GetAttackAnimation(AttackType.MELEE);
+        }
 
         // Wait until the attack reaches the start time
         while (time < animation.attackStartTime)
