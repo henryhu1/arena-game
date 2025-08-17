@@ -7,8 +7,6 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
-    private CharacterController controller;
-
     private Vector2 moveInput;
 
     [Header("Ground Detection")]
@@ -18,11 +16,6 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerComponent
     public void Initialize(PlayerManager manager)
     {
         this.manager = manager;
-    }
-
-    private void Awake()
-    {
-        controller = GetComponent<CharacterController>();
     }
 
     private bool HasDetectedGround()
@@ -45,7 +38,7 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerComponent
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (!manager.movementController.GetIsJumping() && (controller.isGrounded || HasDetectedGround()))
+        if (!manager.movementController.GetIsJumping() && (manager.IsControllerGrounded() || HasDetectedGround()))
         {
             manager.movementController.SetIsJumpInitiated(true);
         }
@@ -54,7 +47,7 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerComponent
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (!manager.movementController.GetIsJumping() &&
-            (controller.isGrounded || HasDetectedGround()) &&
+            (manager.IsControllerGrounded() || HasDetectedGround()) &&
             manager.movementController.GetMovement().Equals(Vector2.zero)
            )
         {

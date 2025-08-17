@@ -57,7 +57,7 @@ public class PlayerManager : MonoBehaviour
 
     private void Update()
     {
-        if (controller.isGrounded)
+        if (IsControllerGrounded())
         {
             if (movementController.GetVelocity().y <= 0f)
             {
@@ -69,9 +69,14 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    // TODO: move to new player component
-    public void EquipItem(CollectableItem item)
+    public bool IsControllerGrounded()
     {
-        inventoryHandler.HoldItem(item);
+        return controller.isGrounded;
+    }
+
+    public void MovePlayer(Vector3 velocity)
+    {
+        controller.Move(Time.deltaTime * velocity);
+        transform.position = controller.transform.position;
     }
 }

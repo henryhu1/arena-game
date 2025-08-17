@@ -5,7 +5,6 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
-    private CharacterController controller;
     [SerializeField] private Animator animator;
 
     [Header("Attack Animations")]
@@ -35,11 +34,6 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
             { AttackType.CAST, castAttack },
             { AttackType.BOW, bowAttack },
         };
-    }
-
-    private void Awake()
-    {
-        controller = GetComponent<CharacterController>();
     }
 
     private void Start()
@@ -73,7 +67,7 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
 
         Vector2 movement = manager.movementController.GetMovement();
         Vector3 velocity = manager.movementController.GetVelocity();
-        if (controller.isGrounded)
+        if (manager.IsControllerGrounded())
         {
             if (velocity.y <= 0f)
             {

@@ -5,8 +5,6 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
-    private CharacterController controller;
-
     [SerializeField] private VoidEventChannelSO OnTakeDamage;
     [SerializeField] private VoidEventChannelSO OnFreeFromDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
@@ -54,7 +52,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     private void PlayerHealth_OnTakeDamage()
     {
         isPreventedFromMoving = true;
-        velocity = -transform.forward * 2; // TODO: pass direction and push back value
+        velocity = -transform.forward * 2; // TODO: pass direction and push back value, utililze HitboxValues on enemies
     }
 
     private void PlayerHealth_OnFreeFromDamage() { isPreventedFromMoving = false; }
@@ -91,8 +89,6 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 
     private void Awake()
     {
-        controller = GetComponent<CharacterController>();
-
         isPreventedFromMoving = false;
     }
 
@@ -134,9 +130,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 
     private void Update()
     {
-        // move player controller and player
-        controller.Move(Time.deltaTime * velocity);
-        transform.position = controller.transform.position;
+        manager.MovePlayer(velocity);
 
         if (isPreventedFromMoving)
         {
@@ -147,7 +141,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
         // make player face the same direction as the camera
         transform.forward = cameraDirection;
 
-        if (controller.isGrounded)
+        if (manager.IsControllerGrounded())
         {
             if (isJumpInitiated)
             {

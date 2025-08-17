@@ -6,8 +6,6 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
-    private CharacterController controller;
-
     private bool isAttacking;
     private bool isDamaging;
 
@@ -24,12 +22,6 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
     public void Initialize(PlayerManager manager)
     {
         this.manager = manager;
-    }
-
-    private void Awake()
-    {
-        controller = GetComponent<CharacterController>();
-        currentAttack = AttackType.MELEE;
     }
 
     void Start()
@@ -55,6 +47,7 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
         hitbox.EndAttack();
         isDamaging = false;
         isAttacking = false;
+        StopCoroutine(attackingRoutine);
         attackingRoutine = null;
     }
 
@@ -73,7 +66,7 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private void Update()
     {
-        if (controller.isGrounded)
+        if (manager.IsControllerGrounded())
         {
             if (manager.movementController.GetIsJumpInitiated())
             {
