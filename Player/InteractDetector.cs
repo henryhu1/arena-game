@@ -11,15 +11,15 @@ public class InteractionDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<Interactable>(out var item))
+        if (other.TryGetComponent<IInteractable>(out var item))
         {
-            interactHandler.AddToNearbyInteractables(item);
+            interactHandler.AddToNearbyInteractables(item, other.transform.position);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<Interactable>(out var item))
+        if (other.TryGetComponent<IInteractable>(out var item))
         {
             interactHandler.RemoveFromNearbyInteractables(item);
         }

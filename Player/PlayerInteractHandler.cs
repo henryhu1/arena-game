@@ -5,19 +5,19 @@ public class PlayerInteractHandler : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
-    private HashSet<Interactable> nearbyInteractions = new();
+    private Dictionary<IInteractable, Vector3> nearbyInteractions = new();
 
     public void Initialize(PlayerManager manager)
     {
         this.manager = manager;
     }
 
-    public void AddToNearbyInteractables(Interactable item)
+    public void AddToNearbyInteractables(IInteractable item, Vector3 pos)
     {
-        nearbyInteractions.Add(item);
+        nearbyInteractions.Add(item, pos);
     }
 
-    public void RemoveFromNearbyInteractables(Interactable item)
+    public void RemoveFromNearbyInteractables(IInteractable item)
     {
         nearbyInteractions.Remove(item);
     }
@@ -25,24 +25,24 @@ public class PlayerInteractHandler : MonoBehaviour, IPlayerComponent
     public void InteractWithClosestInteraction()
     {
         if (nearbyInteractions.Count == 0) return;
-        Interactable closest = GetClosestInteractable();
+        IInteractable closest = GetClosestInteractable();
         closest.Interact(gameObject);
     }
 
-    private Interactable GetClosestInteractable()
+    private IInteractable GetClosestInteractable()
     {
-        Interactable closest = null;
+        IInteractable closest = null;
         float minDist = float.MaxValue;
 
         Vector3 playerPos = transform.position;
 
-        foreach (var item in nearbyInteractions)
+        foreach (KeyValuePair<IInteractable, Vector3> interactable in nearbyInteractions)
         {
-            float dist = Vector3.SqrMagnitude(item.transform.position - playerPos);
+            float dist = Vector3.SqrMagnitude(interactable.Value - playerPos);
             if (dist < minDist)
             {
                 minDist = dist;
-                closest = item;
+                closest = interactable.Key;
             }
         }
 
