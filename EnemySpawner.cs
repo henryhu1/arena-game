@@ -124,8 +124,8 @@ public class EnemySpawner : MonoBehaviour
         return roughPos;
     }
 
-    public void DespawnEnemy(GameObject obj, EnemySpawnData data)
+    public void DespawnEnemy(GameObject obj)
     {
-        ObjectPoolManager.Instance.Despawn(obj, data.enemyPrefab);
+        ObjectPoolManager.Instance.Despawn(obj);
     }
 }

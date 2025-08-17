@@ -1,7 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
-public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
+// TODO: add more enemies
+public abstract class EnemyControllerBase : PoolIdentity, IPoolable
 {
     public EnemyStats enemyStats;
     public EnemySpawnData spawnData;
@@ -43,7 +44,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     public abstract void SetDamageState();
     public abstract void SetAttackState();
-    public virtual bool CanAttack() { return !knockback.GetIsStunned(); }
+    public virtual bool CanAttack() { return !knockback.GetIsStunned() && !health.GetIsDead(); }
 
     public abstract void WarpAgent(Vector3 pos);
 
@@ -63,7 +64,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         yield return new WaitForSeconds(enemyStats.DeathClipLength);
 
         // Then despawn via pooling
-        EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
+        EnemySpawner.Instance.DespawnEnemy(gameObject);
     }
 
     public void OnSpawned(Vector3 pos)
