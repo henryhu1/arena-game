@@ -6,8 +6,6 @@ public class Arrow : Projectile
 
     [Header("Arrow Parts")]
     public Transform arrowTip; // Assign actual arrow tip mesh position
-    public Collider shaftCollider; // Main flight collider
-    public Collider tipCollider;   // Trigger collider at tip
 
     private CollectableItem collectableItem;
 
@@ -25,7 +23,13 @@ public class Arrow : Projectile
         rb.centerOfMass = localTip;
 
         // Ensure correct collision settings
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
+
+    void OnDisable()
+    {
+        ObjectPoolManager.Instance.Despawn(gameObject);
     }
 
     void FixedUpdate()
@@ -37,7 +41,6 @@ public class Arrow : Projectile
     private void OnTriggerEnter(Collider other)
     {
         if (hasHit) return;
-        if (other == shaftCollider) return; // Ignore self
 
         if (gameObject.layer == LayerMask.NameToLayer("DamageDealing"))
         {
@@ -47,7 +50,7 @@ public class Arrow : Projectile
 
     public override void Launch(Vector3 direction, float speed)
     {
-        collectableItem.enabled = false;
+        MakeUninteractable();
 
         float launchSpeed = speed > 0 ? speed : defaultSpeed;
 
@@ -67,10 +70,6 @@ public class Arrow : Projectile
         // Stop physics
         rb.isKinematic = true;
 
-        // Disable shaft collisions to prevent knock-off
-        shaftCollider.enabled = false;
-        tipCollider.enabled = false;
-
         // Parent to hit object so it moves with it
         transform.parent = hitCollider.transform;
 
@@ -80,5 +79,19 @@ public class Arrow : Projectile
         //     Vector3 offset = transform.position - arrowTip.position;
         //     transform.position = hit.point + offset;
         // }
+
+        MakeInteractable();
+    }
+
+    private void MakeInteractable()
+    {
+        collectableItem.enabled = true;
+        gameObject.layer = LayerMask.NameToLayer("Interactables");
+    }
+
+    private void MakeUninteractable()
+    {
+        collectableItem.enabled = false;
+        gameObject.layer = LayerMask.NameToLayer("DamageDealing");
     }
 }

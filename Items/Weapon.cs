@@ -20,6 +20,9 @@ public class Weapon : CollectableItem
     public override void Interact(GameObject interactor)
     {
         base.Interact(interactor);
+        // TODO: fix redundant calls to SetActive in base and here
+        gameObject.SetActive(true);
+
         if (interactor.TryGetComponent(out PlayerManager playerManager))
         {
             if (data.IsWeaponOfType(AttackType.BOW))

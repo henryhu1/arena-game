@@ -22,6 +22,8 @@ public abstract class Projectile : PoolIdentity, IPoolable
     // Called automatically by pool on despawn
     public virtual void OnDespawned()
     {
+        if (rb.isKinematic) return;
+
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
     }

@@ -7,11 +7,13 @@ public class CollectableItem : MonoBehaviour, IInteractable
     {
         if (!IsInteractable()) return;
 
+        // TODO: use a collectable item event channel
         if (interactor.TryGetComponent(out PlayerManager playerManager))
         {
             playerManager.interactHandler.RemoveFromNearbyInteractables(this);
             playerManager.inventoryHandler.HoldItem(this);
         }
+        gameObject.SetActive(false);
     }
 
     protected bool IsInteractable()
