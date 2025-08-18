@@ -34,16 +34,14 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
 
         currentHealth -= damagePoints;
 
+        Vector3 knockbackDirection = (transform.position - fromPos).normalized;
+        controllerBase.ApplyKnockback(knockbackDirection, force);
+
         if (currentHealth <= 0)
         {
             isDead = true;
             controllerBase.HandleDeath();
             deathEvent.RaiseEvent(controllerBase);
-        }
-        else
-        {
-            Vector3 knockbackDirection = (transform.position - fromPos).normalized;
-            controllerBase.ApplyKnockback(knockbackDirection, force);
         }
     }
 
