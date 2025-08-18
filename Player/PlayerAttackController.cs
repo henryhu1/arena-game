@@ -122,8 +122,15 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
             yield return null;
         }
 
-        hitbox.StartAttack();
-        isDamaging = true;
+        if (holdingWeapon is BowData bowData)
+        {
+            bowData.FireArrow(manager.projectileSpawnPoint.transform);
+        }
+        else
+        {
+            hitbox.StartAttack();
+            isDamaging = true;
+        }
 
         // Wait until it reaches the end time
         while (time < animation.attackEndTime)

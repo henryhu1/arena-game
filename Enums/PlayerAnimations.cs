@@ -60,6 +60,7 @@ public enum PlayerAnimations
     [AnimationName("PunchRight")] PUNCH_RIGHT,
     [AnimationName("PunchLeft"), AttackAnimation] PUNCH_LEFT,
     [AnimationName("MeleeAttack_OneHanded"), AttackAnimation] MELEE_ATTACK_ONE_HANDED,
+    [AnimationName("BowShot"), AttackAnimation] BOW_SHOT,
     [AnimationName("GetHit")] GET_HIT,
     [AnimationName("Death")] DEATH,
 }

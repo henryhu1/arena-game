@@ -22,8 +22,18 @@ public class Weapon : CollectableItem
         base.Interact(interactor);
         if (interactor.TryGetComponent(out PlayerManager playerManager))
         {
-            transform.SetParent(playerManager.gripPoint.transform);
-            transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+            if (data.IsWeaponOfType(AttackType.BOW))
+            {
+                transform.SetParent(playerManager.leftGripPoint.transform);
+                transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.Euler(225, 0, 0));
+                playerManager.heldArrow.SetActive(true);
+            }
+            else
+            {
+                transform.SetParent(playerManager.rightGripPoint.transform);
+                transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+                playerManager.heldArrow.SetActive(false);
+            }
             itemCollider.enabled = false;
             itemRigidbody.isKinematic = true;
 

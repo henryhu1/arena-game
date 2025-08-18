@@ -24,7 +24,10 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Player Model")]
     public Transform modelTransform;
-    public GameObject gripPoint;
+    public GameObject rightGripPoint;
+    public GameObject leftGripPoint;
+    public GameObject heldArrow;
+    public GameObject projectileSpawnPoint;
 
     [SerializeField] private CharacterController controller;
 
@@ -42,6 +45,7 @@ public class PlayerManager : MonoBehaviour
         inventoryHandler = GetComponent<PlayerInventoryHandler>();
 
         InitializeAll();
+        heldArrow.SetActive(false);
     }
 
     void InitializeAll()

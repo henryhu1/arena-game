@@ -15,4 +15,6 @@ public class WeaponData : ScriptableObject
     [Header("Hitbox Settings")]
     public Vector3 hitboxSize = new(0.7f, 1.7f, 1f);
     public Vector3 hitboxOffset = Vector3.zero;
+
+    public bool IsWeaponOfType(AttackType type) => attackType == type;
 }
