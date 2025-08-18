@@ -9,7 +9,7 @@ public abstract class Projectile : PoolIdentity, IPoolable
         rb = GetComponent<Rigidbody>();
     }
 
-    public abstract void Launch(Vector3 direction, float speed);
+    public abstract void Launch(float damagePoints, Vector3 direction, float speed);
 
     // Called automatically by pool on spawn
     public virtual void OnSpawned(Vector3 position)

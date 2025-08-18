@@ -3,6 +3,8 @@ using UnityEngine;
 public class Arrow : Projectile
 {
     [SerializeField] private float defaultSpeed = 20f;
+    [SerializeField] private float defaultForce = 5f;
+    protected float damagePoints = 0;
 
     [Header("Arrow Parts")]
     public Transform arrowTip; // Assign actual arrow tip mesh position
@@ -42,13 +44,21 @@ public class Arrow : Projectile
     {
         if (hasHit) return;
 
+        if (other.CompareTag("Enemy"))
+        {
+            if (other.TryGetComponent(out EnemyHealth enemyHealth))
+            {
+                enemyHealth.TakeDamage(damagePoints, transform.position, defaultForce);
+            }
+        }
+
         if (gameObject.layer == LayerMask.NameToLayer("DamageDealing"))
         {
             StickArrow(other);
         }
     }
 
-    public override void Launch(Vector3 direction, float speed)
+    public override void Launch(float damagePoints, Vector3 direction, float speed)
     {
         MakeUninteractable();
 
@@ -61,11 +71,14 @@ public class Arrow : Projectile
 
         // shoot arrow
         rb.linearVelocity = direction * launchSpeed;
+
+        this.damagePoints = damagePoints;
     }
 
     private void StickArrow(Collider hitCollider)
     {
         hasHit = true;
+        damagePoints = 0;
 
         // Stop physics
         rb.isKinematic = true;

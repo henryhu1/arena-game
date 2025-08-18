@@ -28,7 +28,7 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
         isDead = false;
     }
 
-    public void TakeDamage(float damagePoints, Vector3 playerPos, float force)
+    public void TakeDamage(float damagePoints, Vector3 fromPos, float force)
     {
         if (isDead) return;
 
@@ -42,7 +42,7 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
         }
         else
         {
-            Vector3 knockbackDirection = (transform.position - playerPos).normalized;
+            Vector3 knockbackDirection = (transform.position - fromPos).normalized;
             controllerBase.ApplyKnockback(knockbackDirection, force);
         }
     }

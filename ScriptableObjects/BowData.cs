@@ -5,7 +5,9 @@ public class BowData : WeaponData
 {
     [Header("Projectile")]
     public Arrow arrowPrefab;
-    public float maxForce = 100;
+
+    [Header("Stats")]
+    public float damagePoints = 100;
     public float maxSpeed = 100;
 
     public void FireArrow(Transform spawnPoint)
@@ -23,7 +25,7 @@ public class BowData : WeaponData
         // Launch
         if (arrowObj.TryGetComponent(out Projectile proj))
         {
-            proj.Launch(MainCamera.Instance.transform.forward, maxSpeed);
+            proj.Launch(damagePoints, MainCamera.Instance.transform.forward, maxSpeed);
         }
     }
 }
