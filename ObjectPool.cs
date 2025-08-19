@@ -25,7 +25,6 @@ public class ObjectPool
     public GameObject Get(Vector3 position, Quaternion rotation)
     {
         GameObject obj = pool.Count > 0 ? pool.Dequeue() : Object.Instantiate(prefab, parent);
-        obj.GetComponent<PoolIdentity>().Prefab = prefab;
         obj.transform.SetPositionAndRotation(position, rotation);
         obj.SetActive(true);
         if (obj.TryGetComponent(out IPoolable poolObj)) {
@@ -39,6 +38,7 @@ public class ObjectPool
         if (obj.TryGetComponent(out IPoolable poolObj)) {
             poolObj.OnDespawned();
         }
+        obj.transform.parent = parent;
         obj.SetActive(false);
         pool.Enqueue(obj);
     }

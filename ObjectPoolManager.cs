@@ -31,12 +31,11 @@ public class ObjectPoolManager : MonoBehaviour
         return poolMap[prefab].Get(position, rotation);
     }
 
-    public void Despawn(GameObject obj)
+    public void Despawn(GameObject obj, GameObject prefab)
     {
-        var identity = obj.GetComponent<PoolIdentity>();
-        if (identity != null && poolMap.ContainsKey(identity.Prefab))
+        if (poolMap.ContainsKey(prefab))
         {
-            poolMap[identity.Prefab].Return(obj);
+            poolMap[prefab].Return(obj);
         }
         else
         {

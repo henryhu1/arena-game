@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 // TODO: add more enemies
-public abstract class EnemyControllerBase : PoolIdentity, IPoolable
+public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 {
     public EnemyStats enemyStats;
     public EnemySpawnData spawnData;
@@ -64,7 +64,7 @@ public abstract class EnemyControllerBase : PoolIdentity, IPoolable
         yield return new WaitForSeconds(enemyStats.DeathClipLength);
 
         // Then despawn via pooling
-        EnemySpawner.Instance.DespawnEnemy(gameObject);
+        EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
     }
 
     public void OnSpawned(Vector3 pos)
