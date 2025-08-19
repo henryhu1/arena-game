@@ -4,7 +4,7 @@ using UnityEngine;
 public class BowData : WeaponData
 {
     [Header("Projectile")]
-    public Arrow arrowPrefab;
+    public GameObject arrowPrefab;
 
     [Header("Stats")]
     public float damagePoints = 100;
@@ -17,15 +17,20 @@ public class BowData : WeaponData
 
         // Spawn from pool
         GameObject arrowObj = ObjectPoolManager.Instance.Spawn(
-            arrowPrefab.gameObject, 
-            spawnPoint.position, 
+            arrowPrefab.gameObject,
+            spawnPoint.position,
             spawnPoint.rotation
         );
 
         // Launch
         if (arrowObj.TryGetComponent(out IProjectilible proj))
         {
-            proj.Launch(damagePoints, MainCamera.Instance.transform.forward, maxSpeed);
+            proj.Launch(this, MainCamera.Instance.transform.forward, maxSpeed);
         }
+    }
+
+    public void ReturnArrowToPool(GameObject arrowObj)
+    {
+        ObjectPoolManager.Instance.Despawn(arrowObj, arrowPrefab);
     }
 }

@@ -27,6 +27,7 @@ public class ObjectPool
         GameObject obj = pool.Count > 0 ? pool.Dequeue() : Object.Instantiate(prefab, parent);
         obj.transform.SetPositionAndRotation(position, rotation);
         obj.SetActive(true);
+        obj.transform.parent = parent;
         if (obj.TryGetComponent(out IPoolable poolObj)) {
             poolObj.OnSpawned(position);
         }
@@ -38,7 +39,6 @@ public class ObjectPool
         if (obj.TryGetComponent(out IPoolable poolObj)) {
             poolObj.OnDespawned();
         }
-        obj.transform.parent = parent;
         obj.SetActive(false);
         pool.Enqueue(obj);
     }

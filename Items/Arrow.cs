@@ -6,6 +6,8 @@ public class Arrow : MonoBehaviour, IProjectilible
     [SerializeField] private float defaultForce = 5f;
     protected float damagePoints = 0;
 
+    private BowData shotFromBow;
+
     [Header("Arrow Parts")]
     public Transform arrowTip; // Assign actual arrow tip mesh position
 
@@ -27,6 +29,11 @@ public class Arrow : MonoBehaviour, IProjectilible
         rb.isKinematic = false;
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
+
+    void OnDisable()
+    {
+        shotFromBow.ReturnArrowToPool(gameObject);
     }
 
     public virtual void OnSpawned(Vector3 position)
@@ -70,7 +77,7 @@ public class Arrow : MonoBehaviour, IProjectilible
         }
     }
 
-    public void Launch(float damagePoints, Vector3 direction, float speed)
+    public void Launch(BowData bowData, Vector3 direction, float speed)
     {
         hasHit = false;
 
@@ -86,7 +93,8 @@ public class Arrow : MonoBehaviour, IProjectilible
         // shoot arrow
         rb.linearVelocity = direction * launchSpeed;
 
-        this.damagePoints = damagePoints;
+        shotFromBow = bowData;
+        damagePoints = bowData.damagePoints;
     }
 
     private void StickArrow(Collider hitCollider)
