@@ -3,17 +3,14 @@ using UnityEngine;
 // TODO: add more subclasses
 public class CollectableItem : MonoBehaviour, IInteractable
 {
+    [Header("Events")]
+    [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
+
     public virtual void Interact(GameObject interactor)
     {
         if (!IsInteractable()) return;
 
-        // TODO: use a collectable item event channel
-        if (interactor.TryGetComponent(out PlayerManager playerManager))
-        {
-            playerManager.interactHandler.RemoveFromNearbyInteractables(this);
-            playerManager.inventoryHandler.HoldItem(this);
-        }
-        gameObject.SetActive(false);
+        collectItemEvent.RaiseEvent(this);
     }
 
     protected bool IsInteractable()

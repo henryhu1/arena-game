@@ -7,9 +7,22 @@ public class PlayerInteractHandler : MonoBehaviour, IPlayerComponent
 
     private Dictionary<IInteractable, Vector3> nearbyInteractions = new();
 
+    [Header("Events")]
+    [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
+
     public void Initialize(PlayerManager manager)
     {
         this.manager = manager;
+    }
+
+    void Start()
+    {
+        collectItemEvent.OnCollectItemEvent += RemoveFromNearbyInteractables;
+    }
+
+    void OnDestroy()
+    {
+        collectItemEvent.OnCollectItemEvent -= RemoveFromNearbyInteractables;
     }
 
     public void AddToNearbyInteractables(IInteractable item, Vector3 pos)
