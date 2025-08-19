@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Arrow : Projectile
+public class Arrow : MonoBehaviour, IProjectilible
 {
     [SerializeField] private float defaultSpeed = 20f;
     [SerializeField] private float defaultForce = 5f;
@@ -9,14 +9,13 @@ public class Arrow : Projectile
     [Header("Arrow Parts")]
     public Transform arrowTip; // Assign actual arrow tip mesh position
 
+    private Rigidbody rb;
     private CollectableItem collectableItem;
 
     private bool hasHit = false;
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
-
         collectableItem = GetComponent<CollectableItem>();
         rb = GetComponent<Rigidbody>();
 
@@ -25,13 +24,26 @@ public class Arrow : Projectile
         rb.centerOfMass = localTip;
 
         // Ensure correct collision settings
+        rb.isKinematic = false;
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
-    void OnDisable()
+    public virtual void OnSpawned(Vector3 position)
     {
-        ObjectPoolManager.Instance.Despawn(gameObject);
+        rb.isKinematic = false;
+        rb.linearVelocity = Vector3.zero; // reset
+        rb.angularVelocity = Vector3.zero;
+        transform.position = position;
+    }
+
+    public virtual void OnDespawned()
+    {
+        if (!rb.isKinematic)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     void FixedUpdate()
@@ -58,8 +70,10 @@ public class Arrow : Projectile
         }
     }
 
-    public override void Launch(float damagePoints, Vector3 direction, float speed)
+    public void Launch(float damagePoints, Vector3 direction, float speed)
     {
+        hasHit = false;
+
         MakeUninteractable();
 
         float launchSpeed = speed > 0 ? speed : defaultSpeed;

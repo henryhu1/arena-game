@@ -23,7 +23,7 @@ public class BowData : WeaponData
         );
 
         // Launch
-        if (arrowObj.TryGetComponent(out Projectile proj))
+        if (arrowObj.TryGetComponent(out IProjectilible proj))
         {
             proj.Launch(damagePoints, MainCamera.Instance.transform.forward, maxSpeed);
         }
