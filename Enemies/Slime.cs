@@ -4,8 +4,6 @@ public enum CustomSlimeAnimationState { Idle,Walk,Attack,Damage,Death }
 public class Slime : EnemyControllerBase
 {
     public GameObject body;
-    public CustomSlimeAnimationState currentState; 
-    public Animator animator;
 
     public Face faces;
     private Material faceMaterial;
@@ -15,60 +13,9 @@ public class Slime : EnemyControllerBase
         faceMaterial = body.GetComponent<Renderer>().materials[1];
     }
 
-    public override void RestartAgent()
-    {
-        ai.EnableAgent();
-    }
-
-    public override void DisableAgent()
-    {
-        ai.DisableAgent();
-    }
-
-    public override void SetDamageState()
-    {
-        currentState = CustomSlimeAnimationState.Damage;
-    }
-
-    public override void SetAttackState()
-    {
-        currentState = CustomSlimeAnimationState.Attack;
-    }
-
-    public override bool CanAttack()
-    {
-        return base.CanAttack() &&
-            currentState != CustomSlimeAnimationState.Damage &&
-            currentState != CustomSlimeAnimationState.Death;
-    }
-
-    public override void WarpAgent(Vector3 pos)
-    {
-        ai.WarpAgent(pos);
-    }
-
-    public override void HandleDeath()
-    {
-        currentState = CustomSlimeAnimationState.Death;
-        base.HandleDeath();
-    }
-
     void SetFace(Texture tex)
     {
         faceMaterial.SetTexture("_MainTex", tex);
-    }
-
-    // private void OnTriggerEnter(Collider other)
-    // {
-    //     if (other.CompareTag("Player") && currentState != CustomSlimeAnimationState.Damage && currentState != CustomSlimeAnimationState.Death)
-    //     {
-    //         currentState = CustomSlimeAnimationState.Attack;
-    //     }
-    // }
-
-    private void OnEnable()
-    {
-        currentState = CustomSlimeAnimationState.Idle;
     }
 
     protected override void Update()
@@ -77,9 +24,9 @@ public class Slime : EnemyControllerBase
 
         if (ai.IsAgentEnabled())
         {
-            if (currentState == CustomSlimeAnimationState.Idle)
+            if (currentState == EnemyAnimation.Idle)
             {
-                currentState = CustomSlimeAnimationState.Walk;
+                currentState = EnemyAnimation.Walk;
                 animator.Play("Locomotion", 0, Random.value);
             }
         }
@@ -88,7 +35,7 @@ public class Slime : EnemyControllerBase
 
         switch (currentState)
         {
-            case CustomSlimeAnimationState.Idle:
+            case EnemyAnimation.Idle:
                 if (animatorState.IsName("Idle")) return;
 
                 ai.StopAgent();
@@ -98,7 +45,7 @@ public class Slime : EnemyControllerBase
                 SetFace(faces.Idleface);
                 break;
 
-            case CustomSlimeAnimationState.Walk:
+            case EnemyAnimation.Walk:
                 if (animatorState.IsName("Walk") || !ai.IsAgentEnabled()) return;
 
                 ai.StartAgent();
@@ -109,7 +56,7 @@ public class Slime : EnemyControllerBase
                 SetFace(faces.WalkFace);
                 break;
 
-            case CustomSlimeAnimationState.Attack:
+            case EnemyAnimation.Attack:
                 if (animatorState.IsName("Attack")) return;
 
                 ai.StopAgent();
@@ -120,7 +67,7 @@ public class Slime : EnemyControllerBase
                 SetFace(faces.attackFace);
                 break;
 
-            case CustomSlimeAnimationState.Damage:
+            case EnemyAnimation.Damage:
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage1")) return;
 
                 ai.StopAgent();
@@ -131,7 +78,7 @@ public class Slime : EnemyControllerBase
                 SetFace(faces.damageFace);
                 break;
 
-            case CustomSlimeAnimationState.Death:
+            case EnemyAnimation.Death:
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage2")) return;
 
                 ai.StopAgent();
@@ -151,18 +98,18 @@ public class Slime : EnemyControllerBase
         {
             if (!health.GetIsDead())
             {
-                currentState = CustomSlimeAnimationState.Walk;
+                currentState = EnemyAnimation.Walk;
             }
         }
 
         if (message.Equals("AnimationAttackEnded"))
         {
-            currentState = CustomSlimeAnimationState.Walk;
+            currentState = EnemyAnimation.Walk;
         }
 
         if (message.Equals("AnimationJumpEnded"))
         {
-            currentState = CustomSlimeAnimationState.Walk;
+            currentState = EnemyAnimation.Walk;
         }
     }
 

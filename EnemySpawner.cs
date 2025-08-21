@@ -66,7 +66,7 @@ public class EnemySpawner : MonoBehaviour
         foreach (var data in spawnConfigs)
         {
             Debug.Log($"is spawning wave: {data.spawnStrategy is WaveBasedSpawnStrategy}");
-            if (data.spawnStrategy is not WaveBasedSpawnStrategy) return;
+            if (data.spawnStrategy is not WaveBasedSpawnStrategy) continue;
 
             int maxThisRound = data.GetMaxAliveForRound(round);
             int toSpawn = maxThisRound - data.currentAlive;
@@ -100,8 +100,8 @@ public class EnemySpawner : MonoBehaviour
 
     private void HandleEnemyDeath(EnemyControllerBase enemy)
     {
-        enemy.spawnData.currentAlive--;
-        if (enemy.spawnData.spawnStrategy is WaveBasedSpawnStrategy)
+        enemy.GetSpawnData().currentAlive--;
+        if (enemy.GetSpawnData().spawnStrategy is WaveBasedSpawnStrategy)
         {
             TotalWaveEnemiesAlive--;
             if (TotalWaveEnemiesAlive == 0)

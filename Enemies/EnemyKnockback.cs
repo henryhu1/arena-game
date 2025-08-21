@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyKnockback : MonoBehaviour, IEnemyComponent
 {
-    [SerializeField] protected EnemyStats stats;
+    protected EnemyStats stats;
     protected EnemyControllerBase controllerBase;
     protected Coroutine knockedBackStunBuffer;
     protected bool isStunned;

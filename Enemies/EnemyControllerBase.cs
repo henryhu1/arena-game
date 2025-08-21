@@ -1,26 +1,26 @@
 using System.Collections;
 using UnityEngine;
 
-// TODO: add more enemies
 public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 {
-    public EnemyStats enemyStats;
-    public EnemySpawnData spawnData;
+    [SerializeField] protected EnemyStats enemyStats;
+    [SerializeField] protected EnemySpawnData spawnData;
+    protected EnemyAnimation currentState;
 
     protected EnemyAI ai;
     protected EnemyHealth health;
     protected EnemyKnockback knockback;
     protected IEnemyAttackBehavior attack;
 
+    public Animator animator;
+
     protected virtual void Awake()
     {
         ai = GetComponent<EnemyAI>();
-
         health = GetComponent<EnemyHealth>();
-
         knockback = GetComponent<EnemyKnockback>();
-
         attack = GetComponent<IEnemyAttackBehavior>();
+        animator = GetComponent<Animator>();
 
         InitializeAll();
     }
@@ -39,23 +39,53 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         //     attack?.Attack();
     }
 
-    public abstract void RestartAgent();
-    public abstract void DisableAgent();
+    public void RestartAgent()
+    {
+        ai.EnableAgent();
+    }
 
-    public abstract void SetDamageState();
-    public abstract void SetAttackState();
-    public virtual bool CanAttack() { return !knockback.GetIsStunned() && !health.GetIsDead(); }
+    public void DisableAgent()
+    {
+        ai.DisableAgent();
+    }
 
-    public abstract void WarpAgent(Vector3 pos);
+    public void SetDamageState()
+    {
+        currentState = EnemyAnimation.Damage;
+    }
+
+    public void SetAttackState()
+    {
+        currentState = EnemyAnimation.Attack;
+    }
+
+    public virtual bool CanAttack()
+    {
+        return !knockback.GetIsStunned() &&
+            !health.GetIsDead() &&
+            currentState != EnemyAnimation.Damage &&
+            currentState != EnemyAnimation.Death;
+    }
+
+    public void WarpAgent(Vector3 pos)
+    {
+        ai.WarpAgent(pos);
+    }
 
     public void ApplyKnockback(Vector3 direction, float force)
     {
         knockback.ApplyKnockback(direction, force);
     }
 
-    public virtual void HandleDeath()
+    public void HandleDeath()
     {
+        currentState = EnemyAnimation.Death;
         StartCoroutine(WaitForDeathAnimationAndDespawn());
+    }
+
+    private void OnEnable()
+    {
+        currentState = EnemyAnimation.Idle;
     }
 
     private IEnumerator WaitForDeathAnimationAndDespawn()
@@ -77,5 +107,15 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
     public void OnDespawned()
     {
 
+    }
+
+    public EnemyStats GetEnemyStats()
+    {
+        return enemyStats;
+    }
+
+    public EnemySpawnData GetSpawnData()
+    {
+        return spawnData;
     }
 }
