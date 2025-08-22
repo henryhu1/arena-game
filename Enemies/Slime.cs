@@ -1,6 +1,5 @@
 using UnityEngine;
 
-public enum CustomSlimeAnimationState { Idle,Walk,Attack,Damage,Death }
 public class Slime : EnemyControllerBase
 {
     public GameObject body;
@@ -37,9 +36,6 @@ public class Slime : EnemyControllerBase
         {
             case EnemyAnimation.Idle:
                 if (animatorState.IsName("Idle")) return;
-
-                ai.StopAgent();
-
                 animator.SetFloat("Speed", 0);
 
                 SetFace(faces.Idleface);
@@ -47,9 +43,6 @@ public class Slime : EnemyControllerBase
 
             case EnemyAnimation.Walk:
                 if (animatorState.IsName("Walk") || !ai.IsAgentEnabled()) return;
-
-                ai.StartAgent();
-
                 // set Speed parameter synchronized with agent root motion moverment
                 animator.SetFloat("Speed", ai.GetVelocity());
 
@@ -58,9 +51,6 @@ public class Slime : EnemyControllerBase
 
             case EnemyAnimation.Attack:
                 if (animatorState.IsName("Attack")) return;
-
-                ai.StopAgent();
-
                 animator.SetFloat("Speed", 0);
                 animator.Play("Attack");
 
@@ -69,9 +59,6 @@ public class Slime : EnemyControllerBase
 
             case EnemyAnimation.Damage:
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage1")) return;
-
-                ai.StopAgent();
-
                 animator.SetFloat("Speed", 0);
                 animator.Play("Damage1");
 
@@ -80,9 +67,6 @@ public class Slime : EnemyControllerBase
 
             case EnemyAnimation.Death:
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage2")) return;
-
-                ai.StopAgent();
-
                 animator.SetFloat("Speed", 0);
                 animator.Play("Damage2");
 

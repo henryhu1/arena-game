@@ -18,42 +18,27 @@ public class Ghost : EnemyControllerBase
         {
             case EnemyAnimation.Idle:
                 if (animatorState.IsName("Idle")) return;
-
-                ai.StopAgent();
                 break;
 
             case EnemyAnimation.Walk:
                 if (animatorState.IsName("move")) return;
-
-                ai.StartAgent();
                 break;
 
             case EnemyAnimation.Attack:
                 if (animatorState.IsName("attack")) return;
-
-                ai.StopAgent();
                 animator.Play("attack");
                 break;
 
             case EnemyAnimation.Damage:
                 if (animatorState.IsName("surprised")) return;
-
-                ai.StopAgent();
                 animator.Play("surprised");
                 break;
 
             case EnemyAnimation.Death:
                 if (animatorState.IsName("dissolve")) return;
-
-                ai.StopAgent();
                 animator.Play("dissolve");
                 break;
 
-        }
-
-        if (currentState != EnemyAnimation.Walk)
-        {
-            currentState = EnemyAnimation.Walk;
         }
     }
 }

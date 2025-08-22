@@ -18,9 +18,6 @@ public class EnemyKnockback : MonoBehaviour, IEnemyComponent
 
     public virtual void ApplyKnockback(Vector3 direction, float force)
     {
-        controllerBase.DisableAgent();
-        controllerBase.SetDamageState();
-
         if (knockedBackStunBuffer != null)
         {
             StopCoroutine(knockedBackStunBuffer);

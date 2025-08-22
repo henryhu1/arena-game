@@ -12,6 +12,10 @@ public class EnemyStats : ScriptableObject
     public float attackEnd = 0.4f;
     public float knockbackTime = 1f;
     public float knockbackDistance = 3f;
+    public AnimationClip attackClip;
+    public float AttackClipLength => attackClip != null ? attackClip.length : 0f;
+    public AnimationClip damageClip;
+    public float DamageClipLength => attackClip != null ? attackClip.length : 0f;
     public AnimationClip deathClip;
     public float DeathClipLength => deathClip != null ? deathClip.length : 0f;
 }

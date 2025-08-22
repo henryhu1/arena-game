@@ -41,22 +41,14 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     public void RestartAgent()
     {
+        currentState = EnemyAnimation.Walk;
         ai.EnableAgent();
     }
 
-    public void DisableAgent()
+    public void DisableAgent(EnemyAnimation nextState)
     {
+        currentState = nextState;
         ai.DisableAgent();
-    }
-
-    public void SetDamageState()
-    {
-        currentState = EnemyAnimation.Damage;
-    }
-
-    public void SetAttackState()
-    {
-        currentState = EnemyAnimation.Attack;
     }
 
     public virtual bool CanAttack()
@@ -72,15 +64,27 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         ai.WarpAgent(pos);
     }
 
-    public void ApplyKnockback(Vector3 direction, float force)
+    public void SetAttackState()
     {
-        knockback.ApplyKnockback(direction, force);
+        DisableAgent(EnemyAnimation.Attack);
+        StartCoroutine(WaitForAttackAnimation());
     }
 
-    public void HandleDeath()
+    public void BeDamaged(Vector3 direction, float force, bool isDead)
     {
-        currentState = EnemyAnimation.Death;
-        StartCoroutine(WaitForDeathAnimationAndDespawn());
+        EnemyAnimation nextState;
+        if (isDead)
+        {
+            nextState = EnemyAnimation.Death;
+            StartCoroutine(WaitForDeathAnimationAndDespawn());
+        }
+        else
+        {
+            nextState = EnemyAnimation.Damage;
+            StartCoroutine(WaitForDamageAnimation());
+            knockback.ApplyKnockback(direction, force);
+        }
+        DisableAgent(nextState);
     }
 
     private void OnEnable()
@@ -88,12 +92,20 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         currentState = EnemyAnimation.Idle;
     }
 
+    private IEnumerator WaitForAttackAnimation()
+    {
+        yield return new WaitForSeconds(enemyStats.AttackClipLength);
+        RestartAgent();
+    }
+
+    private IEnumerator WaitForDamageAnimation()
+    {
+        yield return new WaitForSeconds(enemyStats.DamageClipLength);
+    }
+
     private IEnumerator WaitForDeathAnimationAndDespawn()
     {
-        // Wait for the animation to finish based on its length
         yield return new WaitForSeconds(enemyStats.DeathClipLength);
-
-        // Then despawn via pooling
         EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
     }
 
@@ -106,7 +118,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     public void OnDespawned()
     {
-
+        currentState = EnemyAnimation.Idle;
     }
 
     public EnemyStats GetEnemyStats()
