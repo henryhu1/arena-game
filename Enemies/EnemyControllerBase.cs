@@ -12,7 +12,10 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
     protected EnemyKnockback knockback;
     protected IEnemyAttackBehavior attack;
 
-    public Animator animator;
+    protected Animator animator;
+    private Coroutine animationCoroutine;
+    protected Coroutine knockedBackStunBuffer;
+    protected bool isStunned;
 
     protected virtual void Awake()
     {
@@ -53,7 +56,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     public virtual bool CanAttack()
     {
-        return !knockback.GetIsStunned() &&
+        return !isStunned &&
             !health.GetIsDead() &&
             currentState != EnemyAnimation.Damage &&
             currentState != EnemyAnimation.Death;
@@ -67,22 +70,36 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
     public void SetAttackState()
     {
         DisableAgent(EnemyAnimation.Attack);
-        StartCoroutine(WaitForAttackAnimation());
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+        }
+        animationCoroutine = StartCoroutine(WaitForAttackAnimation());
     }
 
     public void BeDamaged(Vector3 direction, float force, bool isDead)
     {
+        transform.rotation = Quaternion.LookRotation(-direction);
+
         EnemyAnimation nextState;
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+        }
         if (isDead)
         {
             nextState = EnemyAnimation.Death;
-            StartCoroutine(WaitForDeathAnimationAndDespawn());
+            animationCoroutine = StartCoroutine(WaitForDeathAnimationAndDespawn());
         }
         else
         {
             nextState = EnemyAnimation.Damage;
-            StartCoroutine(WaitForDamageAnimation());
             knockback.ApplyKnockback(direction, force);
+            if (knockedBackStunBuffer != null)
+            {
+                StopCoroutine(knockedBackStunBuffer);
+            }
+            knockedBackStunBuffer = StartCoroutine(KnockbackRoutine());
         }
         DisableAgent(nextState);
     }
@@ -98,9 +115,17 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         RestartAgent();
     }
 
-    private IEnumerator WaitForDamageAnimation()
+    private IEnumerator KnockbackRoutine()
     {
-        yield return new WaitForSeconds(enemyStats.DamageClipLength);
+        isStunned = true;
+        // TODO: formula for knockback time?
+        //   Also consolidate knockback time and damage animation time
+        float bufferTime = Mathf.Max(enemyStats.AttackClipLength, enemyStats.knockbackTime);
+        yield return new WaitForSeconds(bufferTime);
+
+        RestartAgent();
+        knockedBackStunBuffer = null;
+        isStunned = false;
     }
 
     private IEnumerator WaitForDeathAnimationAndDespawn()
