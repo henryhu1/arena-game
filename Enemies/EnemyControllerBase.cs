@@ -38,8 +38,22 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     protected virtual void Update()
     {
-        // if (ShouldAttack())
-        //     attack?.Attack();
+        if (ai.IsAgentEnabled() && currentState == EnemyAnimation.Idle)
+        {
+            currentState = EnemyAnimation.Walk;
+        }
+
+        AnimatorStateInfo animatorState = animator.GetCurrentAnimatorStateInfo(0);
+        string animationName = enemyStats.GetAnimationName(currentState);
+
+        if (!animatorState.IsName(animationName))
+        {
+            if (currentState == EnemyAnimation.Walk && ai.IsAgentEnabled())
+            {
+                animator.Play(animationName, 0, Random.value);
+            }
+            else animator.Play(animationName);
+        }
     }
 
     public void RestartAgent()

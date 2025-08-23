@@ -1,3 +1,5 @@
+using System;
+
 public enum EnemyAnimation
 {
     Idle,
@@ -5,4 +7,11 @@ public enum EnemyAnimation
     Attack,
     Damage,
     Death,
+}
+
+[Serializable]
+public struct EnemyAnimationName
+{
+    public EnemyAnimation key;
+    public string value;
 }

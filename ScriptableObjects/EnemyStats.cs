@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EnemyStats", menuName = "Enemy/Stats")]
@@ -12,10 +13,27 @@ public class EnemyStats : ScriptableObject
     public float attackEnd = 0.4f;
     public float knockbackTime = 1f;
     public float knockbackDistance = 3f;
+
+    [Header("Animations")]
+    [SerializeField] private List<EnemyAnimationName> animationMappings = new();
+    private Dictionary<EnemyAnimation, string> lookup;
+
     public AnimationClip attackClip;
     public float AttackClipLength => attackClip != null ? attackClip.length : 0f;
     public AnimationClip damageClip;
     public float DamageClipLength => attackClip != null ? attackClip.length : 0f;
     public AnimationClip deathClip;
     public float DeathClipLength => deathClip != null ? deathClip.length : 0f;
+
+
+    public string GetAnimationName(EnemyAnimation key)
+    {
+        if (lookup == null)
+        {
+            lookup = new Dictionary<EnemyAnimation, string>();
+            foreach (var pair in animationMappings)
+                lookup[pair.key] = pair.value;
+        }
+        return lookup.TryGetValue(key, out var val) ? val : null;
+    }
 }

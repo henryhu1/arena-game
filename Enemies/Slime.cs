@@ -21,15 +21,6 @@ public class Slime : EnemyControllerBase
     {
         base.Update();
 
-        if (ai.IsAgentEnabled())
-        {
-            if (currentState == EnemyAnimation.Idle)
-            {
-                currentState = EnemyAnimation.Walk;
-                animator.Play("Locomotion", 0, Random.value);
-            }
-        }
-
         AnimatorStateInfo animatorState = animator.GetCurrentAnimatorStateInfo(0);
 
         switch (currentState)
@@ -52,7 +43,6 @@ public class Slime : EnemyControllerBase
             case EnemyAnimation.Attack:
                 if (animatorState.IsName("Attack")) return;
                 animator.SetFloat("Speed", 0);
-                animator.Play("Attack");
 
                 SetFace(faces.attackFace);
                 break;
@@ -60,7 +50,6 @@ public class Slime : EnemyControllerBase
             case EnemyAnimation.Damage:
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage1")) return;
                 animator.SetFloat("Speed", 0);
-                animator.Play("Damage1");
 
                 SetFace(faces.damageFace);
                 break;
@@ -68,7 +57,6 @@ public class Slime : EnemyControllerBase
             case EnemyAnimation.Death:
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Damage2")) return;
                 animator.SetFloat("Speed", 0);
-                animator.Play("Damage2");
 
                 SetFace(faces.damageFace);
                 break;
