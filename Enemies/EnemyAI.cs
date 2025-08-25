@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour, IEnemyComponent
 {
     private EnemyStats stats;
@@ -18,7 +19,8 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.speed = stats.moveSpeed;
+        agent.speed = stats.MoveSpeed();
+        agent.stoppingDistance = stats.AttackRange();
     }
 
     private void Start()

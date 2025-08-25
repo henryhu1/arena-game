@@ -38,7 +38,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
 
         attackCooldownTimer -= Time.deltaTime;
 
-        if (distanceToPlayer <= stats.attackRange &&
+        if (distanceToPlayer <= stats.AttackRange() &&
             attackCooldownTimer <= 0f &&
             !isAttacking &&
             controllerBase.CanAttack())
@@ -53,22 +53,22 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         hasDealtDamage = false;
         controllerBase.SetAttackState();
 
-        yield return new WaitForSeconds(stats.attackStart);
+        yield return new WaitForSeconds(stats.AttackStart());
 
         // Damage window starts
-        float damageWindow = stats.attackEnd - stats.attackStart;
+        float damageWindow = stats.AttackEnd() - stats.AttackStart();
         float elapsed = 0f;
 
         while (elapsed < damageWindow)
         {
             if (!hasDealtDamage)
             {
-                Vector3 boxCenter = transform.position + transform.forward * (stats.attackRange / 2);
-                if (Physics.CheckBox(boxCenter, Vector3.one * stats.attackRange, transform.rotation, playerLayer))
+                Vector3 boxCenter = transform.position + transform.forward * (stats.AttackRange() / 2);
+                if (Physics.CheckBox(boxCenter, Vector3.one * stats.AttackRange(), transform.rotation, playerLayer))
                 {
                     if (playerHealth != null)
                     {
-                        playerHealth.TakeDamage(stats.damage);
+                        playerHealth.TakeDamage(stats.Damage());
                         hasDealtDamage = true;
                     }
                     break;
@@ -79,7 +79,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
             yield return null;
         }
 
-        attackCooldownTimer = stats.attackCooldown;
+        attackCooldownTimer = stats.AttackCooldown();
         isAttacking = false;
     }
 
@@ -89,8 +89,8 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         if (stats != null)
         {
             Gizmos.color = Color.red;
-            Vector3 boxCenter = transform.position + transform.forward * (stats.attackRange / 2);
-            Gizmos.DrawWireCube(boxCenter, Vector3.one * stats.attackRange);
+            Vector3 boxCenter = transform.position + transform.forward * (stats.AttackRange() / 2);
+            Gizmos.DrawWireCube(boxCenter, Vector3.one * stats.AttackRange());
         }
     }
 #endif

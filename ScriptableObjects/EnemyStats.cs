@@ -4,27 +4,36 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyStats", menuName = "Enemy/Stats")]
 public class EnemyStats : ScriptableObject
 {
-    public int maxHealth = 100;
-    public float moveSpeed = 3.5f;
-    public int damage = 10;
-    public float attackRange = 2f;
-    public float attackCooldown = 1.5f;
-    public float attackStart = 0.1f;
-    public float attackEnd = 0.4f;
-    public float knockbackTime = 1f;
-    public float knockbackDistance = 3f;
+    [Header("Stats")]
+    [SerializeField] private int maxHealth = 100;
+    [SerializeField] private float moveSpeed = 3.5f;
+
+    [Header("Attack Stats")]
+    [SerializeField] private int damage = 10;
+    [SerializeField] private float attackRange = 2f;
+    [SerializeField] private float attackCooldown = 1.5f;
+    [SerializeField] private float attackStart = 0.1f;
+    [SerializeField] private float attackEnd = 0.4f;
+
+    [Header("Knockback Stats")]
+    [SerializeField] private float knockbackTime = 1f;
+    [SerializeField] private float knockbackDistance = 3f;
 
     [Header("Animations")]
     [SerializeField] private List<EnemyAnimationName> animationMappings = new();
     private Dictionary<EnemyAnimation, string> lookup;
 
-    public AnimationClip attackClip;
-    public float AttackClipLength => attackClip != null ? attackClip.length : 0f;
-    public AnimationClip damageClip;
-    public float DamageClipLength => attackClip != null ? attackClip.length : 0f;
-    public AnimationClip deathClip;
-    public float DeathClipLength => deathClip != null ? deathClip.length : 0f;
+    [SerializeField] private AnimationClip attackClip;
+    public float AttackClipLength => attackClip != null ? attackClip.length * sizeMultiplier : 0f;
+    [SerializeField] private AnimationClip damageClip;
+    public float DamageClipLength => attackClip != null ? attackClip.length * sizeMultiplier : 0f;
+    [SerializeField] private AnimationClip deathClip;
+    public float DeathClipLength => deathClip != null ? deathClip.length * sizeMultiplier : 0f;
 
+    [Header("Stat Multiplier")]
+    [SerializeField] private float sizeMultiplierMin = 1;
+    [SerializeField] private float sizeMultiplierMax = 1;
+    [SerializeField] public float sizeMultiplier = 1;
 
     public string GetAnimationName(EnemyAnimation key)
     {
@@ -36,4 +45,16 @@ public class EnemyStats : ScriptableObject
         }
         return lookup.TryGetValue(key, out var val) ? val : null;
     }
+
+    public float MaxHealth() => maxHealth * sizeMultiplier;
+    public float MoveSpeed() => moveSpeed / sizeMultiplier;
+    public float Damage() => damage * sizeMultiplier;
+    public float AttackRange() => attackRange * sizeMultiplier;
+    public float AttackCooldown() => attackCooldown * sizeMultiplier;
+    public float AttackStart() => attackStart * sizeMultiplier;
+    public float AttackEnd() => attackEnd * sizeMultiplier;
+    public float KnockbackTime() => knockbackTime * sizeMultiplier;
+    public float KnockbackDistance() => knockbackDistance * sizeMultiplier;
+    public float SizeMultiplierMin() => sizeMultiplierMin;
+    public float SizeMultiplierMax() => sizeMultiplierMax;
 }

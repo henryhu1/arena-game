@@ -19,18 +19,18 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
 
     private void Awake()
     {
-        currentHealth = stats.maxHealth;
+        currentHealth = stats.MaxHealth();
     }
 
     public void ResetHealth()
     {
-        currentHealth = stats.maxHealth;
+        currentHealth = stats.MaxHealth();
         isDead = false;
     }
 
     public void TakeDamage(float damagePoints, Vector3 fromPos, float force)
     {
-        if (isDead) return;
+        if (isDead || controllerBase.GetIsStunned()) return;
 
         currentHealth -= damagePoints;
         isDead = currentHealth <= 0;

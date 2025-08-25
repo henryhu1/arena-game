@@ -8,7 +8,7 @@ public class TeleportEnemyKnockback : EnemyKnockback
 
         Vector3 randomPos = new(Random.value, 0, Random.value);
         randomPos.Normalize();
-        Vector3 roughPos = transform.position +  randomPos * stats.knockbackDistance;
+        Vector3 roughPos = transform.position +  randomPos * stats.KnockbackDistance();
         controllerBase.WarpAgent(roughPos);
     }
 }

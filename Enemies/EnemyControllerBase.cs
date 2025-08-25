@@ -1,6 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(EnemyAI))]
+[RequireComponent(typeof(EnemyHealth))]
+[RequireComponent(typeof(IEnemyAttackBehavior))]
+[RequireComponent(typeof(EnemyKnockback))]
+[RequireComponent(typeof(Animator))]
 public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 {
     [SerializeField] protected EnemyStats enemyStats;
@@ -24,11 +29,14 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         knockback = GetComponent<EnemyKnockback>();
         attack = GetComponent<IEnemyAttackBehavior>();
         animator = GetComponent<Animator>();
+        animator.speed /= enemyStats.sizeMultiplier;
+
+        transform.localScale *= enemyStats.sizeMultiplier;
 
         InitializeAll();
     }
 
-    void InitializeAll()
+    protected virtual void InitializeAll()
     {
         ai.Initialize(this, enemyStats);
         health.Initialize(this, enemyStats);
@@ -134,7 +142,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         isStunned = true;
         // TODO: formula for knockback time?
         //   Also consolidate knockback time and damage animation time
-        float bufferTime = Mathf.Max(enemyStats.AttackClipLength, enemyStats.knockbackTime);
+        float bufferTime = Mathf.Max(enemyStats.AttackClipLength, enemyStats.KnockbackTime());
         yield return new WaitForSeconds(bufferTime);
 
         RestartAgent();
@@ -160,13 +168,9 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         currentState = EnemyAnimation.Idle;
     }
 
-    public EnemyStats GetEnemyStats()
-    {
-        return enemyStats;
-    }
+    public EnemyStats GetEnemyStats() { return enemyStats; }
 
-    public EnemySpawnData GetSpawnData()
-    {
-        return spawnData;
-    }
+    public EnemySpawnData GetSpawnData() { return spawnData; }
+
+    public bool GetIsStunned() { return isStunned; }
 }
