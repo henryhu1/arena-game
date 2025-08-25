@@ -24,11 +24,8 @@ public class EnemyStats : ScriptableObject
     private Dictionary<EnemyAnimation, string> lookup;
 
     [SerializeField] private AnimationClip attackClip;
-    public float AttackClipLength => attackClip != null ? attackClip.length * sizeMultiplier : 0f;
     [SerializeField] private AnimationClip damageClip;
-    public float DamageClipLength => attackClip != null ? attackClip.length * sizeMultiplier : 0f;
     [SerializeField] private AnimationClip deathClip;
-    public float DeathClipLength => deathClip != null ? deathClip.length * sizeMultiplier : 0f;
 
     [Header("Stat Multiplier")]
     [SerializeField] private float sizeMultiplierMin = 1;

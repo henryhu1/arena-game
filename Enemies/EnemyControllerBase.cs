@@ -133,17 +133,25 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     private IEnumerator WaitForAttackAnimation()
     {
-        yield return new WaitForSeconds(enemyStats.AttackClipLength);
+        while (!IsAnimationFinished(EnemyAnimation.Attack))
+        {
+            yield return null;
+        }
         RestartAgent();
     }
 
     private IEnumerator KnockbackRoutine()
     {
         isStunned = true;
-        // TODO: formula for knockback time?
-        //   Also consolidate knockback time and damage animation time
-        float bufferTime = Mathf.Max(enemyStats.AttackClipLength, enemyStats.KnockbackTime());
-        yield return new WaitForSeconds(bufferTime);
+        float elapsedTime = 0;
+
+        while (!IsAnimationFinished(EnemyAnimation.Damage))
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(enemyStats.KnockbackTime() - elapsedTime);
 
         RestartAgent();
         knockedBackStunBuffer = null;
@@ -152,8 +160,17 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     private IEnumerator WaitForDeathAnimationAndDespawn()
     {
-        yield return new WaitForSeconds(enemyStats.DeathClipLength);
+        while (!IsAnimationFinished(EnemyAnimation.Death))
+        {
+            yield return null;
+        }
         EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
+    }
+
+    private bool IsAnimationFinished(EnemyAnimation animationName)
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName(enemyStats.GetAnimationName(animationName)) && stateInfo.normalizedTime >= 1;
     }
 
     public void OnSpawned(Vector3 pos)
