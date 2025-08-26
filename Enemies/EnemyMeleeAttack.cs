@@ -6,7 +6,6 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private EnemyStats stats;
     private EnemyControllerBase controllerBase;
 
-    private float attackCooldownTimer;
     private bool isAttacking;
     private bool hasDealtDamage;
 
@@ -23,7 +22,8 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private void Start()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null) {
+        if (player != null)
+        {
             playerTransform = player.transform;
             player.TryGetComponent(out playerHealth);
         }
@@ -36,10 +36,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
 
         float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
 
-        attackCooldownTimer -= Time.deltaTime;
-
         if (distanceToPlayer <= stats.AttackRange() &&
-            attackCooldownTimer <= 0f &&
             !isAttacking &&
             controllerBase.CanAttack())
         {
@@ -78,8 +75,6 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
             elapsed += Time.deltaTime;
             yield return null;
         }
-
-        attackCooldownTimer = stats.AttackCooldown();
         isAttacking = false;
     }
 

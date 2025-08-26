@@ -11,7 +11,6 @@ public class EnemyStats : ScriptableObject
     [Header("Attack Stats")]
     [SerializeField] private int damage = 10;
     [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float attackCooldown = 1.5f;
     [SerializeField] private float attackStart = 0.1f;
     [SerializeField] private float attackEnd = 0.4f;
 
@@ -47,7 +46,6 @@ public class EnemyStats : ScriptableObject
     public float MoveSpeed() => moveSpeed / sizeMultiplier;
     public float Damage() => damage * sizeMultiplier;
     public float AttackRange() => attackRange * sizeMultiplier;
-    public float AttackCooldown() => attackCooldown * sizeMultiplier;
     public float AttackStart() => attackStart * sizeMultiplier;
     public float AttackEnd() => attackEnd * sizeMultiplier;
     public float KnockbackTime() => knockbackTime * sizeMultiplier;
