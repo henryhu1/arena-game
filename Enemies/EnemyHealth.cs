@@ -9,6 +9,7 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
     private bool isDead = false;
 
     [Header("Events")]
+    [SerializeField] private EnemyEventChannelSO damagedEvent;
     [SerializeField] private EnemyEventChannelSO deathEvent;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
@@ -34,6 +35,8 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
 
         currentHealth -= damagePoints;
         isDead = currentHealth <= 0;
+
+        damagedEvent.RaiseEvent(controllerBase);
 
         Vector3 knockbackDirection = (transform.position - fromPos).normalized;
         controllerBase.BeDamaged(knockbackDirection, force, isDead);

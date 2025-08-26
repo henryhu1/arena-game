@@ -6,12 +6,17 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private EnemyStats stats;
     private EnemyControllerBase controllerBase;
 
+    [Header("Events")]
+    [SerializeField] private EnemyEventChannelSO damagedEvent;
+
     private bool isAttacking;
     private bool hasDealtDamage;
 
     private Transform playerTransform;
     private PlayerHealth playerHealth;
     private int playerLayer;
+
+    private Coroutine attackingCoroutine;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
@@ -28,6 +33,13 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
             player.TryGetComponent(out playerHealth);
         }
         playerLayer = LayerMask.GetMask("Player"); // Ensure player is on "Player" layer
+
+        damagedEvent.OnEnemyEvent += DamagedEvent_CancelAttack;
+    }
+
+    private void OnDestroy()
+    {
+        damagedEvent.OnEnemyEvent -= DamagedEvent_CancelAttack;
     }
 
     private void Update()
@@ -40,7 +52,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
             !isAttacking &&
             controllerBase.CanAttack())
         {
-            StartCoroutine(PerformAttack());
+            attackingCoroutine = StartCoroutine(PerformAttack());
         }
     }
 
@@ -74,6 +86,16 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
 
             elapsed += Time.deltaTime;
             yield return null;
+        }
+
+        isAttacking = false;
+    }
+
+    private void DamagedEvent_CancelAttack(EnemyControllerBase _)
+    {
+        if (attackingCoroutine != null)
+        {
+            StopCoroutine(attackingCoroutine);
         }
         isAttacking = false;
     }
