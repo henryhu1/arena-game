@@ -20,7 +20,7 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = stats.MoveSpeed();
-        agent.stoppingDistance = stats.AttackRange();
+        agent.stoppingDistance = stats.sizeMultiplier;
     }
 
     private void Start()

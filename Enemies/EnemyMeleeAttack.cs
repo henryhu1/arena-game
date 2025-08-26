@@ -60,7 +60,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         {
             if (!hasDealtDamage)
             {
-                Vector3 boxCenter = transform.position + transform.forward * (stats.AttackRange() / 2);
+                Vector3 boxCenter = transform.position + (transform.forward + Vector3.up) * (stats.AttackRange() / 2);
                 if (Physics.CheckBox(boxCenter, Vector3.one * stats.AttackRange(), transform.rotation, playerLayer))
                 {
                     if (playerHealth != null)
@@ -84,7 +84,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         if (stats != null)
         {
             Gizmos.color = Color.red;
-            Vector3 boxCenter = transform.position + transform.forward * (stats.AttackRange() / 2);
+            Vector3 boxCenter = transform.position + (transform.forward + Vector3.up) * (stats.AttackRange() / 2);
             Gizmos.DrawWireCube(boxCenter, Vector3.one * stats.AttackRange());
         }
     }
