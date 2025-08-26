@@ -8,4 +8,11 @@ public class Skeleton : EnemyControllerBase
 
         base.Awake();
     }
+
+    public override void OnSpawned(Vector3 _)
+    {
+        enemyStats.sizeMultiplier = Random.Range(enemyStats.SizeMultiplierMin(), enemyStats.SizeMultiplierMax());
+
+        base.OnSpawned(_);
+    }
 }

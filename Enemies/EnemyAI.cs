@@ -73,4 +73,12 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
         agent.isStopped = true;
         agent.updateRotation = false;
     }
+
+    public void ResetAgent(Vector3 pos)
+    {
+        agent.speed = stats.MoveSpeed();
+        agent.stoppingDistance = stats.sizeMultiplier;
+        EnableAgent();
+        WarpAgent(pos);
+    }
 }

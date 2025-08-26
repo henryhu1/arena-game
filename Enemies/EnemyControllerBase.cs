@@ -10,6 +10,8 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 {
     [SerializeField] protected EnemyStats enemyStats;
     [SerializeField] protected EnemySpawnData spawnData;
+    private Vector3 originalScale;
+
     protected EnemyAnimation currentState;
 
     protected EnemyAI ai;
@@ -29,9 +31,10 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         knockback = GetComponent<EnemyKnockback>();
         attack = GetComponent<IEnemyAttackBehavior>();
         animator = GetComponent<Animator>();
-        animator.speed /= enemyStats.sizeMultiplier;
 
-        transform.localScale *= enemyStats.sizeMultiplier;
+        originalScale = transform.localScale;
+
+        ScaleEnemy();
 
         InitializeAll();
     }
@@ -173,11 +176,17 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
         return stateInfo.IsName(enemyStats.GetAnimationName(animationName)) && stateInfo.normalizedTime >= 1;
     }
 
-    public void OnSpawned(Vector3 pos)
+    private void ScaleEnemy()
     {
+        animator.speed = 1 / enemyStats.sizeMultiplier;
+        transform.localScale = originalScale * enemyStats.sizeMultiplier;
+    }
+
+    public virtual void OnSpawned(Vector3 pos)
+    {
+        ScaleEnemy();
         health.ResetHealth();
-        ai.EnableAgent();
-        ai.WarpAgent(pos);
+        ai.ResetAgent(pos);
     }
 
     public void OnDespawned()
