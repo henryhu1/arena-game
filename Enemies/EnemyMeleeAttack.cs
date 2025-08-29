@@ -11,6 +11,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
 
     private bool isAttacking;
     private bool hasDealtDamage;
+    private float attackCooldownTimer;
 
     private Transform playerTransform;
     private PlayerHealth playerHealth;
@@ -47,8 +48,10 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         if (playerTransform == null) return;
 
         float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+        attackCooldownTimer -= Time.deltaTime;
 
         if (distanceToPlayer <= stats.AttackRange() &&
+            attackCooldownTimer <= 0f &&
             !isAttacking &&
             controllerBase.CanAttack())
         {
@@ -88,6 +91,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
             yield return null;
         }
 
+        attackCooldownTimer = stats.AttackCooldown();
         isAttacking = false;
     }
 
