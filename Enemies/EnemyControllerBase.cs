@@ -172,8 +172,19 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     private bool IsAnimationFinished(EnemyAnimation animationName)
     {
+        return IsAnimationPlaying(animationName) && GetAnimatorNormalizedTime() >= 1;
+    }
+
+    public bool IsAnimationPlaying(EnemyAnimation animationName)
+    {
         AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        return stateInfo.IsName(enemyStats.GetAnimationName(animationName)) && stateInfo.normalizedTime >= 1;
+        return stateInfo.IsName(enemyStats.GetAnimationName(animationName));
+    }
+
+    public float GetAnimatorNormalizedTime()
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.normalizedTime;
     }
 
     private void ScaleEnemy()

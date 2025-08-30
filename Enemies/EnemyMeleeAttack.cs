@@ -15,6 +15,8 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private bool isAttacking;
     private float attackCooldownTimer;
 
+    const float k_enemyReach = 1.2f;
+
     private Coroutine attackingCoroutine;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
@@ -41,7 +43,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerManager.Instance.position);
         attackCooldownTimer -= Time.deltaTime;
 
-        if (distanceToPlayer <= stats.AttackRange() &&
+        if (distanceToPlayer <= stats.AttackRange() * k_enemyReach &&
             attackCooldownTimer <= 0f &&
             !isAttacking &&
             controllerBase.CanAttack())
@@ -55,16 +57,23 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         isAttacking = true;
         controllerBase.SetAttackState();
 
-        yield return new WaitForSeconds(stats.AttackStart());
+        while (!controllerBase.IsAnimationPlaying(EnemyAnimation.Attack))
+        {
+            yield return null;
+        }
 
-        // Damage window starts
-        float damageWindow = stats.AttackEnd() - stats.AttackStart();
-        float elapsed = 0f;
+        float animationTime = controllerBase.GetAnimatorNormalizedTime();
+        while (animationTime < stats.AttackStart())
+        {
+            animationTime = controllerBase.GetAnimatorNormalizedTime();
+            yield return null;
+        }
+
         hitbox.StartAttack();
 
-        while (elapsed < damageWindow)
+        while (animationTime < stats.AttackEnd())
         {
-            elapsed += Time.deltaTime;
+            animationTime = controllerBase.GetAnimatorNormalizedTime();
             yield return null;
         }
 

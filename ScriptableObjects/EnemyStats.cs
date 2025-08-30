@@ -47,8 +47,8 @@ public class EnemyStats : ScriptableObject
     public float MoveSpeed() => moveSpeed / sizeMultiplier;
     public float Damage() => damage * sizeMultiplier;
     public float AttackRange() => attackRange * sizeMultiplier;
-    public float AttackStart() => attackStart * sizeMultiplier;
-    public float AttackEnd() => attackEnd * sizeMultiplier;
+    public float AttackStart() => attackStart;
+    public float AttackEnd() => attackEnd;
     public float AttackCooldown() => attackCooldown;
     public float KnockbackTime() => knockbackTime * sizeMultiplier;
     public float KnockbackDistance() => knockbackDistance * sizeMultiplier;
