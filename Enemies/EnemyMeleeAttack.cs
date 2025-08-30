@@ -6,16 +6,14 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private EnemyStats stats;
     private EnemyControllerBase controllerBase;
 
+    [Header("Hitbox Use")]
+    [SerializeField] private EnemyHitbox hitbox;
+
     [Header("Events")]
     [SerializeField] private EnemyEventChannelSO damagedEvent;
 
     private bool isAttacking;
-    private bool hasDealtDamage;
     private float attackCooldownTimer;
-
-    private Transform playerTransform;
-    private PlayerHealth playerHealth;
-    private int playerLayer;
 
     private Coroutine attackingCoroutine;
 
@@ -27,14 +25,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
 
     private void Start()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            playerTransform = player.transform;
-            player.TryGetComponent(out playerHealth);
-        }
-        playerLayer = LayerMask.GetMask("Player"); // Ensure player is on "Player" layer
-
+        hitbox.Setup(stats.Damage(), stats.AttackRange());
         damagedEvent.OnEnemyEvent += DamagedEvent_CancelAttack;
     }
 
@@ -45,9 +36,9 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
 
     private void Update()
     {
-        if (playerTransform == null) return;
+        if (PlayerManager.Instance == null) return;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, playerTransform.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerManager.Instance.position);
         attackCooldownTimer -= Time.deltaTime;
 
         if (distanceToPlayer <= stats.AttackRange() &&
@@ -62,7 +53,6 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     public IEnumerator PerformAttack()
     {
         isAttacking = true;
-        hasDealtDamage = false;
         controllerBase.SetAttackState();
 
         yield return new WaitForSeconds(stats.AttackStart());
@@ -70,27 +60,15 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         // Damage window starts
         float damageWindow = stats.AttackEnd() - stats.AttackStart();
         float elapsed = 0f;
+        hitbox.StartAttack();
 
         while (elapsed < damageWindow)
         {
-            if (!hasDealtDamage)
-            {
-                Vector3 boxCenter = transform.position + (transform.forward + Vector3.up) * (stats.AttackRange() / 2);
-                if (Physics.CheckBox(boxCenter, Vector3.one * stats.AttackRange(), transform.rotation, playerLayer))
-                {
-                    if (playerHealth != null)
-                    {
-                        playerHealth.TakeDamage(stats.Damage());
-                        hasDealtDamage = true;
-                    }
-                    break;
-                }
-            }
-
             elapsed += Time.deltaTime;
             yield return null;
         }
 
+        hitbox.EndAttack();
         attackCooldownTimer = stats.AttackCooldown();
         isAttacking = false;
     }
@@ -101,18 +79,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         {
             StopCoroutine(attackingCoroutine);
         }
+        hitbox.EndAttack();
         isAttacking = false;
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        if (stats != null)
-        {
-            Gizmos.color = Color.red;
-            Vector3 boxCenter = transform.position + (transform.forward + Vector3.up) * (stats.AttackRange() / 2);
-            Gizmos.DrawWireCube(boxCenter, Vector3.one * stats.AttackRange());
-        }
-    }
-#endif
 }
