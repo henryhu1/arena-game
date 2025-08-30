@@ -44,11 +44,16 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private void StopAttacking()
     {
+        if (!isAttacking) return;
+
         hitbox.EndAttack();
         isDamaging = false;
         isAttacking = false;
-        StopCoroutine(attackingRoutine);
-        attackingRoutine = null;
+        if (attackingRoutine != null)
+        {
+            StopCoroutine(attackingRoutine);
+            attackingRoutine = null;
+        }
     }
 
     public bool GetIsAttacking()

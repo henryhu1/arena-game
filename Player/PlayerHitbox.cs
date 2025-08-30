@@ -22,10 +22,10 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         Hitbox.size = values.size;
         Hitbox.enabled = false;
 
-        AddToHitboxValues();
+        ResetHitboxValues();
     }
 
-    private void AddToHitboxValues()
+    private void ResetHitboxValues()
     {
         damageValue = values.baseDamage;
         forceValue = values.force;
