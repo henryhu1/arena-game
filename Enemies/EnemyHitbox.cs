@@ -3,6 +3,7 @@ using UnityEngine;
 public class EnemyHitbox : MonoBehaviour, IHitboxable
 {
     private BoxCollider Hitbox;
+    [SerializeField] private Transform particlePosition;
 
     private float damagePoints;
     private bool hasDealtDamage;
@@ -19,8 +20,7 @@ public class EnemyHitbox : MonoBehaviour, IHitboxable
 
         if (other.TryGetComponent(out PlayerHealth playerHealth))
         {
-            Vector3 contactPos = other.ClosestPoint(transform.position);
-            playerHealth.TakeDamage(damagePoints, contactPos);
+            playerHealth.TakeDamage(damagePoints, particlePosition.position);
             hasDealtDamage = true;
         }
     }

@@ -48,7 +48,7 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
         OnFreeFromDamage.RaiseEvent();
     }
 
-    public void TakeDamage(float damagePoints)
+    public void TakeDamage(float damagePoints, Vector3 contactPos)
     {
         if (isGettingDamaged) return;
 
@@ -62,7 +62,7 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
         else
         {
             isGettingDamaged = true;
-            OnTakeDamage.RaiseEvent();
+            OnTakeDamage.RaiseEvent(contactPos);
             StartCoroutine(DamageImmunityBuffer());
         }
     }
