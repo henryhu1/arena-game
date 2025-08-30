@@ -10,6 +10,15 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
 
     private BoxCollider Hitbox;
 
+    [Header("Positioning")]
+    [SerializeField] private GameObject originalImpactPoint;
+    private GameObject impactPoint;
+
+    [Header("Events")]
+    [SerializeField] private Vector3EventChannelSO punchEnemyEvent;
+    [SerializeField] private Vector3EventChannelSO swordHitEnemyEvent;
+    private Vector3EventChannelSO hitEnemyEvent;
+
     private HashSet<GameObject> DamagedTargets { get; set; }
 
     private float damageValue = 0;
@@ -21,6 +30,9 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         Hitbox = GetComponent<BoxCollider>();
         Hitbox.size = values.size;
         Hitbox.enabled = false;
+
+        impactPoint = originalImpactPoint;
+        hitEnemyEvent = punchEnemyEvent;
 
         ResetHitboxValues();
     }
@@ -58,14 +70,19 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
             if (other.TryGetComponent(out EnemyHealth enemyHealth))
             {
                 enemyHealth.TakeDamage(damageValue, player.position, forceValue);
+                hitEnemyEvent.OnPositionEventRaised?.Invoke(impactPoint.transform.position);
             }
         }
     }
 
-    public void ApplyWeaponData(WeaponData weaponData)
+    public void ApplyWeaponData(WeaponData weaponData, GameObject impactPoint)
     {
         Hitbox.size = weaponData.hitboxSize;
         Hitbox.center = new Vector3(Hitbox.center.x, Hitbox.center.y, weaponData.hitboxSize.z / 2);
+        this.impactPoint = impactPoint;
+
+        if (weaponData.IsWeaponOfType(AttackType.SWING))
+            hitEnemyEvent = swordHitEnemyEvent;
 
         AddToHitboxValues(weaponData);
     }

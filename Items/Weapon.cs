@@ -5,6 +5,9 @@ public class Weapon : CollectableItem
     [Header("Values")]
     [SerializeField] private WeaponData data;
 
+    [Header("Model")]
+    [SerializeField] private GameObject impactPoint;
+
     [Header("Events")]
     [SerializeField] private WeaponEventChannelSO weaponGetEvent;
 
@@ -39,7 +42,7 @@ public class Weapon : CollectableItem
             itemCollider.enabled = false;
             itemRigidbody.isKinematic = true;
 
-            weaponGetEvent.RaiseEvent(data);
+            weaponGetEvent.RaiseEvent(data, impactPoint);
         }
     }
 }

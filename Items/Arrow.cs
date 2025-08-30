@@ -9,7 +9,10 @@ public class Arrow : MonoBehaviour, IProjectilible
     private BowData shotFromBow;
 
     [Header("Arrow Parts")]
-    public Transform arrowTip; // Assign actual arrow tip mesh position
+    public Transform arrowTip;
+
+    [Header("Events")]
+    [SerializeField] private Vector3EventChannelSO arrowHitEvent;
 
     private Rigidbody rb;
     private CollectableItem collectableItem;
@@ -75,6 +78,8 @@ public class Arrow : MonoBehaviour, IProjectilible
         {
             StickArrow(other);
         }
+
+        arrowHitEvent.RaiseEvent(arrowTip.position);
     }
 
     public void Launch(BowData bowData, Vector3 direction, float speed)

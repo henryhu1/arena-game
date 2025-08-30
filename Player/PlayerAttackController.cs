@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-// TODO: projectile attacks
 public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
@@ -71,9 +70,9 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
         return holdingWeapon.attackType;
     }
 
-    private void UseWeapon(WeaponData weaponData)
+    private void UseWeapon(WeaponData weaponData, GameObject impactPoint)
     {
-        hitbox.ApplyWeaponData(weaponData);
+        hitbox.ApplyWeaponData(weaponData, impactPoint);
         holdingWeapon = weaponData;
     }
 
@@ -120,7 +119,6 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
             animation = manager.animationController.GetAttackAnimation(AttackType.MELEE);
         }
 
-        // Wait until the attack reaches the start time
         while (time < animation.attackStartTime)
         {
             time += Time.deltaTime;
@@ -137,7 +135,6 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
             isDamaging = true;
         }
 
-        // Wait until it reaches the end time
         while (time < animation.attackEndTime)
         {
             time += Time.deltaTime;
