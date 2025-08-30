@@ -1,9 +1,16 @@
 using UnityEngine;
 
+// TODO: make prefab
+//   combine player hitbox prefab as one hitbox prefab
 public class EnemyHitbox : MonoBehaviour, IHitboxable
 {
     private BoxCollider Hitbox;
+
+    [Header("Particle")]
     [SerializeField] private Transform particlePosition;
+
+    [Header("Events")]
+    [SerializeField] private Vector3EventChannelSO hitPlayerEvent;
 
     private float damagePoints;
     private bool hasDealtDamage;
@@ -20,7 +27,8 @@ public class EnemyHitbox : MonoBehaviour, IHitboxable
 
         if (other.TryGetComponent(out PlayerHealth playerHealth))
         {
-            playerHealth.TakeDamage(damagePoints, particlePosition.position);
+            playerHealth.TakeDamage(damagePoints);
+            hitPlayerEvent.OnPositionEventRaised?.Invoke(particlePosition.position);
             hasDealtDamage = true;
         }
     }
@@ -28,8 +36,8 @@ public class EnemyHitbox : MonoBehaviour, IHitboxable
     public void Setup(float damagePoints, float attackRange)
     {
         this.damagePoints = damagePoints;
-        // Hitbox.size = Vector3.one * attackRange;
-        // Hitbox.center = new Vector3(0, 0.5f, 0.5f) * attackRange;
+        Hitbox.size = Vector3.one * attackRange;
+        Hitbox.center = new Vector3(0, 0.5f, 0.5f) * attackRange;
     }
 
     public void StartAttack()
@@ -41,4 +49,5 @@ public class EnemyHitbox : MonoBehaviour, IHitboxable
     public void EndAttack()
     {
         Hitbox.enabled = false;
-    }}
+    }
+}
