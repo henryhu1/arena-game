@@ -28,15 +28,24 @@ public class ObjectPool
         obj.transform.SetPositionAndRotation(position, rotation);
         obj.SetActive(true);
         obj.transform.parent = parent;
-        if (obj.TryGetComponent(out IPoolable poolObj)) {
+
+        if (obj.TryGetComponent(out IPoolable poolObj))
+        {
             poolObj.OnSpawned(position);
         }
+
+        if (obj.TryGetComponent(out PooledParticle pooledPs))
+        {
+            pooledPs.SetPrefabReference(prefab);
+        }
+
         return obj;
     }
 
     public void Return(GameObject obj)
     {
-        if (obj.TryGetComponent(out IPoolable poolObj)) {
+        if (obj.TryGetComponent(out IPoolable poolObj))
+        {
             poolObj.OnDespawned();
         }
         obj.SetActive(false);
