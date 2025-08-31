@@ -6,7 +6,7 @@ public enum EnemyMaxAliveIncrease
     MULTIPLICATIVE,
 }
 
-[CreateAssetMenu(fileName = "EnemySpawnData", menuName = "Enemy/EnemySpawnData")]
+[CreateAssetMenu(fileName = "EnemySpawnData", menuName = "Enemy/SpawnData")]
 public class EnemySpawnData : ScriptableObject
 {
     public EnemySpawnStrategy spawnStrategy;

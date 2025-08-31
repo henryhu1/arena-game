@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0e9eca5b47ea4164b9b558c97f2f533a, type: 3}
-  m_Name: SkeletonSpawnData
+  m_Name: SlimeSpawnData
   m_EditorClassIdentifier: 
-  spawnStrategy: {fileID: 11400000, guid: 34ad5a5a7c970cc4ca1967b6f00eb145, type: 2}
-  enemyPrefab: {fileID: 7729727826297472931, guid: b86fd3ad01fc6df49a640a8cd615c088, type: 3}
-  minDistanceFromPlayer: 100
-  maxDistanceFromPlayer: 150
-  baseMaxAlive: 0
-  maxIncreaseType: 0
-  increaseRate: 2
-  currentAlive: 3
+  spawnStrategy: {fileID: 11400000, guid: 68fb6a3b6f6bcd340b2eba991e9a4697, type: 2}
+  enemyPrefab: {fileID: 334908607158566940, guid: 1f1b6b1a68f25ae49bd34c0db5304c4a, type: 3}
+  minDistanceFromPlayer: 50
+  maxDistanceFromPlayer: 100
+  baseMaxAlive: 2
+  maxIncreaseType: 1
+  increaseRate: 1.4
+  currentAlive: 5

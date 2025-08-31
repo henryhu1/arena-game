@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 13d3a5d4bc1c2c544b35bb2f22258c35, type: 3}
-  m_Name: TwoHandedSwordData
+  m_Name: SwordData
   m_EditorClassIdentifier: 
-  weaponName: two handed sword
-  damage: 30
-  knockbackForce: 5
+  weaponName: Sword
+  attackType: 1
+  damage: 10
+  knockbackForce: 2
   attackCooldown: 0.5
-  hitboxSize: {x: 1, y: 1.7, z: 2}
+  hitboxSize: {x: 0.7, y: 1.7, z: 1.25}
   hitboxOffset: {x: 0, y: 0, z: 0}

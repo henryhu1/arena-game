@@ -15,10 +15,26 @@ MonoBehaviour:
   maxHealth: 20
   moveSpeed: 4
   damage: 10
-  attackRange: 2.5
-  attackCooldown: 1.5
+  attackRange: 2
   attackStart: 0.1
   attackEnd: 0.4
+  attackCooldown: 1.5
   knockbackTime: 2.5
   knockbackDistance: 0
+  animationMappings:
+  - key: 0
+    value: Idle
+  - key: 1
+    value: Walk
+  - key: 2
+    value: Attack
+  - key: 3
+    value: Damage_01
+  - key: 4
+    value: Damage_02
+  attackClip: {fileID: -3510217540682870009, guid: eb340672e17c0af4089e561b61cdc548, type: 3}
+  damageClip: {fileID: 8425185202455632357, guid: eb340672e17c0af4089e561b61cdc548, type: 3}
   deathClip: {fileID: 3450929205030471022, guid: eb340672e17c0af4089e561b61cdc548, type: 3}
+  sizeMultiplierMin: 1
+  sizeMultiplierMax: 1
+  sizeMultiplier: 1

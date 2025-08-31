@@ -9,12 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13d3a5d4bc1c2c544b35bb2f22258c35, type: 3}
-  m_Name: BroadswordData
+  m_Script: {fileID: 11500000, guid: 8d0896c0a45f1a146b22b04f83cefb48, type: 3}
+  m_Name: PlayerTakeDamageEvent
   m_EditorClassIdentifier: 
-  weaponName: broadsword
-  damage: 20
-  knockbackForce: 2
-  attackCooldown: 0.5
-  hitboxSize: {x: 1, y: 1.7, z: 1.5}
-  hitboxOffset: {x: 0, y: 0, z: 0}

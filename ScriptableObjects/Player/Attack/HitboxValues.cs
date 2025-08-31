@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "HitboxValues", menuName = "Attack/HitboxValues")]
+[CreateAssetMenu(fileName = "HitboxValues", menuName = "Player/Attack/HitboxValues")]
 public class HitboxValues : ScriptableObject
 {
     public float baseDamage = 10f;

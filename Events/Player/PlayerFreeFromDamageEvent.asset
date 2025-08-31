@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d0896c0a45f1a146b22b04f83cefb48, type: 3}
-  m_Name: PlayerTakeDamage
+  m_Name: PlayerFreeFromDamageEvent
   m_EditorClassIdentifier: 

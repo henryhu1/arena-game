@@ -29,11 +29,11 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
         isDead = false;
     }
 
-    public void TakeDamage(float damagePoints, Vector3 fromPos, float force)
+    public void TakeDamage(float damage, Vector3 fromPos, float force)
     {
         if (isDead || controllerBase.GetIsStunned()) return;
 
-        currentHealth -= damagePoints;
+        currentHealth -= damage;
         isDead = currentHealth <= 0;
 
         damagedEvent.RaiseEvent(controllerBase);

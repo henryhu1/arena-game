@@ -14,11 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   moveSpeed: 15
-  damage: 10
+  damage: 50
   attackRange: 2
-  attackCooldown: 1.5
   attackStart: 0.1
   attackEnd: 0.4
-  knockbackTime: 1
-  knockbackDistance: 30
+  attackCooldown: 1.5
+  knockbackTime: 5
+  knockbackDistance: 150
+  animationMappings:
+  - key: 0
+    value: Idle
+  - key: 1
+    value: move
+  - key: 2
+    value: attack
+  - key: 3
+    value: surprised
+  - key: 4
+    value: dissolve
+  attackClip: {fileID: 5760000541639399817, guid: 8242d247159ec462794ba075ca8c938e, type: 3}
+  damageClip: {fileID: -365803540475578079, guid: 8242d247159ec462794ba075ca8c938e, type: 3}
   deathClip: {fileID: 7400000, guid: 506ff7550b5114a6aa6d9a3396ff8e95, type: 2}
+  sizeMultiplierMin: 1
+  sizeMultiplierMax: 1
+  sizeMultiplier: 1

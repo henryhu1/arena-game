@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AttackAnimationSO", menuName = "Attack/Animation")]
+[CreateAssetMenu(fileName = "AttackAnimationSO", menuName = "Player/Attack/Animation")]
 public class AttackAnimationSO : ScriptableObject
 {
     public float attackStartTime = 0.4f;

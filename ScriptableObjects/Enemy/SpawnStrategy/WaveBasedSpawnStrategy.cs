@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Enemy/Wave Based Spawn Strategy")]
+[CreateAssetMenu(menuName = "Enemy/Spawn Strategy/Wave")]
 public class WaveBasedSpawnStrategy : EnemySpawnStrategy
 {
     private EnemySpawner spawner;

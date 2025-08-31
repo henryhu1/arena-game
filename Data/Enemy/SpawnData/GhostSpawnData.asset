@@ -19,4 +19,4 @@ MonoBehaviour:
   baseMaxAlive: 1
   maxIncreaseType: 0
   increaseRate: 0.2
-  currentAlive: 4
+  currentAlive: 2

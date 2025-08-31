@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Enemy/Time Based Spawn Strategy")]
+[CreateAssetMenu(menuName = "Enemy/Spawn Strategy/Time")]
 public class TimeBasedSpawnStrategySO : EnemySpawnStrategy
 {
     public AnimationCurve spawnRateOverTime;
