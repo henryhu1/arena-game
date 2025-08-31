@@ -10,7 +10,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private FloatReference timeElapsed;
 
     [Header("Events")]
+    [SerializeField] private Vector3EventChannelSO spawnEnemyEvent;
     [SerializeField] private EnemyEventChannelSO deathEventChannel;
+    [SerializeField] private Vector3EventChannelSO despawnEnemyEvent;
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
     [SerializeField] private IntEventChannelSO roundStartedEventChannel;
 
@@ -86,6 +88,7 @@ public class EnemySpawner : MonoBehaviour
 
         Vector3 pos = GetRandomSpawnPosition(data.minDistanceFromPlayer, data.maxDistanceFromPlayer);
         GameObject enemy = ObjectPoolManager.Instance.Spawn(data.enemyPrefab, pos, Quaternion.identity);
+        spawnEnemyEvent.OnPositionEventRaised(pos);
 
         // var tracker = enemy.AddComponent<EnemyLifetimeTracker>();
         // tracker.spawnData = data;
@@ -127,5 +130,6 @@ public class EnemySpawner : MonoBehaviour
     public void DespawnEnemy(GameObject obj, EnemySpawnData data)
     {
         ObjectPoolManager.Instance.Despawn(obj, data.enemyPrefab);
+        despawnEnemyEvent.OnPositionEventRaised(obj.transform.position);
     }
 }

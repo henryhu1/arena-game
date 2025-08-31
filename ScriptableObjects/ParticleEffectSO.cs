@@ -15,7 +15,6 @@ public class ParticleEffectSO : ScriptableObject
     {
         if (particlePrefab != null && !isPoolInitialized)
         {
-            Debug.Log("initialized pool");
             ObjectPoolManager.Instance.CreatePool(particlePrefab, initialPoolSize);
             isPoolInitialized = true;
         }
@@ -30,7 +29,6 @@ public class ParticleEffectSO : ScriptableObject
 
     public void Play(Vector3 position, Quaternion? rotation = null)
     {
-        Debug.Log("playing particle");
         if (particlePrefab != null)
         {
             // InitializePoolIfNeeded(); DANGER: doubles particles played
@@ -41,7 +39,7 @@ public class ParticleEffectSO : ScriptableObject
         }
     }
 
-    public void Play(Vector3 pos) => Play(pos, Quaternion.identity);
+    public void Play(Vector3 pos) => Play(pos, particlePrefab.transform.rotation);
 
     private void Subscribe()
     {
