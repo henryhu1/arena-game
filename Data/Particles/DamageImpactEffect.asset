@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b508340a5e1c2419ec806acae652d2, type: 3}
+  m_Name: DamageImpactEffect
+  m_EditorClassIdentifier: 
+  particlePrefab: {fileID: 44869780471211252, guid: 5d5de67b281067e4b8e100e3f4155dae, type: 3}
+  initialPoolSize: 5
+  isPoolInitialized: 0
+  triggerEvent: {fileID: 11400000, guid: 556feda6e93cccb49a66b1429a21919a, type: 2}
