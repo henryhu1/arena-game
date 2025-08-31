@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(fileName = "CollectableItemEventChannelSO", menuName = "Events/Collectable Item Event Channel")]
+[CreateAssetMenu(fileName = "CollectableItemEventChannelSO", menuName = "Events/Collectable Item")]
 public class CollectableItemEventChannelSO : ScriptableObject
 {
     public UnityAction<CollectableItem> OnCollectItemEvent;

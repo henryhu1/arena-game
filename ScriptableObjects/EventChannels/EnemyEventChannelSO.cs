@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(menuName = "Events/Enemy Event Channel")]
+[CreateAssetMenu(menuName = "Events/Enemy")]
 public class EnemyEventChannelSO : Vector3EventChannelSO
 {
     public UnityAction<EnemyControllerBase> OnEnemyEvent;

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(menuName = "Events/Void Event Channel")]
+[CreateAssetMenu(menuName = "Events/Void")]
 public class VoidEventChannelSO : ScriptableObject
 {
     public UnityAction OnEventRaised;

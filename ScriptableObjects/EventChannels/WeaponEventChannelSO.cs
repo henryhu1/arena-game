@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[CreateAssetMenu(fileName = "WeaponEventChannelSO", menuName = "Events/Weapon Event Channel")]
+[CreateAssetMenu(fileName = "WeaponEventChannelSO", menuName = "Events/Weapon")]
 public class WeaponEventChannelSO : ScriptableObject
 {
     public UnityAction<WeaponData, GameObject> OnWeaponEvent;
