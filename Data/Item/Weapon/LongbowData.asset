@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ba3b21fbc2af9a40a4de4f345d5d9fd, type: 3}
+  m_Name: LongbowData
+  m_EditorClassIdentifier: 
+  weaponName: Longbow
+  attackType: 3
+  damage: 10
+  knockbackForce: 5
+  attackCooldown: 0.5
+  hitboxSize: {x: 0.7, y: 1.7, z: 1}
+  hitboxOffset: {x: 0, y: 0, z: 0}
+  arrowPrefab: {fileID: 8110563637834143658, guid: 16859936d55af464c8013e198087582a, type: 3}
+  damagePoints: 20
+  maxSpeed: 20
