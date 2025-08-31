@@ -2,6 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// TODO: figure out camera collision with terrain and obstacles
 public class MainCamera : MonoBehaviour
 {
     public static MainCamera Instance { get; private set; }

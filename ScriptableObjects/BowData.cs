@@ -13,7 +13,7 @@ public class BowData : WeaponData
     public void FireArrow(Transform spawnPoint)
     {
         // Ensure pool exists
-        ObjectPoolManager.Instance.CreatePool(arrowPrefab.gameObject, 10);
+        ObjectPoolManager.Instance.CreatePool(arrowPrefab, 10);
 
         // Spawn from pool
         GameObject arrowObj = ObjectPoolManager.Instance.Spawn(

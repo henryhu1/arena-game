@@ -26,7 +26,6 @@ public class PooledParticle : MonoBehaviour, IPoolable
 
     private void OnParticleSystemStopped()
     {
-        Debug.Log($"particle system stopped, despawning? {prefabRef != null}");
         if (prefabRef != null)
         {
             ObjectPoolManager.Instance.Despawn(gameObject, prefabRef);

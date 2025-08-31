@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerAnimationController))]
 [RequireComponent(typeof(PlayerInteractHandler))]
 [RequireComponent(typeof(PlayerAttackController))]
+[RequireComponent(typeof(PlayerInventoryHandler))]
 public class PlayerManager : MonoBehaviour
 {
     public static Transform Instance { get; private set; }
