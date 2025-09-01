@@ -1,15 +1,52 @@
+using System.Collections;
 using UnityEngine;
 
-// TODO: add more subclasses
 public class CollectableItem : MonoBehaviour, IInteractable
 {
+    [Header("Particles")]
+    private ParticleSystem ps;
+
     [Header("Events")]
     [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
+
+    private Coroutine playingParticle;
+
+    const float k_playDuration = 3f;
+    const float k_pauseDuration = 3f; // TODO: randomize?
+
+    protected virtual void Awake()
+    {
+        ps = GetComponent<ParticleSystem>();
+    }
+
+    private void Start()
+    {
+        SetInteractable();
+    }
+
+    private IEnumerator PlayParticle()
+    {
+        while (IsInteractable())
+        {
+            ps.Clear(true);
+            ps.Play(true);
+
+            yield return new WaitForSeconds(k_playDuration);
+
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            yield return new WaitForSeconds(k_pauseDuration);
+        }
+    }
 
     public virtual void Interact(GameObject interactor)
     {
         if (!IsInteractable()) return;
 
+        if (playingParticle != null)
+        {
+            StopCoroutine(playingParticle);
+        }
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         collectItemEvent.RaiseEvent(this);
     }
 
@@ -19,7 +56,7 @@ public class CollectableItem : MonoBehaviour, IInteractable
     }
 
     // TODO: set layer safely
-    protected void SetNotInteractable(string layer)
+    protected void SetNotInteractable(string layer = "Default")
     {
         gameObject.layer = LayerMask.NameToLayer(layer);
     }
@@ -27,5 +64,6 @@ public class CollectableItem : MonoBehaviour, IInteractable
     protected void SetInteractable()
     {
         gameObject.layer = LayerMask.NameToLayer("Interactables");
+        playingParticle = StartCoroutine(PlayParticle());
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// TODO: separate weapon script from collectable item?
 public class Weapon : CollectableItem
 {
     [Header("Values")]
@@ -14,8 +15,10 @@ public class Weapon : CollectableItem
     private Collider itemCollider;
     private Rigidbody itemRigidbody;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         itemCollider = GetComponent<Collider>();
         itemRigidbody = GetComponent<Rigidbody>();
     }
@@ -43,6 +46,7 @@ public class Weapon : CollectableItem
             itemRigidbody.isKinematic = true;
 
             weaponGetEvent.RaiseEvent(data, impactPoint);
+            SetNotInteractable();
         }
     }
 }
