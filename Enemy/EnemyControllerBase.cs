@@ -87,9 +87,9 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
             currentState != EnemyAnimation.Death;
     }
 
-    public void WarpAgent(Vector3 pos)
+    public Vector3 WarpAgent(Vector3 pos)
     {
-        ai.WarpAgent(pos);
+        return ai.WarpAgent(pos);
     }
 
     public void SetAttackState()
