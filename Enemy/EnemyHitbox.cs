@@ -28,7 +28,7 @@ public class EnemyHitbox : MonoBehaviour, IHitboxable
         if (other.TryGetComponent(out PlayerHealth playerHealth))
         {
             playerHealth.TakeDamage(damagePoints);
-            hitPlayerEvent.OnPositionEventRaised?.Invoke(particlePosition.position);
+            hitPlayerEvent.RaiseEvent(particlePosition.position);
             hasDealtDamage = true;
         }
     }

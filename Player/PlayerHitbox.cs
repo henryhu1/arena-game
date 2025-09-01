@@ -70,7 +70,7 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
             if (other.TryGetComponent(out EnemyHealth enemyHealth))
             {
                 enemyHealth.TakeDamage(damageValue, player.position, forceValue);
-                hitEnemyEvent.OnPositionEventRaised?.Invoke(impactPoint.transform.position);
+                hitEnemyEvent.RaiseEvent(impactPoint.transform.position);
             }
         }
     }
