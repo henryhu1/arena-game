@@ -49,9 +49,16 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
 
     protected virtual void Update()
     {
-        if (ai.IsAgentEnabled() && currentState == EnemyAnimation.Idle)
+        if (ai.IsAgentEnabled())
         {
-            currentState = EnemyAnimation.Walk;
+            if (!ai.IsFollowingPlayer() && ai.IsDestinationReached())
+            {
+                currentState = EnemyAnimation.Idle;
+            }
+            else
+            {
+                currentState = EnemyAnimation.Walk;
+            }
         }
 
         AnimatorStateInfo animatorState = animator.GetCurrentAnimatorStateInfo(0);
@@ -83,6 +90,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
     {
         return !isStunned &&
             !health.GetIsDead() &&
+            ai.IsFollowingPlayer() &&
             currentState != EnemyAnimation.Damage &&
             currentState != EnemyAnimation.Death;
     }

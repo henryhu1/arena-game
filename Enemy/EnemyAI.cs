@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,6 +11,20 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
     private NavMeshAgent agent;
     private Transform player;
 
+    private bool shouldFollowPlayer;
+    private float originalStoppingDistance;
+
+    private Coroutine wanderingCoroutine;
+
+    private const float k_wanderDistanceMin = 20f;
+    private const float k_wanderDistanceMax = 70f;
+    private const float k_wanderStoppingDistance = 10f;
+    private const float k_wanderTimeMin = 2f;
+    private const float k_wanderTimeMax = 8f;
+
+    [Header("Events")]
+    [SerializeField] private VoidEventChannelSO onPlayerDeath;
+
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
         this.controllerBase = controllerBase;
@@ -21,18 +36,57 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
         agent = GetComponent<NavMeshAgent>();
         agent.speed = stats.MoveSpeed();
         agent.stoppingDistance = stats.sizeMultiplier;
+        originalStoppingDistance = agent.stoppingDistance;
     }
 
     private void Start()
     {
         player = PlayerManager.Instance;
+        shouldFollowPlayer = true;
+
+        onPlayerDeath.OnEventRaised += WanderAgent;
+    }
+
+    private void OnDestroy()
+    {
+        onPlayerDeath.OnEventRaised -= WanderAgent;
     }
 
     private void Update()
     {
-        if (agent.enabled && player != null)
+        if (!agent.enabled) return;
+
+        if (shouldFollowPlayer)
         {
+            if (wanderingCoroutine != null)
+            {
+                StopCoroutine(wanderingCoroutine);
+            }
+            agent.stoppingDistance = originalStoppingDistance;
             agent.SetDestination(player.position);
+        }
+        else
+        {
+            wanderingCoroutine ??= StartCoroutine(WanderAI());
+        }
+    }
+
+    private void WanderAgent()
+    {
+        shouldFollowPlayer = false;
+    }
+
+    private IEnumerator WanderAI()
+    {
+        agent.stoppingDistance = k_wanderStoppingDistance;
+        while (!shouldFollowPlayer)
+        {
+            float wanderDistance = Random.Range(k_wanderDistanceMin, k_wanderDistanceMax);
+            Vector3 wanderToPosition = EnemyPositionUtils.GetRandomPositionInNavSphere(transform.position, wanderDistance);
+            agent.SetDestination(wanderToPosition);
+
+            float wanderTime = Random.Range(k_wanderTimeMin, k_wanderTimeMax);
+            yield return new WaitForSeconds(wanderTime);
         }
     }
 
@@ -40,7 +94,8 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
 
     public void DisableAgent() { agent.enabled = false; }
     public void EnableAgent() { agent.enabled = true; }
-
+    public bool IsFollowingPlayer() { return shouldFollowPlayer; }
+    public bool IsDestinationReached() { return !agent.hasPath || agent.velocity.sqrMagnitude == 0; }
     public float GetVelocity() { return agent.velocity.magnitude; }
 
     public float GetAgentY() { return agent.nextPosition.y; }
