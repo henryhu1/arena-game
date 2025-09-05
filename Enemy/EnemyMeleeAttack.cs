@@ -10,6 +10,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     [SerializeField] private EnemyHitbox hitbox;
 
     [Header("Events")]
+    [SerializeField] private EnemyEventChannelSO attackEvent;
     [SerializeField] private EnemyEventChannelSO damagedEvent;
 
     private bool isAttacking;
@@ -48,6 +49,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
             !isAttacking &&
             controllerBase.CanAttack())
         {
+            attackEvent.RaiseEvent(controllerBase);
             attackingCoroutine = StartCoroutine(PerformAttack());
         }
     }
