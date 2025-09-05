@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// What's the benefit of having this script?
+//   ObjectPool now has to specifically check whether it spawns particles
 [RequireComponent(typeof(ParticleSystem))]
 public class PooledParticle : MonoBehaviour, IPoolable
 {

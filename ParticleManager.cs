@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -7,22 +8,18 @@ public class ParticleEffect
     public Vector3EventChannelSO triggerEvent;
 }
 
-public class ParticleEffectListener : MonoBehaviour
+public class ParticleManager : MonoBehaviour
 {
-    [SerializeField] ParticleEffect[] effects;
+    [SerializeField] private List<ParticleEffect> effects;
 
-    private bool isPoolInitialized = false;
+    private void Awake()
+    {
+    }
 
     private void OnEnable()
     {
         foreach (ParticleEffect effect in effects)
         {
-            if (effect.particleData.particlePrefab != null && !isPoolInitialized)
-            {
-                ObjectPoolManager.Instance.CreatePool(effect.particleData.particlePrefab, effect.particleData.initialPoolSize);
-                isPoolInitialized = true;
-            }
-
             if (effect.triggerEvent != null)
                 effect.triggerEvent.OnPositionEventRaised += pos => HandlePlay(effect, pos);
         }
@@ -36,7 +33,7 @@ public class ParticleEffectListener : MonoBehaviour
                 effect.triggerEvent.OnPositionEventRaised -= pos => HandlePlay(effect, pos);
         }
     }
-
+ 
     private void HandlePlay(ParticleEffect effect, Vector3 pos)
     {
         if (effect.particleData == null) return;
