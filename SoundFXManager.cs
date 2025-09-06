@@ -16,6 +16,11 @@ public class SoundFXManager : MonoBehaviour
     [SerializeField] private AudioSource soundFXObject;
     [SerializeField] private List<AudioEffect> effects;
 
+    [Header("Unique Enemy Events")]
+    [SerializeField] private EnemyEventChannelSO onEnemySpawned;
+    [SerializeField] private EnemyEventChannelSO onEnemyAttack;
+    [SerializeField] private EnemyEventChannelSO onEnemyDamaged;
+
     const int k_initialPoolSize = 10;
 
     private void Awake()
@@ -39,6 +44,10 @@ public class SoundFXManager : MonoBehaviour
             if (effect.triggerEvent != null)
                 effect.triggerEvent.OnPositionEventRaised += pos => HandlePlay(effect, pos);
         }
+
+        onEnemySpawned.OnEnemyEvent += PlaySpawnSound;
+        onEnemyAttack.OnEnemyEvent += PlayAttackSound;
+        onEnemyDamaged.OnEnemyEvent += PlayDamageSound;
     }
 
     private void OnDisable()
@@ -48,6 +57,10 @@ public class SoundFXManager : MonoBehaviour
             if (effect.triggerEvent != null)
                 effect.triggerEvent.OnPositionEventRaised -= pos => HandlePlay(effect, pos);
         }
+
+        onEnemySpawned.OnEnemyEvent -= PlaySpawnSound;
+        onEnemyAttack.OnEnemyEvent -= PlayAttackSound;
+        onEnemyDamaged.OnEnemyEvent -= PlayDamageSound;
     }
 
     private void HandlePlay(AudioEffect effect, Vector3 pos)
@@ -55,6 +68,29 @@ public class SoundFXManager : MonoBehaviour
         if (effect.audioData == null) return;
 
         PlaySoundFXClip(effect.audioData.GetRandomClip(), pos, 0.6f);
+    }
+
+    public void PlaySpawnSound(EnemyControllerBase enemy)
+    {
+        PlaySound(enemy.GetEnemyStats().GetAudioProfile().spawnSound);
+    }
+
+    public void PlayAttackSound(EnemyControllerBase enemy)
+    {
+        PlaySound(enemy.GetEnemyStats().GetAudioProfile().attackSound);
+    }
+
+    public void PlayDamageSound(EnemyControllerBase enemy)
+    {
+        PlaySound(enemy.GetEnemyStats().GetAudioProfile().damagedSound);
+    }
+
+    private void PlaySound(AudioEffectSO audioEffect)
+    {
+        if (audioEffect == null) return;
+        AudioClip clip = audioEffect.GetRandomClip();
+        if (clip == null) return;
+        PlaySoundFXClip(clip, transform.position, 1);
     }
 
     public void PlaySoundFXClip(AudioClip audioClip, Vector3 spawnPos, float volume)

@@ -16,7 +16,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private bool isAttacking;
     private float attackCooldownTimer;
 
-    const float k_enemyReach = 1.2f;
+    const float k_enemyReach = 1.3f;
 
     private Coroutine attackingCoroutine;
 

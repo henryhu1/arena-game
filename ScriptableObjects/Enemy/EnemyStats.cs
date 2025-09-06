@@ -27,6 +27,9 @@ public class EnemyStats : ScriptableObject
     [SerializeField] private AnimationClip damageClip;
     [SerializeField] private AnimationClip deathClip;
 
+    [Header("Audio Effects")]
+    [SerializeField] private EnemyAudioProfileSO audioProfile;
+
     [Header("Stat Multiplier")]
     [SerializeField] private float sizeMultiplierMin = 1;
     [SerializeField] private float sizeMultiplierMax = 1;
@@ -54,4 +57,5 @@ public class EnemyStats : ScriptableObject
     public float KnockbackDistance() => knockbackDistance * sizeMultiplier;
     public float SizeMultiplierMin() => sizeMultiplierMin;
     public float SizeMultiplierMax() => sizeMultiplierMax;
+    public EnemyAudioProfileSO GetAudioProfile() => audioProfile;
 }
