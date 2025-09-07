@@ -13,7 +13,7 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
     [SerializeField] private float damageStunTime = 0.3f;
 
     [Header("Events")]
-    [SerializeField] private VoidEventChannelSO OnTakeDamage;
+    [SerializeField] private Vector3EventChannelSO OnTakeDamage;
     [SerializeField] private VoidEventChannelSO OnFreeFromDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
 
@@ -48,10 +48,11 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
         OnFreeFromDamage.RaiseEvent();
     }
 
-    public void TakeDamage(float damagePoints)
+    public void TakeDamage(Vector3 contactPos, float damagePoints)
     {
         if (isGettingDamaged) return;
 
+        OnTakeDamage.RaiseEvent(contactPos);
         healthPoints -= damagePoints;
 
         if (healthPoints <= 0)
@@ -62,7 +63,6 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
         else
         {
             isGettingDamaged = true;
-            OnTakeDamage.RaiseEvent();
             StartCoroutine(DamageImmunityBuffer());
         }
     }

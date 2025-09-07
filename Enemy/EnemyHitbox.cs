@@ -6,12 +6,6 @@ public class EnemyHitbox : MonoBehaviour, IHitboxable
 {
     private BoxCollider Hitbox;
 
-    [Header("Particle")]
-    [SerializeField] private Transform particlePosition;
-
-    [Header("Events")]
-    [SerializeField] private Vector3EventChannelSO hitPlayerEvent;
-
     private float damagePoints;
     private bool hasDealtDamage;
 
@@ -27,8 +21,7 @@ public class EnemyHitbox : MonoBehaviour, IHitboxable
 
         if (other.TryGetComponent(out PlayerHealth playerHealth))
         {
-            playerHealth.TakeDamage(damagePoints);
-            hitPlayerEvent.RaiseEvent(particlePosition.position);
+            playerHealth.TakeDamage(other.ClosestPoint(transform.position), damagePoints);
             hasDealtDamage = true;
         }
     }

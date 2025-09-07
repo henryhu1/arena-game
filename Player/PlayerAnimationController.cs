@@ -14,7 +14,7 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
     [SerializeField] private AttackAnimationSO bowAttack;
 
     [Header("Events")]
-    [SerializeField] private VoidEventChannelSO OnTakeDamage;
+    [SerializeField] private Vector3EventChannelSO OnTakeDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
 
     private PlayerAnimations currentState;
@@ -36,15 +36,15 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
         };
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        OnTakeDamage.OnEventRaised += ChangeAnimationForDamage;
+        OnTakeDamage.OnPositionEventRaised += ChangeAnimationForDamage;
         OnDeath.OnEventRaised += ChangeAnimationForDeath;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        OnTakeDamage.OnEventRaised -= ChangeAnimationForDamage;
+        OnTakeDamage.OnPositionEventRaised -= ChangeAnimationForDamage;
         OnDeath.OnEventRaised -= ChangeAnimationForDeath;
     }
 
@@ -144,7 +144,7 @@ public class PlayerAnimationController : MonoBehaviour, IPlayerComponent
         }
     }
 
-    public void ChangeAnimationForDamage()
+    public void ChangeAnimationForDamage(Vector3 _)
     {
         ChangeAnimationState(PlayerAnimations.GET_HIT);
     }

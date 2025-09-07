@@ -5,7 +5,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
-    [SerializeField] private VoidEventChannelSO OnTakeDamage;
+    [SerializeField] private Vector3EventChannelSO OnTakeDamage;
     [SerializeField] private VoidEventChannelSO OnFreeFromDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
 
@@ -49,7 +49,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
         return this.movement != Vector2.zero;
     }
 
-    private void PlayerHealth_OnTakeDamage()
+    private void PlayerHealth_OnTakeDamage(Vector3 _)
     {
         isPreventedFromMoving = true;
         velocity = -transform.forward * 2; // TODO: pass direction and push back value, utililze HitboxValues on enemies
@@ -96,18 +96,18 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
         isPreventedFromMoving = false;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        OnTakeDamage.OnEventRaised += PlayerHealth_OnTakeDamage;
+        OnTakeDamage.OnPositionEventRaised += PlayerHealth_OnTakeDamage;
         OnFreeFromDamage.OnEventRaised += PlayerHealth_OnFreeFromDamage;
         OnDeath.OnEventRaised += PlayerHealth_OnDeath;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        OnTakeDamage.OnEventRaised -= PlayerHealth_OnTakeDamage;
+        OnTakeDamage.OnPositionEventRaised -= PlayerHealth_OnTakeDamage;
         OnFreeFromDamage.OnEventRaised -= PlayerHealth_OnFreeFromDamage;
-        OnDeath.OnEventRaised += PlayerHealth_OnDeath;
+        OnDeath.OnEventRaised -= PlayerHealth_OnDeath;
     }
 
     private void FixedUpdate()
