@@ -67,7 +67,7 @@ public class SoundFXManager : MonoBehaviour
     {
         if (effect.audioData == null) return;
 
-        PlaySoundFXClip(effect.audioData.GetRandomClip(), pos, 0.6f);
+        PlaySoundFXClip(effect.audioData.GetRandomClip(), pos, 1f);
     }
 
     public void PlaySpawnSound(EnemyControllerBase enemy)
@@ -82,7 +82,11 @@ public class SoundFXManager : MonoBehaviour
 
     public void PlayDamageSound(EnemyControllerBase enemy)
     {
-        PlaySound(enemy.GetEnemyStats().GetAudioProfile().damagedSound);
+        // PlaySound(enemy.GetEnemyStats().GetAudioProfile().damagedSound);
+        if (PlayerManager.Instance.attackController.GetAttackType() != AttackType.BOW)
+        {
+            PlaySound(PlayerManager.Instance.GetAttackAudio());
+        }
     }
 
     private void PlaySound(AudioEffectSO audioEffect)

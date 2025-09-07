@@ -41,7 +41,7 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
 
     private void Start()
     {
-        player = PlayerManager.Instance;
+        player = PlayerManager.Instance.transform;
         shouldFollowPlayer = true;
 
         onPlayerDeath.OnEventRaised += WanderAgent;

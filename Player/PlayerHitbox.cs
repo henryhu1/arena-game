@@ -14,11 +14,6 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
     [SerializeField] private GameObject originalImpactPoint;
     private GameObject impactPoint;
 
-    [Header("Events")]
-    [SerializeField] private Vector3EventChannelSO punchEnemyEvent;
-    [SerializeField] private Vector3EventChannelSO swordHitEnemyEvent;
-    private Vector3EventChannelSO hitEnemyEvent;
-
     private HashSet<GameObject> DamagedTargets { get; set; }
 
     private float damageValue = 0;
@@ -32,7 +27,6 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         Hitbox.enabled = false;
 
         impactPoint = originalImpactPoint;
-        hitEnemyEvent = punchEnemyEvent;
 
         ResetHitboxValues();
     }
@@ -51,7 +45,7 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
 
     void Start()
     {
-        player = PlayerManager.Instance;
+        player = PlayerManager.Instance.transform;
     }
 
     void Update()
@@ -69,8 +63,7 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
             // Damage and death check
             if (other.TryGetComponent(out EnemyHealth enemyHealth))
             {
-                enemyHealth.TakeDamage(damageValue, player.position, forceValue);
-                hitEnemyEvent.RaiseEvent(impactPoint.transform.position);
+                enemyHealth.TakeDamage(other.ClosestPoint(transform.position), damageValue, player.position, forceValue);
             }
         }
     }
@@ -80,9 +73,6 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         Hitbox.size = weaponData.hitboxSize;
         Hitbox.center = new Vector3(Hitbox.center.x, Hitbox.center.y, weaponData.hitboxSize.z / 2);
         this.impactPoint = impactPoint;
-
-        if (weaponData.IsWeaponOfType(AttackType.SWING))
-            hitEnemyEvent = swordHitEnemyEvent;
 
         AddToHitboxValues(weaponData);
     }

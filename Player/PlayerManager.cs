@@ -9,7 +9,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInventoryHandler))]
 public class PlayerManager : MonoBehaviour
 {
-    public static Transform Instance { get; private set; }
+    public static PlayerManager Instance;
 
     [Header("Player Components")]
     public PlayerHealth health { get; private set; }
@@ -34,7 +34,12 @@ public class PlayerManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = transform;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(Instance);
+        }
+        Instance = this;
+
         focusPoint.SetWantsFocus();
 
         health = GetComponent<PlayerHealth>();
@@ -83,5 +88,10 @@ public class PlayerManager : MonoBehaviour
     {
         controller.Move(Time.deltaTime * velocity);
         transform.position = controller.transform.position;
+    }
+
+    public AudioEffectSO GetAttackAudio()
+    {
+        return attackController.GetAttackAudio();
     }
 }

@@ -12,6 +12,9 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private WeaponData holdingWeapon;
 
+    [Header("Audio")]
+    [SerializeField] private AudioEffectSO fistAudio;
+
     [Header("Hitbox Use")]
     [SerializeField] private PlayerHitbox hitbox;
 
@@ -68,6 +71,16 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
         }
 
         return holdingWeapon.attackType;
+    }
+
+    public AudioEffectSO GetAttackAudio()
+    {
+        if (holdingWeapon == null)
+        {
+            return fistAudio;
+        }
+
+        return holdingWeapon.contactAudio;
     }
 
     private void UseWeapon(WeaponData weaponData, GameObject impactPoint)

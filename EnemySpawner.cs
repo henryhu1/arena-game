@@ -42,7 +42,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        player = PlayerManager.Instance;
+        player = PlayerManager.Instance.transform;
 
         deathEventChannel.OnEnemyEvent += HandleEnemyDeath;
         roundStartedEventChannel.OnEventRaised += SpawnWave;

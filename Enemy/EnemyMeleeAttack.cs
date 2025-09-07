@@ -41,7 +41,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     {
         if (PlayerManager.Instance == null) return;
 
-        float distanceToPlayer = Vector3.Distance(transform.position, PlayerManager.Instance.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, PlayerManager.Instance.transform.position);
         attackCooldownTimer -= Time.deltaTime;
 
         if (distanceToPlayer <= stats.AttackRange() * k_enemyReach &&

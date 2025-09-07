@@ -62,6 +62,8 @@ public class Arrow : MonoBehaviour, IProjectilible
             transform.forward = rb.linearVelocity.normalized;
     }
 
+    // TODO: move to enemy controller base to implement its own collision detection
+    //   avoid projectiles for teleporting enemies
     private void OnTriggerEnter(Collider other)
     {
         if (hasHit) return;
@@ -70,7 +72,7 @@ public class Arrow : MonoBehaviour, IProjectilible
         {
             if (other.TryGetComponent(out EnemyHealth enemyHealth))
             {
-                enemyHealth.TakeDamage(damagePoints, transform.position, defaultForce);
+                enemyHealth.TakeDamage(arrowTip.position, damagePoints, transform.position, defaultForce);
             }
         }
 

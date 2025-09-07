@@ -6,6 +6,7 @@ public class WeaponData : ScriptableObject
     public string weaponName = "Weapon";
 
     public AttackType attackType;
+    public AudioEffectSO contactAudio;
 
     [Header("Stats")]
     public float damage = 10f;
