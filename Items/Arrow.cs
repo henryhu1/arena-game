@@ -12,7 +12,8 @@ public class Arrow : MonoBehaviour, IProjectilible
     public Transform arrowTip;
 
     [Header("Events")]
-    [SerializeField] private Vector3EventChannelSO arrowHitEvent;
+    [SerializeField] private Vector3EventChannelSO onArrowHit;
+    [SerializeField] private Vector3EventChannelSO onArrowMiss;
 
     private Rigidbody rb;
     private CollectableItem collectableItem;
@@ -68,20 +69,21 @@ public class Arrow : MonoBehaviour, IProjectilible
     {
         if (hasHit) return;
 
-        if (other.CompareTag("Enemy"))
+        bool shouldStick = true;
+        if (other.TryGetComponent(out IHittable hittable))
         {
-            if (other.TryGetComponent(out EnemyHealth enemyHealth))
-            {
-                enemyHealth.TakeDamage(arrowTip.position, damagePoints, transform.position, defaultForce);
-            }
+            shouldStick = hittable.TakeHit(arrowTip.position, damagePoints, transform.position, defaultForce);
         }
 
-        if (gameObject.layer == LayerMask.NameToLayer("DamageDealing"))
+        if (shouldStick && gameObject.layer == LayerMask.NameToLayer("DamageDealing"))
         {
             StickArrow(other);
+            onArrowHit.RaiseEvent(arrowTip.position);
         }
-
-        arrowHitEvent.RaiseEvent(arrowTip.position);
+        else
+        {
+            onArrowMiss.RaiseEvent(arrowTip.position);
+        }
     }
 
     public void Launch(BowData bowData, Vector3 direction, float speed)

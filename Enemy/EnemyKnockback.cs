@@ -14,4 +14,6 @@ public class EnemyKnockback : MonoBehaviour, IEnemyComponent
     public virtual void ApplyKnockback(Vector3 direction, float force)
     {
     }
+
+    public virtual bool IsKnockbackableByProjectile() { return true; }
 }

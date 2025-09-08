@@ -6,7 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(IEnemyAttackBehavior))]
 [RequireComponent(typeof(EnemyKnockback))]
 [RequireComponent(typeof(Animator))]
-public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
+public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
 {
     [SerializeField] protected EnemyStats enemyStats;
     [SerializeField] protected EnemySpawnData spawnData;
@@ -135,6 +135,27 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable
             knockedBackStunBuffer = StartCoroutine(KnockbackRoutine());
         }
         DisableAgent(nextState);
+    }
+
+    // TODO: should be levaraged more, not just for proejctiles
+    public bool TakeHit(Vector3 contactPos, float damagePoints, Vector3 fromDirection, float force)
+    {
+        if (knockback.IsKnockbackableByProjectile())
+        {
+            health.TakeDamage(contactPos, damagePoints, fromDirection, force);
+            return true;
+        }
+        else
+        {
+            knockback.ApplyKnockback(fromDirection, force);
+            if (knockedBackStunBuffer != null)
+            {
+                StopCoroutine(knockedBackStunBuffer);
+            }
+            knockedBackStunBuffer = StartCoroutine(KnockbackRoutine());
+            DisableAgent(EnemyAnimation.Damage);
+            return false;
+        }
     }
 
     private void OnEnable()

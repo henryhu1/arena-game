@@ -12,9 +12,12 @@ public class TeleportEnemyKnockback : EnemyKnockback
 
         Vector3 randomPos = new(Random.value, 0, Random.value);
         randomPos.Normalize();
-        Vector3 roughPos = transform.position +  randomPos * stats.KnockbackDistance();
+        Vector3 roughPos = transform.position + randomPos * stats.KnockbackDistance();
         Vector3 teleportedToPos = controllerBase.WarpAgent(roughPos);
 
+        Debug.Log($"teleport to {teleportedToPos}, but at {transform.position}");
         enemyTeleportEvent.RaiseEvent(teleportedToPos);
     }
+
+    public override bool IsKnockbackableByProjectile() { return false; }
 }
