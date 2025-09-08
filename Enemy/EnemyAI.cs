@@ -105,16 +105,12 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
     public Vector3 WarpAgent(Vector3 pos)
     {
         Vector3 positionOnNavMesh = EnemyPositionUtils.GetPositionOnNavMesh(pos);
-        if (positionOnNavMesh != Vector3.negativeInfinity)
+        if (positionOnNavMesh != Vector3.negativeInfinity && agent.Warp(positionOnNavMesh))
         {
-            agent.Warp(positionOnNavMesh);
             return positionOnNavMesh;
         }
-        else
-        {
-            Debug.LogWarning("Could not find NavMesh at the given XZ coordinates.");
-            return pos;
-        }
+        Debug.LogWarning("Could not find NavMesh at the given XZ coordinates.");
+        return pos;
     }
 
     public void StartAgent()

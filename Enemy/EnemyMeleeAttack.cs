@@ -49,7 +49,6 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
             !isAttacking &&
             controllerBase.CanAttack())
         {
-            attackEvent.RaiseEvent(controllerBase);
             attackingCoroutine = StartCoroutine(PerformAttack());
         }
     }
@@ -71,6 +70,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
             yield return null;
         }
 
+        attackEvent.RaiseEvent(controllerBase);
         hitbox.StartAttack();
 
         while (animationTime < stats.AttackEnd())

@@ -9,9 +9,9 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
     private bool isDead = false;
 
     [Header("Events")]
-    [SerializeField] private Vector3EventChannelSO onEnemyHitEvent;
-    [SerializeField] private EnemyEventChannelSO onEnemyDamagedEvent;
-    [SerializeField] private EnemyEventChannelSO onEnemyDeathEvent;
+    [SerializeField] private Vector3EventChannelSO onEnemyHit;
+    [SerializeField] private EnemyEventChannelSO onEnemyDamaged;
+    [SerializeField] private EnemyEventChannelSO onEnemyDeath;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
@@ -37,15 +37,15 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
         currentHealth -= damage;
         isDead = currentHealth <= 0;
 
-        onEnemyHitEvent.RaiseEvent(contactPos);
-        onEnemyDamagedEvent.RaiseEvent(controllerBase);
+        onEnemyHit.RaiseEvent(contactPos);
+        onEnemyDamaged.RaiseEvent(controllerBase);
 
         Vector3 knockbackDirection = (transform.position - fromPos).normalized;
         controllerBase.BeDamaged(knockbackDirection, force, isDead);
 
         if (isDead)
         {
-            onEnemyDeathEvent.RaiseEvent(controllerBase);
+            onEnemyDeath.RaiseEvent(controllerBase);
         }
     }
 
