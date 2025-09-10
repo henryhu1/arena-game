@@ -14,6 +14,7 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
 
     [Header("Events")]
     [SerializeField] private Vector3EventChannelSO OnTakeDamage;
+    [SerializeField] private FloatEventChannelSO OnPlayerHealthChange;
     [SerializeField] private VoidEventChannelSO OnFreeFromDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
 
@@ -53,7 +54,9 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
         if (isGettingDamaged) return;
 
         OnTakeDamage.RaiseEvent(contactPos);
-        healthPoints -= damagePoints;
+
+        healthPoints = Mathf.Max(healthPoints - damagePoints, 0);
+        OnPlayerHealthChange.RaiseEvent(healthPoints);
 
         if (healthPoints <= 0)
         {
