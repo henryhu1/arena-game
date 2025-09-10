@@ -8,6 +8,10 @@ public class EnemyStats : ScriptableObject
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private float moveSpeed = 3.5f;
 
+    [Header("Gameplay")]
+    [SerializeField] private float pointValue = 1;
+    [SerializeField] private float timeRegained = 10;
+
     [Header("Attack Stats")]
     [SerializeField] private int damage = 10;
     [SerializeField] private float attackRange = 2f;
@@ -48,6 +52,8 @@ public class EnemyStats : ScriptableObject
 
     public float MaxHealth() => maxHealth * sizeMultiplier;
     public float MoveSpeed() => moveSpeed / sizeMultiplier;
+    public float PointValue() => pointValue * (1 + Mathf.Abs(1 - sizeMultiplier));
+    public float TimeRegained() => timeRegained * (1 + Mathf.Abs(1 - sizeMultiplier));
     public float Damage() => damage * sizeMultiplier;
     public float AttackRange() => attackRange * sizeMultiplier;
     public float AttackStart() => attackStart;

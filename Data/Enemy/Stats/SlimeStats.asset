@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 20
   moveSpeed: 4
+  pointValue: 1
+  timeRegained: 3
   damage: 10
-  attackRange: 2
+  attackRange: 1.5
   attackStart: 0.1
   attackEnd: 0.4
   attackCooldown: 1.5
@@ -35,6 +37,7 @@ MonoBehaviour:
   attackClip: {fileID: -3510217540682870009, guid: eb340672e17c0af4089e561b61cdc548, type: 3}
   damageClip: {fileID: 8425185202455632357, guid: eb340672e17c0af4089e561b61cdc548, type: 3}
   deathClip: {fileID: 3450929205030471022, guid: eb340672e17c0af4089e561b61cdc548, type: 3}
+  audioProfile: {fileID: 11400000, guid: 8018ce9c16ad50844a5439b92880cb80, type: 2}
   sizeMultiplierMin: 1
   sizeMultiplierMax: 1
   sizeMultiplier: 1
