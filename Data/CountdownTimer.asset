@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74e42de20231c38428e6039d9c614846, type: 3}
   m_Name: CountdownTimer
   m_EditorClassIdentifier: 
-  initialValue: 300
+  initialValue: 150
   Value: 0

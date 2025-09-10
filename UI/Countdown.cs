@@ -16,6 +16,6 @@ public class Countdown : MonoBehaviour
         float timer = countdownTimer.Value;
         float minutes = Mathf.Floor(timer / 60);
         float seconds = Mathf.Floor(timer % 60);
-        return $"{minutes}:{seconds}";
+        return $"{(minutes > 0 ? $"{minutes}:" : "")}{(seconds < 10 ? "0" : "")}{seconds}";
     }
 }
