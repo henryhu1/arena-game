@@ -4,18 +4,28 @@ using UnityEngine;
 public class Countdown : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private FloatReference countdownTimer;
+    [SerializeField] private FloatVariable countdownTimer;
 
-    private void Update()
+    private void Start()
     {
-        timerText.text = FormatTime();
+        FormatTime(countdownTimer.GetValue());
     }
 
-    private string FormatTime()
+    private void OnEnable()
     {
-        float timer = countdownTimer.Value;
+        countdownTimer.onValueChanged.OnEventRaised += FormatTime;
+    }
+
+    private void OnDisable()
+    {
+        countdownTimer.onValueChanged.OnEventRaised -= FormatTime;
+    }
+
+    private void FormatTime(float time)
+    {
+        float timer = Mathf.Max(time, 0);
         float minutes = Mathf.Floor(timer / 60);
         float seconds = Mathf.Floor(timer % 60);
-        return $"{(minutes > 0 ? $"{minutes}:" : "")}{(seconds < 10 ? "0" : "")}{seconds}";
+        timerText.text = $"{(minutes > 0 ? $"{minutes}:" : "")}{(seconds < 10 ? "0" : "")}{seconds}";
     }
 }
