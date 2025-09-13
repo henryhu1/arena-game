@@ -7,6 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerInteractHandler))]
 [RequireComponent(typeof(PlayerAttackController))]
 [RequireComponent(typeof(PlayerInventoryHandler))]
+[RequireComponent(typeof(PlayerAudioController))]
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
@@ -19,6 +20,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerInteractHandler interactHandler { get; private set; }
     public PlayerAttackController attackController { get; private set; }
     public PlayerInventoryHandler inventoryHandler { get; private set; }
+    public PlayerAudioController audioController { get; private set; }
 
     [Header("Camera Focus Point")]
     public CameraFocus focusPoint;
@@ -49,6 +51,7 @@ public class PlayerManager : MonoBehaviour
         interactHandler = GetComponent<PlayerInteractHandler>();
         attackController = GetComponent<PlayerAttackController>();
         inventoryHandler = GetComponent<PlayerInventoryHandler>();
+        audioController = GetComponent<PlayerAudioController>();
 
         InitializeAll();
         heldArrow.SetActive(false);
@@ -63,6 +66,7 @@ public class PlayerManager : MonoBehaviour
         interactHandler.Initialize(this);
         attackController.Initialize(this);
         inventoryHandler.Initialize(this);
+        audioController.Initialize(this);
     }
 
     private void Update()

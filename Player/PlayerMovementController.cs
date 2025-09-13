@@ -5,9 +5,11 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
+    [Header("Events")]
     [SerializeField] private Vector3EventChannelSO OnTakeDamage;
     [SerializeField] private VoidEventChannelSO OnFreeFromDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
+    [SerializeField] private Vector2EventChannelSO onPlayerMove;
 
     private Vector2 movement;
     private bool isSprinting;
@@ -37,6 +39,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     public void SetMovement(Vector2 input)
     {
         this.movement = input;
+        onPlayerMove.RaiseEvent(movement);
     }
 
     public Vector2 GetMovement()
