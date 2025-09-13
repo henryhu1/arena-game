@@ -10,6 +10,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     [SerializeField] private VoidEventChannelSO OnFreeFromDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
     [SerializeField] private Vector2EventChannelSO onPlayerMove;
+    [SerializeField] private Vector3EventChannelSO onPlayerLand;
 
     private Vector2 movement;
     private bool isSprinting;
@@ -169,6 +170,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
                     isJumping = false;
                     manager.focusPoint.SetWantsFocus();
                     manager.modelTransform.rotation = Quaternion.LookRotation(GetCameraLookDirection());
+                    onPlayerLand.RaiseEvent(transform.position);
                 }
             }
         }
