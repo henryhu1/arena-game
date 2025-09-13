@@ -52,35 +52,37 @@ public class PlayerAudioController : MonoBehaviour, IPlayerComponent
     {
         while (manager.movementController.IsMoving())
         {
-            if (!manager.IsControllerGrounded())
+            if (manager.IsControllerGrounded())
             {
-                continue;
-            }
+                audioSource.Play();
 
-            audioSource.Play();
-
-            if (movement.x == 0 && movement.y > 0)
-            {
-                if (manager.movementController.GetIsSprinting())
+                if (movement.x == 0 && movement.y > 0)
                 {
-                    yield return new WaitForSeconds(sprintFootstepAudioBuffer);
+                    if (manager.movementController.GetIsSprinting())
+                    {
+                        yield return new WaitForSeconds(sprintFootstepAudioBuffer);
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(baseFootstepAudioBuffer);
+                    }
+                }
+                else if (movement.x == 0 && movement.y < 0)
+                {
+                    yield return new WaitForSeconds(backwardFootstepAudioBuffer);
+                }
+                else if (movement.y == 0)
+                {
+                    yield return new WaitForSeconds(sidewayFootstepAudioBuffer);
                 }
                 else
                 {
                     yield return new WaitForSeconds(baseFootstepAudioBuffer);
                 }
             }
-            else if (movement.x == 0 && movement.y < 0)
-            {
-                yield return new WaitForSeconds(backwardFootstepAudioBuffer);
-            }
-            else if (movement.y == 0)
-            {
-                yield return new WaitForSeconds(sidewayFootstepAudioBuffer);
-            }
             else
             {
-                yield return new WaitForSeconds(baseFootstepAudioBuffer);
+                yield return null;
             }
         }
     }
