@@ -4,14 +4,15 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    [SerializeField] private FloatReference timeElapsed;
-    [SerializeField] private FloatReference countdownTimer;
-    [SerializeField] private FloatReference pointsEarned;
+    [SerializeField] private FloatVariable timeElapsed;
+    [SerializeField] private FloatVariable countdownTimer;
+    [SerializeField] private FloatVariable playerScore;
 
     [Header("Events")]
     [SerializeField] private IntEventChannelSO onRoundStart;
     [SerializeField] private IntEventChannelSO onRoundEnd;
     [SerializeField] private EnemyEventChannelSO onEnemyDefeated;
+    [SerializeField] private VoidEventChannelSO onGameOver;
 
     private bool isCountingDown = false;
 
@@ -23,8 +24,9 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
 
-        timeElapsed.variable.ResetValue();
-        countdownTimer.variable.ResetValue();
+        timeElapsed.ResetValue();
+        countdownTimer.ResetValue();
+        playerScore.ResetValue();
     }
 
     void Start()
@@ -49,10 +51,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        timeElapsed.variable.Value += Time.deltaTime;
+        timeElapsed.AddToValue(Time.deltaTime);
         if (isCountingDown)
         {
-            countdownTimer.variable.Value -= Time.deltaTime;
+            countdownTimer.SubtractFromValue(Time.deltaTime);
+        }
+        if (countdownTimer.GetValue() <= 0)
+        {
+            GameOver();
         }
     }
 
@@ -68,11 +74,16 @@ public class GameManager : MonoBehaviour
 
     private void EnemyDefeated(EnemyControllerBase enemy)
     {
-        pointsEarned.variable.Value += enemy.GetEnemyStats().PointValue();
-        countdownTimer.variable.Value += enemy.GetEnemyStats().TimeRegained();
+        playerScore.AddToValue(enemy.GetEnemyStats().PointValue());
+        countdownTimer.AddToValue(enemy.GetEnemyStats().TimeRegained());
     }
 
-    public float GetGameTimeElapsed() { return timeElapsed.Value; }
+    private void GameOver()
+    {
+        onGameOver.RaiseEvent();
+    }
 
-    public float GetCountdownTimer() { return countdownTimer.Value; }
+    public float GetGameTimeElapsed() { return timeElapsed.GetValue(); }
+
+    public float GetCountdownTimer() { return countdownTimer.GetValue(); }
 }

@@ -7,7 +7,7 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField] private List<EnemySpawnData> spawnConfigs;
 
-    [SerializeField] private FloatReference timeElapsed;
+    [SerializeField] private FloatVariable timeElapsed;
 
     [Header("Events")]
     [SerializeField] private Vector3EventChannelSO spawnEnemyEvent;
@@ -19,7 +19,7 @@ public class EnemySpawner : MonoBehaviour
     private Transform player;
 
     private Dictionary<EnemySpawnData, EnemySpawnStrategy> activeStrategies = new();
-    public float TimeElapsed => timeElapsed?.Value ?? 0f;
+    public float TimeElapsed => timeElapsed.GetValue();
 
     public int TotalWaveEnemiesAlive { get; private set; } = 0;
 
