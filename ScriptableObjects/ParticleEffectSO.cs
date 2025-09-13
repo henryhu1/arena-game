@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ParticleEffectSO", menuName = "Particles/Effects")]
+[CreateAssetMenu(fileName = "ParticleEffectSO", menuName = "Effects/Particle")]
 public class ParticleEffectSO : ScriptableObject
 {
     public GameObject particlePrefab;
