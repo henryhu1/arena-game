@@ -14,6 +14,9 @@ public class Countdown : MonoBehaviour
 
     [SerializeField] private float colorPulseTime = 1.5f;
 
+    [Header("Events")]
+    [SerializeField] private VoidEventChannelSO onGameOver;
+
     private Color originalColor;
 
     private Coroutine timeWarning;
@@ -31,18 +34,20 @@ public class Countdown : MonoBehaviour
     private void OnEnable()
     {
         countdownTimer.onValueChanged.OnEventRaised += FormatTime;
+        onGameOver.OnEventRaised += StopCountdownPulse;
     }
 
     private void OnDisable()
     {
         countdownTimer.onValueChanged.OnEventRaised -= FormatTime;
+        onGameOver.OnEventRaised -= StopCountdownPulse;
     }
 
     private void FormatTime(float time)
     {
         float timer = Mathf.Max(time, 0);
         float minutes = Mathf.Floor(timer / 60);
-        float seconds = Mathf.Floor(timer % 60);
+        float seconds = Mathf.Ceil(timer % 60);
         timerText.text = $"{(minutes > 0 ? $"{minutes}:" : "")}{(0 < seconds && seconds < 10 ? "0" : "")}{seconds}";
 
         if (0 < time && time <= warningTimeAt)
@@ -51,12 +56,7 @@ public class Countdown : MonoBehaviour
         }
         else
         {
-            background.color = originalColor;
-            if (timeWarning != null)
-            {
-                StopCoroutine(timeWarning);
-                timeWarning = null;
-            }
+            StopCountdownPulse();
         }
     }
 
@@ -69,6 +69,16 @@ public class Countdown : MonoBehaviour
             background.DOColor(toColor, colorPulseTime);
             yield return new WaitForSeconds(colorPulseTime);
             numberOfPulses++;
+        }
+    }
+
+    private void StopCountdownPulse()
+    {
+        background.color = originalColor;
+        if (timeWarning != null)
+        {
+            StopCoroutine(timeWarning);
+            timeWarning = null;
         }
     }
 }

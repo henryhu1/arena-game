@@ -7,19 +7,26 @@ public class MainCamera : MonoBehaviour
 {
     public static MainCamera Instance { get; private set; }
 
-    private const float k_verticalRotationLimit = 40;
-
     private CameraFocus objectToOrbit;
+
+    [Header("Control")]
+    [SerializeField] private PlayerInput cameraControl;
+    public bool isInverted = false;
+
+    [Header("Values")]
     [SerializeField] private float sensitivity = 0.1f;
     [SerializeField] private float radius = 10;
     [SerializeField] private float followSpeed = 10;
     [SerializeField] private float verticalFollowSlack = 10;
-
-    public LayerMask collisionLayers;
-
-    public bool isInverted = false;
+    [SerializeField] private float verticalRotationLimit = 40f;
     private float currentPitch;
     private Vector2 rotation;
+
+    [Header("Events")]
+    [SerializeField] private VoidEventChannelSO onGameOver;
+
+    [Header("Collision")]
+    public LayerMask collisionLayers;
 
     private void Awake()
     {
@@ -37,6 +44,16 @@ public class MainCamera : MonoBehaviour
         collisionLayers = LayerMask.GetMask("Ground");
     }
 
+    private void OnEnable()
+    {
+        onGameOver.OnEventRaised += DisableCameraControl;
+    }
+
+    private void OnDisable()
+    {
+        onGameOver.OnEventRaised -= DisableCameraControl;
+    }
+
     void Update()
     {
         Vector3 followingObjectPosition = objectToOrbit.GetFocusPointPosition();
@@ -45,7 +62,7 @@ public class MainCamera : MonoBehaviour
         int vertical = isInverted ? -1 : 1;
 
         float pitchChange = vertical * rotation.y * sensitivity;
-        float newPitch = Mathf.Clamp(currentPitch + pitchChange, -k_verticalRotationLimit, k_verticalRotationLimit);
+        float newPitch = Mathf.Clamp(currentPitch + pitchChange, -verticalRotationLimit, verticalRotationLimit);
         float clampedPitchChange = newPitch - currentPitch;
         transform.RotateAround(followingObjectPosition, transform.right, clampedPitchChange);
         currentPitch = newPitch;
@@ -53,7 +70,8 @@ public class MainCamera : MonoBehaviour
         Vector3 cameraPosition = followingObjectPosition - (transform.forward * radius);
         if (!objectToOrbit.DoesWantFocus())
         {
-            if (Mathf.Abs(followingObjectPosition.y - transform.position.y) < verticalFollowSlack) {
+            if (Mathf.Abs(followingObjectPosition.y - transform.position.y) < verticalFollowSlack)
+            {
                 cameraPosition.y = transform.position.y;
             }
         }
@@ -63,6 +81,11 @@ public class MainCamera : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         rotation = context.ReadValue<Vector2>();
+    }
+
+    private void DisableCameraControl()
+    {
+        cameraControl.enabled = false;
     }
 
     //private void OnTriggerEnter(Collider other)

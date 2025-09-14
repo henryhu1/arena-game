@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerHealth))]
 [RequireComponent(typeof(PlayerInputHandler))]
@@ -21,6 +22,8 @@ public class PlayerManager : MonoBehaviour
     public PlayerAttackController attackController { get; private set; }
     public PlayerInventoryHandler inventoryHandler { get; private set; }
     public PlayerAudioController audioController { get; private set; }
+    [SerializeField] private PlayerInput playerInputComponent;
+    [SerializeField] private CharacterController controller;
 
     [Header("Camera Focus Point")]
     public CameraFocus focusPoint;
@@ -32,7 +35,8 @@ public class PlayerManager : MonoBehaviour
     public GameObject heldArrow;
     public GameObject projectileSpawnPoint;
 
-    [SerializeField] private CharacterController controller;
+    [Header("Events")]
+    [SerializeField] private VoidEventChannelSO onGameOver;
 
     private void Awake()
     {
@@ -83,6 +87,16 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        onGameOver.OnEventRaised += DisablePlayerInput;
+    }
+
+    private void OnDisable()
+    {
+        onGameOver.OnEventRaised -= DisablePlayerInput;
+    }
+
     public bool IsControllerGrounded()
     {
         return controller.isGrounded;
@@ -97,5 +111,10 @@ public class PlayerManager : MonoBehaviour
     public AudioEffectSO GetAttackAudio()
     {
         return attackController.GetAttackAudio();
+    }
+
+    private void DisablePlayerInput()
+    {
+        playerInputComponent.enabled = false;
     }
 }

@@ -63,7 +63,6 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     private void PlayerHealth_OnDeath()
     {
         velocity = Vector3.zero;
-        isPreventedFromMoving = true;
     }
 
     public Vector3 GetVelocity() { return this.velocity; }

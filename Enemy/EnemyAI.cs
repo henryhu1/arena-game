@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
     private Transform player;
 
     private bool shouldFollowPlayer;
+    private bool shouldWander;
     private float originalStoppingDistance;
 
     private Coroutine wanderingCoroutine;
@@ -24,6 +25,7 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
 
     [Header("Events")]
     [SerializeField] private VoidEventChannelSO onPlayerDeath;
+    [SerializeField] private VoidEventChannelSO onTimeRunOut;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
@@ -43,13 +45,19 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
     {
         player = PlayerManager.Instance.transform;
         shouldFollowPlayer = true;
-
-        onPlayerDeath.OnEventRaised += WanderAgent;
+        shouldWander = false;
     }
 
-    private void OnDestroy()
+    private void OnEnable()
+    {
+        onPlayerDeath.OnEventRaised += WanderAgent;
+        onTimeRunOut.OnEventRaised += StopFollowingPlayer;
+    }
+
+    private void OnDisable()
     {
         onPlayerDeath.OnEventRaised -= WanderAgent;
+        onTimeRunOut.OnEventRaised -= StopFollowingPlayer;
     }
 
     private void Update()
@@ -65,21 +73,31 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
             agent.stoppingDistance = originalStoppingDistance;
             agent.SetDestination(player.position);
         }
-        else
+        else if (shouldWander)
         {
             wanderingCoroutine ??= StartCoroutine(WanderAI());
         }
+        else
+        {
+            agent.isStopped = true;
+        }
+    }
+
+    private void StopFollowingPlayer()
+    {
+        shouldFollowPlayer = false;
     }
 
     private void WanderAgent()
     {
-        shouldFollowPlayer = false;
+        StopFollowingPlayer();
+        shouldWander = true;
     }
 
     private IEnumerator WanderAI()
     {
         agent.stoppingDistance = k_wanderStoppingDistance;
-        while (!shouldFollowPlayer)
+        while (!shouldFollowPlayer && shouldWander)
         {
             float wanderDistance = Random.Range(k_wanderDistanceMin, k_wanderDistanceMax);
             Vector3 wanderToPosition = EnemyPositionUtils.GetRandomPositionInNavSphere(transform.position, wanderDistance);
@@ -95,6 +113,7 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
     public void DisableAgent() { agent.enabled = false; }
     public void EnableAgent() { agent.enabled = true; }
     public bool IsFollowingPlayer() { return shouldFollowPlayer; }
+    public bool IsWandering() { return shouldWander; }
     public bool IsDestinationReached() { return !agent.hasPath || agent.velocity.sqrMagnitude == 0; }
     public float GetVelocity() { return agent.velocity.magnitude; }
 

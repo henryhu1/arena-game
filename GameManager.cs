@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private IntEventChannelSO onRoundStart;
     [SerializeField] private IntEventChannelSO onRoundEnd;
     [SerializeField] private EnemyEventChannelSO onEnemyDefeated;
+    [SerializeField] private VoidEventChannelSO onPlayerDeath;
+    [SerializeField] private VoidEventChannelSO onTimeRunOut;
     [SerializeField] private VoidEventChannelSO onGameOver;
 
     private bool isCountingDown = false;
@@ -40,6 +42,7 @@ public class GameManager : MonoBehaviour
         onRoundStart.OnEventRaised += RoundStarted;
         onRoundEnd.OnEventRaised += RoundEnded;
         onEnemyDefeated.OnEnemyEvent += EnemyDefeated;
+        onPlayerDeath.OnEventRaised += PlayerDied;
     }
 
     void OnDisable()
@@ -47,6 +50,7 @@ public class GameManager : MonoBehaviour
         onRoundStart.OnEventRaised -= RoundStarted;
         onRoundEnd.OnEventRaised -= RoundEnded;
         onEnemyDefeated.OnEnemyEvent -= EnemyDefeated;
+        onPlayerDeath.OnEventRaised -= PlayerDied;
     }
 
     void Update()
@@ -58,7 +62,7 @@ public class GameManager : MonoBehaviour
         }
         if (countdownTimer.GetValue() <= 0)
         {
-            GameOver();
+            TimeRanOut();
         }
     }
 
@@ -78,9 +82,22 @@ public class GameManager : MonoBehaviour
         countdownTimer.AddToValue(enemy.GetEnemyStats().TimeRegained());
     }
 
+    private void PlayerDied()
+    {
+        GameOver();
+    }
+
+    private void TimeRanOut()
+    {
+        onTimeRunOut.RaiseEvent();
+        GameOver();
+    }
+
     private void GameOver()
     {
         onGameOver.RaiseEvent();
+        isCountingDown = false;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public float GetGameTimeElapsed() { return timeElapsed.GetValue(); }
