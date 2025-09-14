@@ -16,8 +16,6 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
     [SerializeField] private IntEventChannelSO roundStartedEventChannel;
 
-    private Transform player;
-
     private Dictionary<EnemySpawnData, EnemySpawnStrategy> activeStrategies = new();
     public float TimeElapsed => timeElapsed.GetValue();
 
@@ -42,8 +40,6 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        player = PlayerManager.Instance.transform;
-
         deathEventChannel.OnEnemyEvent += HandleEnemyDeath;
         roundStartedEventChannel.OnEventRaised += SpawnWave;
     }
@@ -86,7 +82,7 @@ public class EnemySpawner : MonoBehaviour
         if (data.currentAlive >= data.GetMaxAliveForRound(GameRoundManager.Instance.CurrentRound))
             return;
 
-        Vector3 pos = GetRandomSpawnPosition(data.minDistanceFromPlayer, data.maxDistanceFromPlayer);
+        Vector3 pos = PlayerManager.Instance.GetRandomPositionAroundPlayer(data.minDistanceFromPlayer, data.maxDistanceFromPlayer);
         GameObject enemy = ObjectPoolManager.Instance.Spawn(data.enemyPrefab, pos, Quaternion.identity);
         spawnEnemyEvent.OnPositionEventRaised(pos);
 
@@ -112,19 +108,6 @@ public class EnemySpawner : MonoBehaviour
                 allWaveEnemiesDefeatedEventChannel.RaiseEvent();
             }
         }
-    }
-
-    private Vector3 GetRandomSpawnPosition(float minDist, float maxDist)
-    {
-        Vector2 offset2D = Random.insideUnitCircle.normalized * Random.Range(minDist, maxDist);
-        Vector3 offset = new(offset2D.x, 0f, offset2D.y);
-        Vector3 roughPos = player.position + offset;
-        Vector3 spawnPos = EnemyPositionUtils.GetPositionOnNavMesh(roughPos);
-        if (spawnPos != Vector3.negativeInfinity)
-        {
-            return spawnPos;
-        }
-        return roughPos;
     }
 
     public void DespawnEnemy(GameObject obj, EnemySpawnData data)

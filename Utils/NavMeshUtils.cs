@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public static class EnemyPositionUtils
+public static class NavMeshUtils
 {
   public static Vector3 GetPositionOnNavMesh(Vector3 requestedPos, float maxDistance = 200f)
   {

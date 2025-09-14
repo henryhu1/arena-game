@@ -108,6 +108,19 @@ public class PlayerManager : MonoBehaviour
         transform.position = controller.transform.position;
     }
 
+    public Vector3 GetRandomPositionAroundPlayer(float minDist, float maxDist)
+    {
+        Vector2 offset2D = Random.insideUnitCircle.normalized * Random.Range(minDist, maxDist);
+        Vector3 offset = new(offset2D.x, 0f, offset2D.y);
+        Vector3 roughPos = transform.position + offset;
+        Vector3 onNavMeshPos = NavMeshUtils.GetPositionOnNavMesh(roughPos);
+        if (onNavMeshPos != Vector3.negativeInfinity)
+        {
+            return onNavMeshPos;
+        }
+        return roughPos;
+    }
+
     public AudioEffectSO GetAttackAudio()
     {
         return attackController.GetAttackAudio();

@@ -100,7 +100,7 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
         while (!shouldFollowPlayer && shouldWander)
         {
             float wanderDistance = Random.Range(k_wanderDistanceMin, k_wanderDistanceMax);
-            Vector3 wanderToPosition = EnemyPositionUtils.GetRandomPositionInNavSphere(transform.position, wanderDistance);
+            Vector3 wanderToPosition = NavMeshUtils.GetRandomPositionInNavSphere(transform.position, wanderDistance);
             agent.SetDestination(wanderToPosition);
 
             float wanderTime = Random.Range(k_wanderTimeMin, k_wanderTimeMax);
@@ -123,7 +123,7 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
 
     public Vector3 WarpAgent(Vector3 pos)
     {
-        Vector3 positionOnNavMesh = EnemyPositionUtils.GetPositionOnNavMesh(pos);
+        Vector3 positionOnNavMesh = NavMeshUtils.GetPositionOnNavMesh(pos);
         if (positionOnNavMesh != Vector3.negativeInfinity && agent.Warp(positionOnNavMesh))
         {
             return positionOnNavMesh;
