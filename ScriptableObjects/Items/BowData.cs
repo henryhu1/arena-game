@@ -6,8 +6,7 @@ public class BowData : WeaponData
     [Header("Projectile")]
     public GameObject arrowPrefab;
 
-    [Header("Stats")]
-    public float damagePoints = 100;
+    [Header("Projectile Stats")]
     public float maxSpeed = 100;
 
     public void FireArrow(Transform spawnPoint)

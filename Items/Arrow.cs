@@ -103,7 +103,7 @@ public class Arrow : MonoBehaviour, IProjectilible
         rb.linearVelocity = direction * launchSpeed;
 
         shotFromBow = bowData;
-        damagePoints = bowData.damagePoints;
+        damagePoints = bowData.damage;
     }
 
     private void StickArrow(Collider hitCollider)
