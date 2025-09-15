@@ -68,5 +68,19 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
 
     public WeaponData GetHeldWeaponData() { return heldWeaponData; }
 
+    public void DropItem()
+    {
+        if (heldItem)
+        {
+            heldItem.SetInteractable();
+        }
+        if (heldItem is Weapon heldWeapon)
+        {
+            heldWeapon.transform.SetParent(null);
+            heldWeapon.StartPhysics();
+        }
+        heldArrow.SetActive(false);
+    }
+
     public bool IsHoldingWeapon() { return heldItem is Weapon; }
 }

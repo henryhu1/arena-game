@@ -61,7 +61,7 @@ public class CollectableItem : MonoBehaviour, IInteractable
         gameObject.layer = LayerMask.NameToLayer(layer);
     }
 
-    protected void SetInteractable()
+    public void SetInteractable()
     {
         gameObject.layer = LayerMask.NameToLayer("Interactables");
         playingParticle = StartCoroutine(PlayParticle());
