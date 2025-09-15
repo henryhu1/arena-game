@@ -10,7 +10,6 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private Coroutine attackingRoutine;
 
-    private WeaponData holdingWeapon;
 
     [Header("Audio")]
     [SerializeField] private AudioEffectSO fistAudio;
@@ -18,22 +17,9 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
     [Header("Hitbox Use")]
     [SerializeField] private PlayerHitbox hitbox;
 
-    [Header("Events")]
-    [SerializeField] private WeaponEventChannelSO getWeaponEvent;
-
     public void Initialize(PlayerManager manager)
     {
         this.manager = manager;
-    }
-
-    void Start()
-    {
-        getWeaponEvent.OnWeaponEvent += UseWeapon;
-    }
-
-    void OnDestroy()
-    {
-        getWeaponEvent.OnWeaponEvent -= UseWeapon;
     }
 
     public void StartAttacking()
@@ -65,28 +51,29 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     public AttackType GetAttackType()
     {
-        if (holdingWeapon == null)
+        WeaponData heldWeaponData = manager.inventoryHandler.GetHeldWeaponData();
+        if (heldWeaponData == null)
         {
             return AttackType.MELEE;
         }
 
-        return holdingWeapon.attackType;
+        return heldWeaponData.attackType;
     }
 
     public AudioEffectSO GetAttackAudio()
     {
-        if (holdingWeapon == null)
+        WeaponData heldWeaponData = manager.inventoryHandler.GetHeldWeaponData();
+        if (heldWeaponData == null)
         {
             return fistAudio;
         }
 
-        return holdingWeapon.contactAudio;
+        return heldWeaponData.contactAudio;
     }
 
-    private void UseWeapon(WeaponData weaponData, GameObject impactPoint)
+    public void UseWeapon(Weapon weapon)
     {
-        hitbox.ApplyWeaponData(weaponData, impactPoint);
-        holdingWeapon = weaponData;
+        hitbox.ApplyWeaponData(weapon);
     }
 
     private void Update()
@@ -121,11 +108,13 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private IEnumerator DamageWindow(PlayerHitbox hitbox)
     {
+        WeaponData heldWeaponData = manager.inventoryHandler.GetHeldWeaponData();
+
         float time = 0;
         AttackAnimationSO animation;
-        if (holdingWeapon != null)
+        if (heldWeaponData != null)
         {
-            animation = manager.animationController.GetAttackAnimation(holdingWeapon.attackType);
+            animation = manager.animationController.GetAttackAnimation(heldWeaponData.attackType);
         }
         else
         {
@@ -138,7 +127,7 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
             yield return null;
         }
 
-        if (holdingWeapon is BowData bowData)
+        if (heldWeaponData is BowData bowData)
         {
             bowData.FireArrow(manager.projectileSpawnPoint.transform);
         }

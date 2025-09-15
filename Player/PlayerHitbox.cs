@@ -11,8 +11,8 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
     private BoxCollider Hitbox;
 
     [Header("Positioning")]
-    [SerializeField] private GameObject originalImpactPoint;
-    private GameObject impactPoint;
+    [SerializeField] private Transform originalImpactPoint;
+    private Transform impactPoint;
 
     private HashSet<GameObject> DamagedTargets { get; set; }
 
@@ -68,8 +68,10 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         }
     }
 
-    public void ApplyWeaponData(WeaponData weaponData, GameObject impactPoint)
+    public void ApplyWeaponData(Weapon weapon)
     {
+        WeaponData weaponData = weapon.GetWeaponData();
+        Transform impactPoint = weapon.GetImpactPoint();
         Hitbox.size = weaponData.hitboxSize;
         Hitbox.center = new Vector3(Hitbox.center.x, Hitbox.center.y, weaponData.hitboxSize.z / 2);
         this.impactPoint = impactPoint;

@@ -30,9 +30,6 @@ public class PlayerManager : MonoBehaviour
 
     [Header("Player Model")]
     public Transform modelTransform;
-    public GameObject rightGripPoint;
-    public GameObject leftGripPoint;
-    public GameObject heldArrow;
     public GameObject projectileSpawnPoint;
 
     [Header("Events")]
@@ -58,7 +55,6 @@ public class PlayerManager : MonoBehaviour
         audioController = GetComponent<PlayerAudioController>();
 
         InitializeAll();
-        heldArrow.SetActive(false);
     }
 
     void InitializeAll()

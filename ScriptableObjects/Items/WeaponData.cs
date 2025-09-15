@@ -3,6 +3,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WeaponData", menuName = "Items/Weapon Data")]
 public class WeaponData : ScriptableObject
 {
+    public enum HeldByHand
+    {
+        RIGHT,
+        LEFT,
+    }
+
     public string weaponName = "Weapon";
 
     public AttackType attackType;
@@ -16,6 +22,10 @@ public class WeaponData : ScriptableObject
     [Header("Hitbox Settings")]
     public Vector3 hitboxSize = new(0.7f, 1.7f, 1f);
     public Vector3 hitboxOffset = Vector3.zero;
+
+    [Header("Model")]
+    public HeldByHand heldByHand = HeldByHand.RIGHT;
+    public Vector3 eulerRotation;
 
     public bool IsWeaponOfType(AttackType type) => attackType == type;
 }

@@ -4,10 +4,10 @@ using UnityEngine.Events;
 [CreateAssetMenu(fileName = "WeaponEventChannelSO", menuName = "Events/Weapon")]
 public class WeaponEventChannelSO : ScriptableObject
 {
-    public UnityAction<WeaponData, GameObject> OnWeaponEvent;
+    public UnityAction<Weapon> OnWeaponEvent;
 
-    public void RaiseEvent(WeaponData weaponData, GameObject impactPoint)
+    public void RaiseEvent(Weapon weapon)
     {
-        OnWeaponEvent?.Invoke(weaponData, impactPoint);
+        OnWeaponEvent?.Invoke(weapon);
     }
 }
