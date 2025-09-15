@@ -43,12 +43,17 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
     {
         if (item is Weapon weaponItem)
         {
-            heldItem = item;
+            // heldItem = item;
         }
     }
 
     private void EquipWeapon(Weapon weapon)
     {
+        if (heldItem)
+        {
+            DropItem();
+        }
+
         WeaponData weaponData = weapon.GetWeaponData();
 
         Transform handToHold = rightGripPoint;
@@ -62,8 +67,9 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
         heldArrow.SetActive(weaponData.IsWeaponOfType(AttackType.BOW));
         weapon.StopPhysics();
 
-        manager.attackController.UseWeapon(weapon);
+        heldItem = weapon;
         heldWeaponData = weapon.GetWeaponData();
+        manager.attackController.UseWeapon(weapon);
     }
 
     public WeaponData GetHeldWeaponData() { return heldWeaponData; }
@@ -79,7 +85,10 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
             heldWeapon.transform.SetParent(null);
             heldWeapon.StartPhysics();
         }
+
         heldArrow.SetActive(false);
+        heldItem = null;
+        heldWeaponData = null;
     }
 
     public bool IsHoldingWeapon() { return heldItem is Weapon; }

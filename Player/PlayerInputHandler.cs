@@ -57,7 +57,10 @@ public class PlayerInputHandler : MonoBehaviour, IPlayerComponent
 
     public void OnDrop(InputAction.CallbackContext context)
     {
-        manager.inventoryHandler.DropItem();
+        if (context.performed)
+        {
+            manager.inventoryHandler.DropItem();
+        }
     }
 
     public void OnInteract(InputAction.CallbackContext context)
