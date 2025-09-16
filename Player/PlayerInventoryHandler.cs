@@ -16,6 +16,7 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
     [Header("Events")]
     [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
     [SerializeField] private WeaponEventChannelSO getWeaponEvent;
+    [SerializeField] private WeaponEventChannelSO dropWeaponEvent;
 
     private void Start()
     {
@@ -84,9 +85,10 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
         {
             heldWeapon.transform.SetParent(null);
             heldWeapon.StartPhysics();
+            dropWeaponEvent.RaiseEvent(heldWeapon);
+            heldArrow.SetActive(false);
         }
 
-        heldArrow.SetActive(false);
         heldItem = null;
         heldWeaponData = null;
     }
