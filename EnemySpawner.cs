@@ -11,7 +11,7 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Events")]
     [SerializeField] private Vector3EventChannelSO spawnEnemyEvent;
-    [SerializeField] private EnemyEventChannelSO deathEventChannel;
+    [SerializeField] private EnemyEventChannelSO defeatedEventChannel;
     [SerializeField] private Vector3EventChannelSO despawnEnemyEvent;
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
     [SerializeField] private IntEventChannelSO roundStartedEventChannel;
@@ -40,7 +40,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        deathEventChannel.OnEnemyEvent += HandleEnemyDeath;
+        defeatedEventChannel.OnEnemyEvent += HandleEnemyDeath;
         roundStartedEventChannel.OnEventRaised += SpawnWave;
     }
 
@@ -55,7 +55,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void OnDestroy()
     {
-        deathEventChannel.OnEnemyEvent -= HandleEnemyDeath;
+        defeatedEventChannel.OnEnemyEvent -= HandleEnemyDeath;
         roundStartedEventChannel.OnEventRaised -= SpawnWave;
     }
 

@@ -11,7 +11,7 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
     [Header("Events")]
     [SerializeField] private Vector3EventChannelSO onEnemyHit;
     [SerializeField] private EnemyEventChannelSO onEnemyDamaged;
-    [SerializeField] private EnemyEventChannelSO onEnemyDeath;
+    [SerializeField] private EnemyEventChannelSO onEnemyDefeated;
 
     public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
     {
@@ -45,7 +45,7 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
 
         if (isDead)
         {
-            onEnemyDeath.RaiseEvent(controllerBase);
+            onEnemyDefeated.RaiseEvent(controllerBase);
         }
     }
 

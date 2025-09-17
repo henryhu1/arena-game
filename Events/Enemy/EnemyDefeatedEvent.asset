@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1d94919f9092f784c8ed2eb1dc9393a0, type: 3}
-  m_Name: EnemyDeathEvent
+  m_Name: EnemyDefeatedEvent
   m_EditorClassIdentifier: 
