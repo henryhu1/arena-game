@@ -12,8 +12,8 @@ public class AmmoCount : MonoBehaviour
     [SerializeField] private TextMeshProUGUI text;
 
     [Header("Events")]
-    [SerializeField] private WeaponEventChannelSO onWeaponGet;
-    [SerializeField] private WeaponEventChannelSO onWeaponDrop;
+    [SerializeField] private WeaponEventChannelSO onPlayerWeaponChange;
+    [SerializeField] private IntEventChannelSO onArrowCountChange;
 
     private Color originalBackgroundColor;
     private Color transparentBackgroundColor;
@@ -49,19 +49,18 @@ public class AmmoCount : MonoBehaviour
     private void OnEnable()
     {
         // TODO: maybe watch a weapon change event instead of get and drop
-        onWeaponGet.OnWeaponEvent += ToggleAmmoDisplay;
-        onWeaponDrop.OnWeaponEvent += DropWeaponHandler;
+        onPlayerWeaponChange.OnWeaponEvent += ToggleAmmoDisplay;
+        onArrowCountChange.OnEventRaised += ChangeArrowCount;
     }
 
     private void OnDisable()
     {
-        onWeaponGet.OnWeaponEvent -= ToggleAmmoDisplay;
-        onWeaponDrop.OnWeaponEvent -= DropWeaponHandler;
+        onPlayerWeaponChange.OnWeaponEvent -= ToggleAmmoDisplay;
+        onArrowCountChange.OnEventRaised -= ChangeArrowCount;
     }
 
     private void ToggleAmmoDisplay(Weapon weapon)
     {
-        Debug.Log(weapon.GetWeaponData().attackType);
         if (weapon.GetWeaponData().IsWeaponOfType(AttackType.BOW))
         {
             if (fadeOutCoroutine != null)
@@ -76,14 +75,6 @@ public class AmmoCount : MonoBehaviour
         }
     }
 
-    private void DropWeaponHandler(Weapon weapon)
-    {
-        if (weapon.GetWeaponData().IsWeaponOfType(AttackType.BOW))
-        {
-            StopDisplayingAmmo();
-        }
-    }
-
     private void StopDisplayingAmmo()
     {
         if (fadeInCoroutine != null)
@@ -91,6 +82,11 @@ public class AmmoCount : MonoBehaviour
             StopCoroutine(fadeInCoroutine);
         }
         fadeOutCoroutine ??= StartCoroutine(FadeOutAmmoDisplay());
+    }
+
+    private void ChangeArrowCount(int count)
+    {
+        text.text = count.ToString();
     }
 
     private IEnumerator FadeInAmmoDisplay()

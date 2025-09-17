@@ -129,7 +129,10 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
         if (heldWeaponData is BowData bowData)
         {
-            bowData.FireArrow(manager.projectileSpawnPoint.transform);
+            if (manager.inventoryHandler.ConsumeArrow())
+            {
+                bowData.FireArrow(manager.projectileSpawnPoint.transform);
+            }
         }
         else
         {

@@ -8,15 +8,26 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
 
     private WeaponData heldWeaponData;
 
+    [Header("Inventory")]
+    [SerializeField] private PlayerInventorySO inventory;
+
     [Header("Model")]
     [SerializeField] private Transform rightGripPoint;
     [SerializeField] private Transform leftGripPoint;
     [SerializeField] private GameObject heldArrow;
-    
+
     [Header("Events")]
     [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
     [SerializeField] private WeaponEventChannelSO getWeaponEvent;
+    [SerializeField] private WeaponEventChannelSO onWeaponChange;
+    // TODO: currently nothing occurs when weapon is dropped
     [SerializeField] private WeaponEventChannelSO dropWeaponEvent;
+    [SerializeField] private IntEventChannelSO onArrowCountChange;
+
+    private void Awake()
+    {
+        inventory.arrowCount.ResetValue();
+    }
 
     private void Start()
     {
@@ -27,12 +38,13 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
     {
         collectItemEvent.OnCollectItemEvent += HoldItem;
         getWeaponEvent.OnWeaponEvent += EquipWeapon;
+        onArrowCountChange.OnEventRaised += CheckAmmo;
     }
 
     private void OnDisable()
     {
         collectItemEvent.OnCollectItemEvent -= HoldItem;
-        getWeaponEvent.OnWeaponEvent -= EquipWeapon;
+        onArrowCountChange.OnEventRaised -= CheckAmmo;
     }
 
     public void Initialize(PlayerManager manager)
@@ -45,6 +57,10 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
         if (item is Weapon weaponItem)
         {
             // heldItem = item;
+        }
+        if (item.TryGetComponent(out Arrow pickedUpArrow))
+        {
+            inventory.arrowCount.AddToValue(1);
         }
     }
 
@@ -70,7 +86,13 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
 
         heldItem = weapon;
         heldWeaponData = weapon.GetWeaponData();
+        onWeaponChange.RaiseEvent(weapon);
         manager.attackController.UseWeapon(weapon);
+    }
+
+    private void CheckAmmo(int count)
+    {
+        heldArrow.SetActive(count > 0);
     }
 
     public WeaponData GetHeldWeaponData() { return heldWeaponData; }
@@ -94,4 +116,17 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
     }
 
     public bool IsHoldingWeapon() { return heldItem is Weapon; }
+
+    public bool ConsumeArrow()
+    {
+        if (inventory.arrowCount.GetValue() > 0)
+        {
+            inventory.arrowCount.SubtractFromValue(1);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
