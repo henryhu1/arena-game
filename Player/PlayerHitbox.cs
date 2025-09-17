@@ -55,7 +55,7 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
 
     void OnTriggerEnter(Collider other)
     {
-        if (!Hitbox.enabled) return; // only active during damage window
+        if (!Hitbox.enabled || GameManager.Instance.IsGameOver()) return; // only active during damage window
         if (other.CompareTag("Enemy") && !DamagedTargets.Contains(other.gameObject))
         {
             DamagedTargets.Add(other.gameObject);

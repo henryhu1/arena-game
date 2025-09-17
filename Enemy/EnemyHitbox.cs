@@ -17,7 +17,7 @@ public class EnemyHitbox : MonoBehaviour, IHitboxable
 
     void OnTriggerEnter(Collider other)
     {
-        if (hasDealtDamage) return;
+        if (hasDealtDamage || GameManager.Instance.IsGameOver()) return;
 
         if (other.TryGetComponent(out PlayerHealth playerHealth))
         {

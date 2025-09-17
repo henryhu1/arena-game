@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private VoidEventChannelSO onGameOver;
 
     private bool isCountingDown = false;
+    private bool isGameOver = false;
 
     void Awake()
     {
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         isCountingDown = false;
+        isGameOver = false;
     }
 
     void OnEnable()
@@ -78,8 +80,11 @@ public class GameManager : MonoBehaviour
 
     private void EnemyDefeated(EnemyControllerBase enemy)
     {
-        playerScore.AddToValue(enemy.GetEnemyStats().PointValue());
-        countdownTimer.AddToValue(enemy.GetEnemyStats().TimeRegained());
+        if (!isGameOver)
+        {
+            playerScore.AddToValue(enemy.GetEnemyStats().PointValue());
+            countdownTimer.AddToValue(enemy.GetEnemyStats().TimeRegained());
+        }
     }
 
     private void PlayerDied()
@@ -96,6 +101,7 @@ public class GameManager : MonoBehaviour
     private void GameOver()
     {
         onGameOver.RaiseEvent();
+        isGameOver = true;
         isCountingDown = false;
         Cursor.lockState = CursorLockMode.None;
     }
@@ -103,4 +109,5 @@ public class GameManager : MonoBehaviour
     public float GetGameTimeElapsed() { return timeElapsed.GetValue(); }
 
     public float GetCountdownTimer() { return countdownTimer.GetValue(); }
+    public bool IsGameOver() { return isGameOver; }
 }
