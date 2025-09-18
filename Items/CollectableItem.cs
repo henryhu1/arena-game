@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class CollectableItem : MonoBehaviour, IInteractable
 {
-    [Header("Particles")]
-    private ParticleSystem ps;
+    [Header("Spawning")]
+    public ItemSpawnStrategy spawnStrategy;
 
     [Header("Events")]
     [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
+
+    private ParticleSystem ps;
 
     private Coroutine playingParticle;
 
