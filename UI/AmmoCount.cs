@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class AmmoCount : MonoBehaviour
 {
+    [Header("Data")]
+    [SerializeField] private IntVariable arrowCount;
+
     [Header("UI")]
     [SerializeField] private Image backgroundImage;
     [SerializeField] private RawImage arrowImage;
@@ -37,6 +40,7 @@ public class AmmoCount : MonoBehaviour
         transparentArrowColor = new Color(originalArrowColor.r, originalArrowColor.g, originalArrowColor.b, 0);
         originalTextColor = text.color;
         transparentTextColor = new Color(originalTextColor.r, originalTextColor.g, originalTextColor.b, 0);
+        text.text = arrowCount.GetValue().ToString();
     }
 
     private void Start()

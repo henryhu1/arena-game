@@ -81,7 +81,7 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
 
         weapon.transform.SetParent(handToHold);
         weapon.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.Euler(weaponData.eulerRotation));
-        heldArrow.SetActive(weaponData.IsWeaponOfType(AttackType.BOW));
+        heldArrow.SetActive(weaponData.IsWeaponOfType(AttackType.BOW) && inventory.arrowCount.GetValue() > 0);
         weapon.StopPhysics();
 
         heldItem = weapon;
