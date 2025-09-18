@@ -7,6 +7,9 @@ public class ObjectPoolManager : MonoBehaviour
 
     private Dictionary<GameObject, ObjectPool> poolMap = new();
 
+    [Header("Poolable Objects")]
+    [SerializeField] private GameObject arrowPrefab;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -31,6 +34,12 @@ public class ObjectPoolManager : MonoBehaviour
         return poolMap[prefab].Get(position, rotation);
     }
 
+    public GameObject SpawnArrow(Vector3 position, Quaternion rotation)
+    {
+        // TODO: find a way to spawn different types of arrows for different bows
+        return Spawn(arrowPrefab, position, rotation);
+    }
+
     public void Despawn(GameObject obj, GameObject prefab)
     {
         if (poolMap.ContainsKey(prefab))
@@ -41,5 +50,10 @@ public class ObjectPoolManager : MonoBehaviour
         {
             Destroy(obj); // fallback
         }
+    }
+
+    public void DespawnArrow(GameObject arrowObject)
+    {
+        Despawn(arrowObject, arrowPrefab);
     }
 }

@@ -6,8 +6,6 @@ public class Arrow : MonoBehaviour, IProjectilible
     [SerializeField] private float defaultForce = 5f;
     protected float damagePoints = 0;
 
-    private BowData shotFromBow;
-
     [Header("Arrow Parts")]
     public Transform arrowTip;
 
@@ -37,11 +35,12 @@ public class Arrow : MonoBehaviour, IProjectilible
 
     void OnDisable()
     {
-        shotFromBow.ReturnArrowToPool(gameObject);
+        ObjectPoolManager.Instance.DespawnArrow(gameObject);
     }
 
     public virtual void OnSpawned(Vector3 position)
     {
+        hasHit = false;
         rb.isKinematic = false;
         rb.linearVelocity = Vector3.zero; // reset
         rb.angularVelocity = Vector3.zero;
@@ -75,7 +74,7 @@ public class Arrow : MonoBehaviour, IProjectilible
             shouldStick = hittable.TakeHit(arrowTip.position, damagePoints, transform.position, defaultForce);
         }
 
-        if (shouldStick && gameObject.layer == LayerMask.NameToLayer("DamageDealing"))
+        if (shouldStick)
         {
             StickArrow(other);
             onArrowHit.RaiseEvent(arrowTip.position);
@@ -102,7 +101,6 @@ public class Arrow : MonoBehaviour, IProjectilible
         // shoot arrow
         rb.linearVelocity = direction * launchSpeed;
 
-        shotFromBow = bowData;
         damagePoints = bowData.damage;
     }
 

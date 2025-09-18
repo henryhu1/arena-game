@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponName: Bow
   attackType: 3
-  damage: 10
+  contactAudio: {fileID: 11400000, guid: e4e076330aef1164da83f31c3ee97a3d, type: 2}
+  damage: 50
   knockbackForce: 5
   attackCooldown: 0.5
   hitboxSize: {x: 0.7, y: 1.7, z: 1}
   hitboxOffset: {x: 0, y: 0, z: 0}
-  arrowPrefab: {fileID: 8110563637834143658, guid: 16859936d55af464c8013e198087582a, type: 3}
-  damagePoints: 10
+  heldByHand: 1
+  eulerRotation: {x: 255, y: 0, z: 0}
+  arrowPrefab: {fileID: 2732707625181881089, guid: 8d5cb11eddc23164f9db25c72864e891, type: 3}
   maxSpeed: 10
