@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private VoidEventChannelSO onPlayerDeath;
     [SerializeField] private VoidEventChannelSO onTimeRunOut;
     [SerializeField] private VoidEventChannelSO onGameOver;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     private bool isCountingDown = false;
     private bool isGameOver = false;
@@ -26,17 +27,28 @@ public class GameManager : MonoBehaviour
             Destroy(Instance);
         }
         Instance = this;
-
-        timeElapsed.ResetValue();
-        countdownTimer.ResetValue();
-        playerScore.ResetValue();
     }
 
     void Start()
     {
+        StartGame();
+    }
+
+    public void RestartGame()
+    {
+        onGameRestart.RaiseEvent();
+        StartGame();
+    }
+
+    private void StartGame()
+    {
         Cursor.lockState = CursorLockMode.Locked;
         isCountingDown = false;
         isGameOver = false;
+
+        timeElapsed.ResetValue();
+        countdownTimer.ResetValue();
+        playerScore.ResetValue();
     }
 
     void OnEnable()
@@ -61,11 +73,12 @@ public class GameManager : MonoBehaviour
         if (isCountingDown)
         {
             countdownTimer.SubtractFromValue(Time.deltaTime);
+            if (countdownTimer.GetValue() <= 0)
+            {
+                TimeRanOut();
+            }
         }
-        if (countdownTimer.GetValue() <= 0)
-        {
-            TimeRanOut();
-        }
+
     }
 
     private void RoundStarted(int _)
@@ -82,8 +95,8 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameOver)
         {
-            playerScore.AddToValue(enemy.GetEnemyStats().PointValue());
-            countdownTimer.AddToValue(enemy.GetEnemyStats().TimeRegained());
+            playerScore.AddToValue(enemy.GetPointValue());
+            countdownTimer.AddToValue(enemy.GetTimeRegained());
         }
     }
 
