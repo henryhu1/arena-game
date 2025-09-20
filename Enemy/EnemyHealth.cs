@@ -46,6 +46,7 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
         if (isDead)
         {
             onEnemyDefeated.RaiseEvent(controllerBase);
+            controllerBase.DecrementAliveCount();
         }
     }
 

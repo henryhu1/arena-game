@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Slime : EnemyControllerBase
 {
+    [Header("Slime Specific")]
     public GameObject body;
 
     public Face faces;

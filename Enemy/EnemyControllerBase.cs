@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
 {
+    [Header("Data")]
     [SerializeField] protected EnemyStats enemyStats;
     [SerializeField] protected EnemySpawnData spawnData;
     private Vector3 originalScale;
@@ -234,9 +235,35 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
         currentState = EnemyAnimation.Idle;
     }
 
-    public EnemyStats GetEnemyStats() { return enemyStats; }
+    public void DecrementAliveCount()
+    {
+        spawnData.currentAlive--;
+    }
 
-    public EnemySpawnData GetSpawnData() { return spawnData; }
+    public float GetPointValue()
+    {
+        return enemyStats.PointValue();
+    }
+
+    public float GetTimeRegained()
+    {
+        return enemyStats.TimeRegained();
+    }
+
+    public AudioEffectSO GetSpawnSound()
+    {
+        return enemyStats.GetAudioProfile().spawnSound;
+    }
+
+    public AudioEffectSO GetAttackSound()
+    {
+        return enemyStats.GetAudioProfile().attackSound;
+    }
+
+    public EnemySpawnStrategy GetSpawnStrategy()
+    {
+        return spawnData.spawnStrategy;
+    }
 
     public bool GetIsStunned() { return isStunned; }
 }

@@ -72,12 +72,12 @@ public class SoundFXManager : MonoBehaviour
 
     public void PlaySpawnSound(EnemyControllerBase enemy)
     {
-        PlaySound(enemy.GetEnemyStats().GetAudioProfile().spawnSound);
+        PlaySound(enemy.GetSpawnSound());
     }
 
     public void PlayAttackSound(EnemyControllerBase enemy)
     {
-        PlaySound(enemy.GetEnemyStats().GetAudioProfile().attackSound);
+        PlaySound(enemy.GetAttackSound());
     }
 
     public void PlayDamageSound(EnemyControllerBase enemy)

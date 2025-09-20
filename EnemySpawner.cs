@@ -38,10 +38,16 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        defeatedEventChannel.OnEnemyEvent += HandleEnemyDeath;
+        defeatedEventChannel.OnEnemyEvent += HandleEnemyDefeated;
         roundStartedEventChannel.OnEventRaised += SpawnWave;
+    }
+
+    private void OnDisable()
+    {
+        defeatedEventChannel.OnEnemyEvent -= HandleEnemyDefeated;
+        roundStartedEventChannel.OnEventRaised -= SpawnWave;
     }
 
     private void Update()
@@ -51,12 +57,6 @@ public class EnemySpawner : MonoBehaviour
             if (strategy is not TimeBasedSpawnStrategySO) continue;
             strategy.UpdateStrategy(Time.deltaTime);
         }
-    }
-
-    private void OnDestroy()
-    {
-        defeatedEventChannel.OnEnemyEvent -= HandleEnemyDeath;
-        roundStartedEventChannel.OnEventRaised -= SpawnWave;
     }
 
     public void SpawnWave(int round)
@@ -97,10 +97,9 @@ public class EnemySpawner : MonoBehaviour
 
     }
 
-    private void HandleEnemyDeath(EnemyControllerBase enemy)
+    private void HandleEnemyDefeated(EnemyControllerBase enemy)
     {
-        enemy.GetSpawnData().currentAlive--;
-        if (enemy.GetSpawnData().spawnStrategy is WaveBasedSpawnStrategy)
+        if (enemy.GetSpawnStrategy() is WaveBasedSpawnStrategy)
         {
             TotalWaveEnemiesAlive--;
             if (TotalWaveEnemiesAlive == 0)
