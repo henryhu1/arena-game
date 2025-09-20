@@ -32,8 +32,12 @@ public class PlayerManager : MonoBehaviour
     public Transform modelTransform;
     public GameObject projectileSpawnPoint;
 
+    // TODO: instead of each individual player component subscribing to an event,
+    //   this manager will hold all the relevant events, then the player components
+    //   override an abstract / implement a virtual function called by the manager
     [Header("Events")]
     [SerializeField] private VoidEventChannelSO onGameOver;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     private void Awake()
     {
@@ -86,11 +90,13 @@ public class PlayerManager : MonoBehaviour
     private void OnEnable()
     {
         onGameOver.OnEventRaised += DisablePlayerInput;
+        onGameRestart.OnEventRaised += EnablePlayerInput;
     }
 
     private void OnDisable()
     {
         onGameOver.OnEventRaised -= DisablePlayerInput;
+        onGameRestart.OnEventRaised -= EnablePlayerInput;
     }
 
     public bool IsControllerGrounded()
@@ -125,5 +131,10 @@ public class PlayerManager : MonoBehaviour
     private void DisablePlayerInput()
     {
         playerInputComponent.enabled = false;
+    }
+
+    private void EnablePlayerInput()
+    {
+        playerInputComponent.enabled = true;
     }
 }

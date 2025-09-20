@@ -11,6 +11,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     [SerializeField] private VoidEventChannelSO OnDeath;
     [SerializeField] private Vector2EventChannelSO onPlayerMove;
     [SerializeField] private Vector3EventChannelSO onPlayerLand;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     private Vector2 movement;
     private bool isSprinting;
@@ -60,10 +61,8 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
     }
 
     private void PlayerHealth_OnFreeFromDamage() { isPreventedFromMoving = false; }
-    private void PlayerHealth_OnDeath()
-    {
-        velocity = Vector3.zero;
-    }
+    private void PlayerHealth_OnDeath() { velocity = Vector3.zero; }
+    private void GameRestart() { isPreventedFromMoving = false; }
 
     public Vector3 GetVelocity() { return this.velocity; }
 
@@ -104,6 +103,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
         OnTakeDamage.OnPositionEventRaised += PlayerHealth_OnTakeDamage;
         OnFreeFromDamage.OnEventRaised += PlayerHealth_OnFreeFromDamage;
         OnDeath.OnEventRaised += PlayerHealth_OnDeath;
+        onGameRestart.OnEventRaised += GameRestart;
     }
 
     private void OnDisable()
@@ -111,6 +111,7 @@ public class PlayerMovementController : MonoBehaviour, IPlayerComponent
         OnTakeDamage.OnPositionEventRaised -= PlayerHealth_OnTakeDamage;
         OnFreeFromDamage.OnEventRaised -= PlayerHealth_OnFreeFromDamage;
         OnDeath.OnEventRaised -= PlayerHealth_OnDeath;
+        onGameRestart.OnEventRaised -= GameRestart;
     }
 
     private void FixedUpdate()

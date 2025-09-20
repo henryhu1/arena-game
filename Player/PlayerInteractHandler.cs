@@ -15,12 +15,12 @@ public class PlayerInteractHandler : MonoBehaviour, IPlayerComponent
         this.manager = manager;
     }
 
-    void Start()
+    void OnEnable()
     {
         collectItemEvent.OnCollectItemEvent += RemoveFromNearbyInteractables;
     }
 
-    void OnDestroy()
+    void OnDisable()
     {
         collectItemEvent.OnCollectItemEvent -= RemoveFromNearbyInteractables;
     }

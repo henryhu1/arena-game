@@ -17,6 +17,7 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
     [SerializeField] private FloatEventChannelSO OnPlayerHealthChange;
     [SerializeField] private VoidEventChannelSO OnFreeFromDamage;
     [SerializeField] private VoidEventChannelSO OnDeath;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     public void Initialize(PlayerManager manager)
     {
@@ -33,10 +34,21 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
         ResetPlayerHealth();
     }
 
+    private void OnEnable()
+    {
+        onGameRestart.OnEventRaised += ResetPlayerHealth;
+    }
+
+    private void OnDisable()
+    {
+        onGameRestart.OnEventRaised -= ResetPlayerHealth;
+    }
+
     public void ResetPlayerHealth()
     {
         healthPoints = k_MaxHealthPoints;
         isDead = false;
+        OnPlayerHealthChange.RaiseEvent(healthPoints);
     }
 
     public bool GetIsGettingDamaged() { return isGettingDamaged; }

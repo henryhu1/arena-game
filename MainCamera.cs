@@ -22,8 +22,13 @@ public class MainCamera : MonoBehaviour
     private float currentPitch;
     private Vector2 rotation;
 
+    [Header("Music")]
+    [SerializeField] private AudioSource inGameAudioSource;
+    [SerializeField] private AudioSource outGameAudioSource;
+
     [Header("Events")]
     [SerializeField] private VoidEventChannelSO onGameOver;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     [Header("Collision")]
     public LayerMask collisionLayers;
@@ -46,12 +51,14 @@ public class MainCamera : MonoBehaviour
 
     private void OnEnable()
     {
-        onGameOver.OnEventRaised += DisableCameraControl;
+        onGameOver.OnEventRaised += GameOverEventHandler;
+        onGameRestart.OnEventRaised += GameRestartEventHandler;
     }
 
     private void OnDisable()
     {
-        onGameOver.OnEventRaised -= DisableCameraControl;
+        onGameOver.OnEventRaised -= GameOverEventHandler;
+        onGameRestart.OnEventRaised -= GameRestartEventHandler;
     }
 
     void Update()
@@ -83,9 +90,18 @@ public class MainCamera : MonoBehaviour
         rotation = context.ReadValue<Vector2>();
     }
 
-    private void DisableCameraControl()
+    private void GameOverEventHandler()
     {
         cameraControl.enabled = false;
+        inGameAudioSource.Pause();
+        outGameAudioSource.Play();
+    }
+
+    private void GameRestartEventHandler()
+    {
+        cameraControl.enabled = true;
+        inGameAudioSource.Play();
+        outGameAudioSource.Pause();
     }
 
     //private void OnTriggerEnter(Collider other)
