@@ -17,6 +17,9 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
     [SerializeField] protected float sizeMultiplierMin = 1;
     [SerializeField] protected float sizeMultiplierMax = 1;
 
+    [Header("Events")]
+    [SerializeField] private VoidEventChannelSO onGameRestart;
+
     protected Vector3 originalScale;
 
     protected EnemyAnimation currentState;
@@ -168,6 +171,12 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
     private void OnEnable()
     {
         currentState = EnemyAnimation.Idle;
+        onGameRestart.OnEventRaised += Despawn;
+    }
+
+    private void OnDisable()
+    {
+        onGameRestart.OnEventRaised -= Despawn;
     }
 
     private IEnumerator WaitForAttackAnimation()

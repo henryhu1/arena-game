@@ -12,6 +12,7 @@ public class GameRoundManager : MonoBehaviour
     [SerializeField] private IntEventChannelSO roundStartedEventChannel;
     [SerializeField] private IntEventChannelSO roundEndedEventChannel;
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     private void Awake()
     {
@@ -23,13 +24,19 @@ public class GameRoundManager : MonoBehaviour
 
     private void Start()
     {
-        allWaveEnemiesDefeatedEventChannel.OnEventRaised += IncrementRound;
         IncrementRound();
     }
 
-    private void OnDestroy()
+    private void OnEnable()
+    {
+        allWaveEnemiesDefeatedEventChannel.OnEventRaised += IncrementRound;
+        onGameRestart.OnEventRaised += ResetRounds;
+    }
+
+    private void OnDisable()
     {
         allWaveEnemiesDefeatedEventChannel.OnEventRaised -= IncrementRound;
+        onGameRestart.OnEventRaised -= ResetRounds;
     }
 
     public void IncrementRound()
@@ -45,5 +52,11 @@ public class GameRoundManager : MonoBehaviour
         Debug.Log($"Wave {CurrentRound} starting.");
         CurrentRound++;
         roundStartedEventChannel.RaiseEvent(CurrentRound);
+    }
+
+    private void ResetRounds()
+    {
+        CurrentRound = 0;
+        IncrementRound();
     }
 }

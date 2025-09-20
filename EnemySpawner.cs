@@ -15,6 +15,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Vector3EventChannelSO despawnEnemyEvent;
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
     [SerializeField] private IntEventChannelSO roundStartedEventChannel;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     private Dictionary<EnemySpawnData, EnemySpawnStrategy> activeStrategies = new();
     public float TimeElapsed => timeElapsed.GetValue();
@@ -42,12 +43,14 @@ public class EnemySpawner : MonoBehaviour
     {
         defeatedEventChannel.OnEnemyEvent += HandleEnemyDefeated;
         roundStartedEventChannel.OnEventRaised += SpawnWave;
+        onGameRestart.OnEventRaised += Reset;
     }
 
     private void OnDisable()
     {
         defeatedEventChannel.OnEnemyEvent -= HandleEnemyDefeated;
         roundStartedEventChannel.OnEventRaised -= SpawnWave;
+        onGameRestart.OnEventRaised -= Reset;
     }
 
     private void Update()
@@ -106,6 +109,15 @@ public class EnemySpawner : MonoBehaviour
             {
                 allWaveEnemiesDefeatedEventChannel.RaiseEvent();
             }
+        }
+    }
+
+    private void Reset()
+    {
+        TotalWaveEnemiesAlive = 0;
+        foreach (var data in spawnConfigs)
+        {
+            data.ResetCurrentAlive();
         }
     }
 

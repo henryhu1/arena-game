@@ -7,7 +7,8 @@ public class CollectableItem : MonoBehaviour, IInteractable
     public ItemSpawnStrategy spawnStrategy;
 
     [Header("Events")]
-    [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
+    [SerializeField] private CollectableItemEventChannelSO onCollectItem;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     private ParticleSystem ps;
 
@@ -24,6 +25,16 @@ public class CollectableItem : MonoBehaviour, IInteractable
     private void Start()
     {
         SetInteractable();
+    }
+
+    private void OnEnable()
+    {
+        onGameRestart.OnEventRaised += Despawn;
+    }
+
+    private void OnDisable()
+    {
+        onGameRestart.OnEventRaised -= Despawn;
     }
 
     private IEnumerator PlayParticle()
@@ -49,7 +60,7 @@ public class CollectableItem : MonoBehaviour, IInteractable
             StopCoroutine(playingParticle);
         }
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        collectItemEvent.RaiseEvent(this);
+        onCollectItem.RaiseEvent(this);
     }
 
     protected bool IsInteractable()
@@ -67,5 +78,14 @@ public class CollectableItem : MonoBehaviour, IInteractable
     {
         gameObject.layer = LayerMask.NameToLayer("Interactables");
         playingParticle = StartCoroutine(PlayParticle());
+    }
+
+    private void Despawn()
+    {
+        if (spawnStrategy != null)
+        {
+            // ItemSpawner.Instance.DespawnItem(spawnStrategy.itemPrefab);
+            ItemSpawner.Instance.DespawnItem(gameObject, spawnStrategy.itemPrefab);
+        }
     }
 }
