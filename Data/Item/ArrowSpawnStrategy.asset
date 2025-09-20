@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8423d23e61c88c4eae2bcec7275d3c8, type: 3}
+  m_Name: ArrowSpawnStrategy
+  m_EditorClassIdentifier: 
+  minDistanceFromPlayer: 10
+  maxDistanceFromPlayer: 30
+  itemPrefab: {fileID: 2732707625181881089, guid: 8d5cb11eddc23164f9db25c72864e891, type: 3}
+  spawnChance: 0.5
+  spawnCooldownTime: 5
