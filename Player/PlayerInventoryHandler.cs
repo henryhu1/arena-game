@@ -20,13 +20,13 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
     [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
     [SerializeField] private WeaponEventChannelSO getWeaponEvent;
     [SerializeField] private WeaponEventChannelSO onWeaponChange;
-    // TODO: currently nothing occurs when weapon is dropped
     [SerializeField] private WeaponEventChannelSO dropWeaponEvent;
     [SerializeField] private IntEventChannelSO onArrowCountChange;
+    [SerializeField] private VoidEventChannelSO onGameRestart;
 
     private void Awake()
     {
-        inventory.arrowCount.ResetValue();
+        ResetAmmo();
     }
 
     private void Start()
@@ -39,12 +39,15 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
         collectItemEvent.OnCollectItemEvent += HoldItem;
         getWeaponEvent.OnWeaponEvent += EquipWeapon;
         onArrowCountChange.OnEventRaised += CheckAmmo;
+        onGameRestart.OnEventRaised += ResetAmmo;
     }
 
     private void OnDisable()
     {
         collectItemEvent.OnCollectItemEvent -= HoldItem;
+        getWeaponEvent.OnWeaponEvent -= EquipWeapon;
         onArrowCountChange.OnEventRaised -= CheckAmmo;
+        onGameRestart.OnEventRaised -= ResetAmmo;
     }
 
     public void Initialize(PlayerManager manager)
@@ -92,7 +95,15 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
 
     private void CheckAmmo(int count)
     {
-        heldArrow.SetActive(count > 0);
+        if (heldWeaponData != null && heldWeaponData.IsWeaponOfType(AttackType.BOW))
+        {
+            heldArrow.SetActive(count > 0);
+        }
+    }
+
+    private void ResetAmmo()
+    {
+        inventory.arrowCount.ResetValue();
     }
 
     public WeaponData GetHeldWeaponData() { return heldWeaponData; }
@@ -108,6 +119,7 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
             heldWeapon.transform.SetParent(null);
             heldWeapon.StartPhysics();
             dropWeaponEvent.RaiseEvent(heldWeapon);
+            onWeaponChange.RaiseEvent(null);
             heldArrow.SetActive(false);
         }
 

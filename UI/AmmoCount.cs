@@ -52,7 +52,6 @@ public class AmmoCount : MonoBehaviour
 
     private void OnEnable()
     {
-        // TODO: maybe watch a weapon change event instead of get and drop
         onPlayerWeaponChange.OnWeaponEvent += ToggleAmmoDisplay;
         onArrowCountChange.OnEventRaised += ChangeArrowCount;
     }
@@ -65,17 +64,21 @@ public class AmmoCount : MonoBehaviour
 
     private void ToggleAmmoDisplay(Weapon weapon)
     {
-        if (weapon.GetWeaponData().IsWeaponOfType(AttackType.BOW))
+        if (weapon == null || !weapon.GetWeaponData().IsWeaponOfType(AttackType.BOW))
         {
+            StopDisplayingAmmo();
+        }
+        else
+        {
+            if (fadeInCoroutine != null)
+            {
+                StopCoroutine(fadeInCoroutine);
+            }
             if (fadeOutCoroutine != null)
             {
                 StopCoroutine(fadeOutCoroutine);
             }
-            fadeInCoroutine ??= StartCoroutine(FadeInAmmoDisplay());
-        }
-        else if (!weapon.GetWeaponData().IsWeaponOfType(AttackType.BOW))
-        {
-            StopDisplayingAmmo();
+            fadeInCoroutine = StartCoroutine(FadeInAmmoDisplay());
         }
     }
 
@@ -85,7 +88,11 @@ public class AmmoCount : MonoBehaviour
         {
             StopCoroutine(fadeInCoroutine);
         }
-        fadeOutCoroutine ??= StartCoroutine(FadeOutAmmoDisplay());
+        if (fadeOutCoroutine != null)
+        {
+            StopCoroutine(fadeOutCoroutine);
+        }
+        fadeOutCoroutine = StartCoroutine(FadeOutAmmoDisplay());
     }
 
     private void ChangeArrowCount(int count)
