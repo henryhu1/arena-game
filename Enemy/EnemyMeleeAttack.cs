@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
 {
-    private EnemyStats stats;
     private EnemyControllerBase controllerBase;
 
     [Header("Hitbox Use")]
@@ -20,19 +19,17 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
 
     private Coroutine attackingCoroutine;
 
-    public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
+    public void Initialize(EnemyControllerBase controllerBase)
     {
         this.controllerBase = controllerBase;
-        this.stats = stats;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        hitbox.Setup(stats.Damage(), stats.AttackRange());
         damagedEvent.OnEnemyEvent += DamagedEvent_CancelAttack;
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         damagedEvent.OnEnemyEvent -= DamagedEvent_CancelAttack;
     }
@@ -44,13 +41,18 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         float distanceToPlayer = Vector3.Distance(transform.position, PlayerManager.Instance.transform.position);
         attackCooldownTimer -= Time.deltaTime;
 
-        if (distanceToPlayer <= stats.AttackRange() * k_enemyReach &&
+        if (distanceToPlayer <= controllerBase.GetAttackRange() * k_enemyReach &&
             attackCooldownTimer <= 0f &&
             !isAttacking &&
             controllerBase.CanAttack())
         {
             attackingCoroutine = StartCoroutine(PerformAttack());
         }
+    }
+
+    public void Setup()
+    {
+        hitbox.Setup(controllerBase.GetDamage(), controllerBase.GetAttackRange());
     }
 
     public IEnumerator PerformAttack()
@@ -64,7 +66,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         }
 
         float animationTime = controllerBase.GetAnimatorNormalizedTime();
-        while (animationTime < stats.AttackStart())
+        while (animationTime < controllerBase.GetAttackStart())
         {
             animationTime = controllerBase.GetAnimatorNormalizedTime();
             yield return null;
@@ -73,14 +75,14 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         attackEvent.RaiseEvent(controllerBase);
         hitbox.StartAttack();
 
-        while (animationTime < stats.AttackEnd())
+        while (animationTime < controllerBase.GetAttackEnd())
         {
             animationTime = controllerBase.GetAnimatorNormalizedTime();
             yield return null;
         }
 
         hitbox.EndAttack();
-        attackCooldownTimer = stats.AttackCooldown();
+        attackCooldownTimer = controllerBase.GetAttackCooldown();
         isAttacking = false;
     }
 

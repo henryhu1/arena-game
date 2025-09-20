@@ -5,39 +5,34 @@ using UnityEngine;
 public class EnemyStats : ScriptableObject
 {
     [Header("Stats")]
-    [SerializeField] private int maxHealth = 100;
-    [SerializeField] private float moveSpeed = 3.5f;
+    public int maxHealth = 100;
+    public float moveSpeed = 3.5f;
 
     [Header("Gameplay")]
-    [SerializeField] private float pointValue = 1;
-    [SerializeField] private float timeRegained = 10;
+    public float pointValue = 1;
+    public float timeRegained = 10;
 
     [Header("Attack Stats")]
-    [SerializeField] private int damage = 10;
-    [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float attackStart = 0.1f;
-    [SerializeField] private float attackEnd = 0.4f;
-    [SerializeField] private float attackCooldown = 1;
+    public int damage = 10;
+    public float attackRange = 2f;
+    public float attackStart = 0.1f;
+    public float attackEnd = 0.4f;
+    public float attackCooldown = 1;
 
     [Header("Knockback Stats")]
-    [SerializeField] private float knockbackTime = 1f;
-    [SerializeField] private float knockbackDistance = 3f;
+    public float knockbackTime = 1f;
+    public float knockbackDistance = 3f;
 
     [Header("Animations")]
-    [SerializeField] private List<EnemyAnimationName> animationMappings = new();
+    public List<EnemyAnimationName> animationMappings = new();
     private Dictionary<EnemyAnimation, string> lookup;
 
-    [SerializeField] private AnimationClip attackClip;
-    [SerializeField] private AnimationClip damageClip;
-    [SerializeField] private AnimationClip deathClip;
+    public AnimationClip attackClip;
+    public AnimationClip damageClip;
+    public AnimationClip deathClip;
 
     [Header("Audio Effects")]
-    [SerializeField] private EnemyAudioProfileSO audioProfile;
-
-    [Header("Stat Multiplier")]
-    [SerializeField] private float sizeMultiplierMin = 1;
-    [SerializeField] private float sizeMultiplierMax = 1;
-    [SerializeField] public float sizeMultiplier = 1;
+    public EnemyAudioProfileSO audioProfile;
 
     public string GetAnimationName(EnemyAnimation key)
     {
@@ -49,19 +44,4 @@ public class EnemyStats : ScriptableObject
         }
         return lookup.TryGetValue(key, out var val) ? val : null;
     }
-
-    public float MaxHealth() => maxHealth * sizeMultiplier;
-    public float MoveSpeed() => moveSpeed / sizeMultiplier;
-    public float PointValue() => pointValue * (1 + Mathf.Abs(1 - sizeMultiplier));
-    public float TimeRegained() => timeRegained * (1 + Mathf.Abs(1 - sizeMultiplier));
-    public float Damage() => damage * sizeMultiplier;
-    public float AttackRange() => attackRange * sizeMultiplier;
-    public float AttackStart() => attackStart;
-    public float AttackEnd() => attackEnd;
-    public float AttackCooldown() => attackCooldown;
-    public float KnockbackTime() => knockbackTime * sizeMultiplier;
-    public float KnockbackDistance() => knockbackDistance * sizeMultiplier;
-    public float SizeMultiplierMin() => sizeMultiplierMin;
-    public float SizeMultiplierMax() => sizeMultiplierMax;
-    public EnemyAudioProfileSO GetAudioProfile() => audioProfile;
 }

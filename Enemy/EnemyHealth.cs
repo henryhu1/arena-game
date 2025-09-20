@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour, IEnemyComponent
 {
-    private EnemyStats stats;
     private EnemyControllerBase controllerBase;
 
     private float currentHealth;
@@ -13,20 +12,19 @@ public class EnemyHealth : MonoBehaviour, IEnemyComponent
     [SerializeField] private EnemyEventChannelSO onEnemyDamaged;
     [SerializeField] private EnemyEventChannelSO onEnemyDefeated;
 
-    public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
+    public void Initialize(EnemyControllerBase controllerBase)
     {
         this.controllerBase = controllerBase;
-        this.stats = stats;
     }
 
     private void Awake()
     {
-        currentHealth = stats.MaxHealth();
+        currentHealth = controllerBase.GetMaxHealth();
     }
 
     public void ResetHealth()
     {
-        currentHealth = stats.MaxHealth();
+        currentHealth = controllerBase.GetMaxHealth();
         isDead = false;
     }
 

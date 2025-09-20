@@ -1,4 +1,4 @@
 public interface IEnemyComponent
 {
-    void Initialize(EnemyControllerBase controllerBase, EnemyStats stats);
+    void Initialize(EnemyControllerBase controllerBase);
 }

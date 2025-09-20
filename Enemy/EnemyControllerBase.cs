@@ -11,7 +11,13 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
     [Header("Data")]
     [SerializeField] protected EnemyStats enemyStats;
     [SerializeField] protected EnemySpawnData spawnData;
-    private Vector3 originalScale;
+
+    [Header("Stat Multiplier")]
+    [SerializeField] protected float sizeMultiplier = 1;
+    [SerializeField] protected float sizeMultiplierMin = 1;
+    [SerializeField] protected float sizeMultiplierMax = 1;
+
+    protected Vector3 originalScale;
 
     protected EnemyAnimation currentState;
 
@@ -42,10 +48,10 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
 
     protected virtual void InitializeAll()
     {
-        ai.Initialize(this, enemyStats);
-        health.Initialize(this, enemyStats);
-        knockback.Initialize(this, enemyStats);
-        attack.Initialize(this, enemyStats);
+        ai.Initialize(this);
+        health.Initialize(this);
+        knockback.Initialize(this);
+        attack.Initialize(this);
     }
 
     protected virtual void Update()
@@ -184,7 +190,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
             yield return null;
         }
 
-        yield return new WaitForSeconds(enemyStats.KnockbackTime() - elapsedTime);
+        yield return new WaitForSeconds(GetKnockbackTime() - elapsedTime);
 
         RestartAgent();
         knockedBackStunBuffer = null;
@@ -197,7 +203,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
         {
             yield return null;
         }
-        EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
+        Despawn();
     }
 
     private bool IsAnimationFinished(EnemyAnimation animationName)
@@ -217,16 +223,22 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
         return stateInfo.normalizedTime;
     }
 
-    private void ScaleEnemy()
+    protected void ScaleEnemy()
     {
-        animator.speed = 1 / enemyStats.sizeMultiplier;
-        transform.localScale = originalScale * enemyStats.sizeMultiplier;
+        animator.speed = 1 / sizeMultiplier;
+        transform.localScale = originalScale * sizeMultiplier;
+    }
+
+    private void Despawn()
+    {
+        EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
     }
 
     public virtual void OnSpawned(Vector3 pos)
     {
         ScaleEnemy();
         health.ResetHealth();
+        attack.Setup();
         ai.ResetAgent(pos);
     }
 
@@ -235,35 +247,21 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
         currentState = EnemyAnimation.Idle;
     }
 
-    public void DecrementAliveCount()
-    {
-        spawnData.currentAlive--;
-    }
+    public void DecrementAliveCount() { spawnData.currentAlive--; }
 
-    public float GetPointValue()
-    {
-        return enemyStats.PointValue();
-    }
-
-    public float GetTimeRegained()
-    {
-        return enemyStats.TimeRegained();
-    }
-
-    public AudioEffectSO GetSpawnSound()
-    {
-        return enemyStats.GetAudioProfile().spawnSound;
-    }
-
-    public AudioEffectSO GetAttackSound()
-    {
-        return enemyStats.GetAudioProfile().attackSound;
-    }
-
-    public EnemySpawnStrategy GetSpawnStrategy()
-    {
-        return spawnData.spawnStrategy;
-    }
-
+    public float GetPointValue() { return enemyStats.pointValue * sizeMultiplier; }
+    public float GetTimeRegained() { return enemyStats.timeRegained * sizeMultiplier; }
+    public float GetMaxHealth() { return enemyStats.maxHealth * sizeMultiplier; }
+    public float GetDamage() { return enemyStats.damage * sizeMultiplier; }
+    public float GetAttackRange() { return enemyStats.attackRange * sizeMultiplier; }
+    public float GetAttackStart() { return enemyStats.attackStart; }
+    public float GetAttackEnd() { return enemyStats.attackEnd; }
+    public float GetAttackCooldown() { return enemyStats.attackCooldown; }
+    public float GetMoveSpeed() { return enemyStats.moveSpeed / sizeMultiplier; }
+    public float GetKnockbackDistance() { return enemyStats.knockbackDistance * sizeMultiplier; }
+    protected float GetKnockbackTime() { return enemyStats.knockbackTime * sizeMultiplier; }
+    public AudioEffectSO GetSpawnSound() { return enemyStats.audioProfile.spawnSound; }
+    public AudioEffectSO GetAttackSound() { return enemyStats.audioProfile.attackSound; }
+    public EnemySpawnStrategy GetSpawnStrategy() { return spawnData.spawnStrategy; }
     public bool GetIsStunned() { return isStunned; }
 }

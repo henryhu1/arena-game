@@ -5,7 +5,6 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class EnemyAI : MonoBehaviour, IEnemyComponent
 {
-    private EnemyStats stats;
     private EnemyControllerBase controllerBase;
 
     private NavMeshAgent agent;
@@ -27,17 +26,16 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
     [SerializeField] private VoidEventChannelSO onPlayerDeath;
     [SerializeField] private VoidEventChannelSO onTimeRunOut;
 
-    public void Initialize(EnemyControllerBase controllerBase, EnemyStats stats)
+    public void Initialize(EnemyControllerBase controllerBase)
     {
         this.controllerBase = controllerBase;
-        this.stats = stats;
     }
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.speed = stats.MoveSpeed();
-        agent.stoppingDistance = stats.sizeMultiplier;
+        agent.speed = controllerBase.GetMoveSpeed();
+        // agent.stoppingDistance = stats.sizeMultiplier;
         originalStoppingDistance = agent.stoppingDistance;
     }
 
@@ -148,8 +146,10 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
 
     public void ResetAgent(Vector3 pos)
     {
-        agent.speed = stats.MoveSpeed();
-        agent.stoppingDistance = stats.sizeMultiplier;
+        agent.speed = controllerBase.GetMoveSpeed();
+        // agent.stoppingDistance = stats.sizeMultiplier;
+        shouldFollowPlayer = true;
+        shouldWander = false;
         EnableAgent();
         WarpAgent(pos);
     }

@@ -4,14 +4,14 @@ public class Skeleton : EnemyControllerBase
 {
     protected override void Awake()
     {
-        enemyStats.sizeMultiplier = Random.Range(enemyStats.SizeMultiplierMin(), enemyStats.SizeMultiplierMax());
+        sizeMultiplier = Random.Range(sizeMultiplierMin, sizeMultiplierMax);
 
         base.Awake();
     }
 
     public override void OnSpawned(Vector3 _)
     {
-        enemyStats.sizeMultiplier = Random.Range(enemyStats.SizeMultiplierMin(), enemyStats.SizeMultiplierMax());
+        sizeMultiplier = Random.Range(sizeMultiplierMin, sizeMultiplierMax);
 
         base.OnSpawned(_);
     }
