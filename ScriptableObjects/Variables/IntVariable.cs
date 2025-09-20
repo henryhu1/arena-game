@@ -5,7 +5,11 @@ public class IntVariable : ScriptableObject
 {
     public int initialValue;
     private int Value;
-    public void ResetValue() => Value = initialValue;
+    public void ResetValue()
+    {
+        Value = initialValue;
+        onValueChanged.RaiseEvent(Value);
+    }
     public void AddToValue(int delta)
     {
         Value += delta;

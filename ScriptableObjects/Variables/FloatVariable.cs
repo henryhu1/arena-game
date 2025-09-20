@@ -5,7 +5,11 @@ public class FloatVariable : ScriptableObject
 {
     public float initialValue;
     private float Value;
-    public void ResetValue() => Value = initialValue;
+    public void ResetValue()
+    {
+        Value = initialValue;
+        onValueChanged.RaiseEvent(Value);
+    }
     public void AddToValue(float delta)
     {
         Value += delta;
