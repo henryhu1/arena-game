@@ -66,7 +66,7 @@ public class Arrow : MonoBehaviour, IProjectilible
     //   avoid projectiles for teleporting enemies
     private void OnTriggerEnter(Collider other)
     {
-        if (hasHit || GameManager.Instance.IsGameOver()) return;
+        if (hasHit) return;
 
         bool shouldStick = true;
         if (other.TryGetComponent(out IHittable hittable))

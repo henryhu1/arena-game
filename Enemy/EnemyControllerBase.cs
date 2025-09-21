@@ -150,6 +150,8 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
     // TODO: should be levaraged more, not just for proejctiles
     public bool TakeHit(Vector3 contactPos, float damagePoints, Vector3 fromDirection, float force)
     {
+        if (GameManager.Instance.IsGameOver()) return true;
+
         if (knockback.IsKnockbackableByProjectile())
         {
             health.TakeDamage(contactPos, damagePoints, fromDirection, force);
