@@ -42,7 +42,7 @@ public class PlayerInteractHandler : MonoBehaviour, IPlayerComponent
         closest.Interact(gameObject);
     }
 
-    private IInteractable GetClosestInteractable()
+    public IInteractable GetClosestInteractable()
     {
         IInteractable closest = null;
         float minDist = float.MaxValue;

@@ -14,6 +14,8 @@ public class InteractionDetector : MonoBehaviour
         if (other.TryGetComponent<IInteractable>(out var item))
         {
             interactHandler.AddToNearbyInteractables(item, other.transform.position);
+
+            item.SetInteractor(interactHandler);
         }
     }
 

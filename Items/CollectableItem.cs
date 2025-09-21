@@ -10,6 +10,8 @@ public class CollectableItem : MonoBehaviour, IInteractable
     [SerializeField] private CollectableItemEventChannelSO onCollectItem;
     [SerializeField] private VoidEventChannelSO onGameRestart;
 
+    private PlayerInteractHandler playerInteractor;
+
     private ParticleSystem ps;
 
     private Coroutine playingParticle;
@@ -51,6 +53,11 @@ public class CollectableItem : MonoBehaviour, IInteractable
         }
     }
 
+    public void SetInteractor(PlayerInteractHandler playerInteractor)
+    {
+        this.playerInteractor = playerInteractor;
+    }
+
     public virtual void Interact(GameObject interactor)
     {
         if (!IsInteractable()) return;
@@ -63,7 +70,18 @@ public class CollectableItem : MonoBehaviour, IInteractable
         onCollectItem.RaiseEvent(this);
     }
 
-    protected bool IsInteractable()
+    public string GetInteractionText()
+    {
+        // TODO: localization
+        return "Pick up";
+    }
+
+    public Vector3 GetScreenPos()
+    {
+        return Camera.main.WorldToScreenPoint(transform.position);
+    }
+
+    public bool IsInteractable()
     {
         return gameObject.layer == LayerMask.NameToLayer("Interactables");
     }
@@ -85,6 +103,10 @@ public class CollectableItem : MonoBehaviour, IInteractable
         if (spawnStrategy != null)
         {
             // ItemSpawner.Instance.DespawnItem(spawnStrategy.itemPrefab);
+            if (playerInteractor != null)
+            {
+                playerInteractor.RemoveFromNearbyInteractables(this);
+            }
             ItemSpawner.Instance.DespawnItem(gameObject, spawnStrategy.itemPrefab);
         }
     }
