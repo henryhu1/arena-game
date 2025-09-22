@@ -31,12 +31,14 @@ public class CollectableItem : MonoBehaviour, IInteractable
 
     private void OnEnable()
     {
+        SetInteractable();
         onGameRestart.OnEventRaised += Despawn;
     }
 
     private void OnDisable()
     {
         onGameRestart.OnEventRaised -= Despawn;
+        SetNotInteractable();
     }
 
     private IEnumerator PlayParticle()
@@ -98,7 +100,7 @@ public class CollectableItem : MonoBehaviour, IInteractable
         playingParticle = StartCoroutine(PlayParticle());
     }
 
-    private void Despawn()
+    public void Despawn()
     {
         if (spawnStrategy != null)
         {
@@ -108,6 +110,10 @@ public class CollectableItem : MonoBehaviour, IInteractable
                 playerInteractor.RemoveFromNearbyInteractables(this);
             }
             ItemSpawner.Instance.DespawnItem(gameObject, spawnStrategy.itemPrefab);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 }
