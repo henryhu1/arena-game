@@ -7,11 +7,13 @@ public class GameRoundManager : MonoBehaviour
 
     public int CurrentRound { get; private set; } = 0;
     public float timeBetweenRounds = 5f;
+    private Coroutine roundBuffer;
 
     [Header("Events")]
     [SerializeField] private IntEventChannelSO roundStartedEventChannel;
     [SerializeField] private IntEventChannelSO roundEndedEventChannel;
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
+    [SerializeField] private VoidEventChannelSO onGameOver;
     [SerializeField] private VoidEventChannelSO onGameRestart;
 
     private void Awake()
@@ -30,12 +32,14 @@ public class GameRoundManager : MonoBehaviour
     private void OnEnable()
     {
         allWaveEnemiesDefeatedEventChannel.OnEventRaised += IncrementRound;
+        onGameOver.OnEventRaised += GameOverEventHandler;
         onGameRestart.OnEventRaised += ResetRounds;
     }
 
     private void OnDisable()
     {
         allWaveEnemiesDefeatedEventChannel.OnEventRaised -= IncrementRound;
+        onGameOver.OnEventRaised -= GameOverEventHandler;
         onGameRestart.OnEventRaised -= ResetRounds;
     }
 
@@ -43,7 +47,7 @@ public class GameRoundManager : MonoBehaviour
     {
         Debug.Log($"Wave {CurrentRound} completed. Next wave in {timeBetweenRounds} seconds...");
         roundEndedEventChannel.RaiseEvent(CurrentRound);
-        StartCoroutine(BetweenRoundsBuffer());
+        roundBuffer = StartCoroutine(BetweenRoundsBuffer());
     }
 
     private IEnumerator BetweenRoundsBuffer()
@@ -52,6 +56,14 @@ public class GameRoundManager : MonoBehaviour
         Debug.Log($"Wave {CurrentRound} starting.");
         CurrentRound++;
         roundStartedEventChannel.RaiseEvent(CurrentRound);
+    }
+
+    private void GameOverEventHandler()
+    {
+        if (roundBuffer != null)
+        {
+            StopCoroutine(roundBuffer);
+        }
     }
 
     private void ResetRounds()
