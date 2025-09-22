@@ -20,6 +20,7 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
     [SerializeField] private CollectableItemEventChannelSO collectItemEvent;
     [SerializeField] private WeaponEventChannelSO getWeaponEvent;
     [SerializeField] private WeaponEventChannelSO onWeaponChange;
+    [SerializeField] private WeaponEventChannelSO onWeaponUse;
     [SerializeField] private WeaponEventChannelSO dropWeaponEvent;
     [SerializeField] private IntEventChannelSO onArrowCountChange;
     [SerializeField] private VoidEventChannelSO onGameRestart;
@@ -38,16 +39,18 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
     {
         collectItemEvent.OnCollectItemEvent += HoldItem;
         getWeaponEvent.OnWeaponEvent += EquipWeapon;
+        onWeaponUse.OnWeaponEvent += UseWeapon;
         onArrowCountChange.OnEventRaised += CheckAmmo;
-        onGameRestart.OnEventRaised += ResetAmmo;
+        onGameRestart.OnEventRaised += ResetInventory;
     }
 
     private void OnDisable()
     {
         collectItemEvent.OnCollectItemEvent -= HoldItem;
         getWeaponEvent.OnWeaponEvent -= EquipWeapon;
+        onWeaponUse.OnWeaponEvent -= UseWeapon;
         onArrowCountChange.OnEventRaised -= CheckAmmo;
-        onGameRestart.OnEventRaised -= ResetAmmo;
+        onGameRestart.OnEventRaised -= ResetInventory;
     }
 
     public void Initialize(PlayerManager manager)
@@ -90,7 +93,19 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
         heldItem = weapon;
         heldWeaponData = weapon.GetWeaponData();
         onWeaponChange.RaiseEvent(weapon);
-        manager.attackController.UseWeapon(weapon);
+        manager.attackController.ApplyWeaponData(weapon);
+    }
+
+    // TODO: should the use weapon event pass the used weapon if this class already stores that data?
+    private void UseWeapon(Weapon usedWeapon)
+    {
+        if (usedWeapon != heldItem) return;
+
+        usedWeapon.DecreaseUses();
+        if (usedWeapon.GetRemainingUses() <= 0)
+        {
+            DropItem();
+        }
     }
 
     private void CheckAmmo(int count)
@@ -108,21 +123,30 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
 
     public WeaponData GetHeldWeaponData() { return heldWeaponData; }
 
-    public void DropItem()
+    public void DropItem(bool shouldWeaponDespawn = false)
     {
-        if (heldItem)
+        if (shouldWeaponDespawn && heldItem != null)
         {
-            heldItem.SetInteractable();
+            heldItem.Despawn();
         }
-        if (heldItem is Weapon heldWeapon)
+        else if (heldItem is Weapon heldWeapon)
         {
             heldWeapon.transform.SetParent(null);
             heldWeapon.StartPhysics();
+            if (heldWeapon.GetRemainingUses() > 0)
+            {
+                heldItem.SetInteractable();
+            }
             dropWeaponEvent.RaiseEvent(heldWeapon);
             onWeaponChange.RaiseEvent(null);
             heldArrow.SetActive(false);
         }
+        else if (heldItem)
+        {
+            heldItem.SetInteractable();
+        }
 
+        manager.attackController.ResetHitbox();
         heldItem = null;
         heldWeaponData = null;
     }
@@ -140,5 +164,11 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
         {
             return false;
         }
+    }
+
+    private void ResetInventory()
+    {
+        ResetAmmo();
+        DropItem(true);
     }
 }

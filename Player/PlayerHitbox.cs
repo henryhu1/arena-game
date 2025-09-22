@@ -14,10 +14,15 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
     [SerializeField] private Transform originalImpactPoint;
     private Transform impactPoint;
 
+    [Header("Events")]
+    [SerializeField] private WeaponEventChannelSO onWeaponUse;
+
     private HashSet<GameObject> DamagedTargets { get; set; }
 
+    private Weapon weaponInUse;
     private float damageValue = 0;
     private float forceValue = 0;
+    private Vector3 originalCenter;
 
     void Awake()
     {
@@ -27,20 +32,18 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
         Hitbox.enabled = false;
 
         impactPoint = originalImpactPoint;
+        originalCenter = Hitbox.center;
 
         ResetHitboxValues();
     }
 
-    private void ResetHitboxValues()
+    public void ResetHitboxValues()
     {
         damageValue = values.baseDamage;
         forceValue = values.force;
-    }
-
-    private void AddToHitboxValues(WeaponData weaponData)
-    {
-        damageValue += weaponData.damage;
-        forceValue += weaponData.knockbackForce;
+        Hitbox.size = values.size;
+        Hitbox.center = originalCenter;
+        weaponInUse = null;
     }
 
     void Start()
@@ -64,19 +67,25 @@ public class PlayerHitbox : MonoBehaviour, IHitboxable
             if (other.TryGetComponent(out EnemyHealth enemyHealth))
             {
                 enemyHealth.TakeDamage(other.ClosestPoint(transform.position), damageValue, player.position, forceValue);
+                if (weaponInUse != null)
+                {
+                    onWeaponUse.RaiseEvent(weaponInUse);
+                }
             }
         }
     }
 
     public void ApplyWeaponData(Weapon weapon)
     {
+        weaponInUse = weapon;
         WeaponData weaponData = weapon.GetWeaponData();
         Transform impactPoint = weapon.GetImpactPoint();
         Hitbox.size = weaponData.hitboxSize;
         Hitbox.center = new Vector3(Hitbox.center.x, Hitbox.center.y, weaponData.hitboxSize.z / 2);
         this.impactPoint = impactPoint;
 
-        AddToHitboxValues(weaponData);
+        damageValue += weaponData.damage;
+        forceValue += weaponData.knockbackForce;
     }
 
     public void StartAttack()

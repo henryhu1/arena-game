@@ -10,7 +10,6 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
 
     private Coroutine attackingRoutine;
 
-
     [Header("Audio")]
     [SerializeField] private AudioEffectSO fistAudio;
 
@@ -71,9 +70,14 @@ public class PlayerAttackController : MonoBehaviour, IPlayerComponent
         return heldWeaponData.contactAudio;
     }
 
-    public void UseWeapon(Weapon weapon)
+    public void ApplyWeaponData(Weapon weapon)
     {
         hitbox.ApplyWeaponData(weapon);
+    }
+
+    public void ResetHitbox()
+    {
+        hitbox.ResetHitboxValues();
     }
 
     private void Update()

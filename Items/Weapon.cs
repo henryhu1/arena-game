@@ -5,6 +5,7 @@ public class Weapon : CollectableItem
 {
     [Header("Values")]
     [SerializeField] private WeaponData data;
+    [SerializeField] private float remainingUses = 10;
 
     [Header("Model")]
     [SerializeField] private Transform impactPoint;
@@ -42,6 +43,13 @@ public class Weapon : CollectableItem
         weaponGetEvent.RaiseEvent(this);
         SetNotInteractable();
     }
+
+    public void DecreaseUses()
+    {
+        remainingUses--;
+    }
+
+    public float GetRemainingUses() { return remainingUses; }
 
     public WeaponData GetWeaponData() { return data; }
     public Transform GetImpactPoint() { return impactPoint; }
