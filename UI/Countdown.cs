@@ -26,11 +26,6 @@ public class Countdown : MonoBehaviour
         originalColor = background.color;
     }
 
-    private void Start()
-    {
-        FormatTime(countdownTimer.GetValue());
-    }
-
     private void OnEnable()
     {
         countdownTimer.onValueChanged.OnEventRaised += FormatTime;
