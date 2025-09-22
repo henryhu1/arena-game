@@ -13,9 +13,11 @@ public class InteractionDetector : MonoBehaviour
     {
         if (other.TryGetComponent<IInteractable>(out var item))
         {
-            interactHandler.AddToNearbyInteractables(item, other.transform.position);
-
-            item.SetInteractor(interactHandler);
+            if (item.IsInteractable())
+            {
+                interactHandler.AddToNearbyInteractables(item, other.gameObject.GetInstanceID(), other.transform.position);
+                item.SetInteractor(interactHandler);
+            }
         }
     }
 
@@ -23,7 +25,7 @@ public class InteractionDetector : MonoBehaviour
     {
         if (other.TryGetComponent<IInteractable>(out var item))
         {
-            interactHandler.RemoveFromNearbyInteractables(item);
+            interactHandler.RemoveFromNearbyInteractables(item, other.gameObject.GetInstanceID());
         }
     }
 }
