@@ -14,11 +14,6 @@ public class CollectableItem : MonoBehaviour, IInteractable
 
     private ParticleSystem ps;
 
-    private Coroutine playingParticle;
-
-    const float k_playDuration = 3f;
-    const float k_pauseDuration = 3f; // TODO: randomize?
-
     protected virtual void Awake()
     {
         ps = GetComponent<ParticleSystem>();
@@ -41,20 +36,6 @@ public class CollectableItem : MonoBehaviour, IInteractable
         SetNotInteractable();
     }
 
-    private IEnumerator PlayParticle()
-    {
-        while (IsInteractable())
-        {
-            ps.Clear(true);
-            ps.Play(true);
-
-            yield return new WaitForSeconds(k_playDuration);
-
-            ps.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-            yield return new WaitForSeconds(k_pauseDuration);
-        }
-    }
-
     public void SetInteractor(PlayerInteractHandler playerInteractor)
     {
         this.playerInteractor = playerInteractor;
@@ -64,10 +45,6 @@ public class CollectableItem : MonoBehaviour, IInteractable
     {
         if (!IsInteractable()) return;
 
-        if (playingParticle != null)
-        {
-            StopCoroutine(playingParticle);
-        }
         ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         onCollectItem.RaiseEvent(this);
     }
@@ -92,12 +69,14 @@ public class CollectableItem : MonoBehaviour, IInteractable
     protected void SetNotInteractable(string layer = "Default")
     {
         gameObject.layer = LayerMask.NameToLayer(layer);
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
 
     public void SetInteractable()
     {
         gameObject.layer = LayerMask.NameToLayer("Interactables");
-        playingParticle = StartCoroutine(PlayParticle());
+        ps.Clear(true);
+        ps.Play(true);
     }
 
     public void Despawn()
