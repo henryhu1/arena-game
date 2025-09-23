@@ -29,6 +29,7 @@ public class MainCamera : MonoBehaviour
     [Header("Events")]
     [SerializeField] private VoidEventChannelSO onGameOver;
     [SerializeField] private VoidEventChannelSO onGameRestart;
+    [SerializeField] private BoolEventChannelSO onGamePauseToggle;
 
     [Header("Collision")]
     public LayerMask collisionLayers;
@@ -51,12 +52,14 @@ public class MainCamera : MonoBehaviour
 
     private void OnEnable()
     {
+        onGamePauseToggle.OnEventRaised += GamePausedToggleHandler;
         onGameOver.OnEventRaised += GameOverEventHandler;
         onGameRestart.OnEventRaised += GameRestartEventHandler;
     }
 
     private void OnDisable()
     {
+        onGamePauseToggle.OnEventRaised -= GamePausedToggleHandler;
         onGameOver.OnEventRaised -= GameOverEventHandler;
         onGameRestart.OnEventRaised -= GameRestartEventHandler;
     }
@@ -88,6 +91,22 @@ public class MainCamera : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         rotation = context.ReadValue<Vector2>();
+    }
+
+    private void GamePausedToggleHandler(bool isPaused)
+    {
+        if (isPaused)
+        {
+            cameraControl.enabled = false;
+            inGameAudioSource.Pause();
+            outGameAudioSource.Play();
+        }
+        else
+        {
+            cameraControl.enabled = true;
+            inGameAudioSource.Play();
+            outGameAudioSource.Pause();
+        }
     }
 
     private void GameOverEventHandler()

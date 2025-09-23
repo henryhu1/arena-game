@@ -5,21 +5,25 @@ public class MyCanvas : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private GameObject gameOverMenu;
+    [SerializeField] private GameObject gamePausedMenu;
     [SerializeField] private GameObject interactCallToAction;
     [SerializeField] private TextMeshProUGUI interactText;
 
     [Header("Events")]
     [SerializeField] private VoidEventChannelSO onGameOver;
     [SerializeField] private VoidEventChannelSO onGameRestart;
+    [SerializeField] private BoolEventChannelSO onGamePauseToggle;
 
     private void OnEnable()
     {
+        onGamePauseToggle.OnEventRaised += GamePausedToggleHandler;
         onGameOver.OnEventRaised += GameOverEventHandler;
         onGameRestart.OnEventRaised += GameRestartEventHandler;
     }
 
     private void OnDisable()
     {
+        onGamePauseToggle.OnEventRaised -= GamePausedToggleHandler;
         onGameOver.OnEventRaised -= GameOverEventHandler;
         onGameRestart.OnEventRaised -= GameRestartEventHandler;
     }
@@ -38,6 +42,11 @@ public class MyCanvas : MonoBehaviour
             interactCallToAction.transform.position = screenPos;
             interactText.text = interactable.GetInteractionText();
         }
+    }
+
+    private void GamePausedToggleHandler(bool isPaused)
+    {
+        gamePausedMenu.SetActive(isPaused);
     }
 
     private void GameOverEventHandler()

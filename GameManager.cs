@@ -1,12 +1,13 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-// TODO: stop or slow in-game time (for menus)
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField] private FloatVariable timeElapsed;
     [SerializeField] private FloatVariable countdownTimer;
     [SerializeField] private FloatVariable playerScore;
+    [SerializeField] private BoolVariable isPaused;
 
     [Header("Events")]
     [SerializeField] private IntEventChannelSO onRoundStart;
@@ -16,6 +17,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private VoidEventChannelSO onTimeRunOut;
     [SerializeField] private VoidEventChannelSO onGameOver;
     [SerializeField] private VoidEventChannelSO onGameRestart;
+
+    [Header("Actions")]
+    [SerializeField] private InputAction pauseAction;
 
     private bool isCountingDown = false;
     private bool isGameOver = false;
@@ -49,6 +53,7 @@ public class GameManager : MonoBehaviour
         timeElapsed.ResetValue();
         countdownTimer.ResetValue();
         playerScore.ResetValue();
+        isPaused.ResetValue();
     }
 
     void OnEnable()
@@ -57,6 +62,9 @@ public class GameManager : MonoBehaviour
         onRoundEnd.OnEventRaised += RoundEnded;
         onEnemyDefeated.OnEnemyEvent += EnemyDefeated;
         onPlayerDeath.OnEventRaised += PlayerDied;
+        pauseAction.performed += OnPauseToggle;
+
+        pauseAction.Enable();
     }
 
     void OnDisable()
@@ -65,6 +73,9 @@ public class GameManager : MonoBehaviour
         onRoundEnd.OnEventRaised -= RoundEnded;
         onEnemyDefeated.OnEnemyEvent -= EnemyDefeated;
         onPlayerDeath.OnEventRaised -= PlayerDied;
+        pauseAction.performed -= OnPauseToggle;
+
+        pauseAction.Disable();
     }
 
     void Update()
@@ -117,6 +128,23 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         isCountingDown = false;
         Cursor.lockState = CursorLockMode.None;
+    }
+
+    private void OnPauseToggle(InputAction.CallbackContext callbackContext)
+    {
+        if (isGameOver) return;
+
+        if (isPaused.GetValue())
+        {
+            Time.timeScale = 1;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Time.timeScale = 0;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        isPaused.SetValue(!isPaused.GetValue());
     }
 
     public float GetGameTimeElapsed() { return timeElapsed.GetValue(); }
