@@ -72,29 +72,26 @@ public class SoundFXManager : MonoBehaviour
 
     public void PlaySpawnSound(EnemyControllerBase enemy)
     {
-        PlaySound(enemy.GetSpawnSound());
+        PlaySound(enemy.GetSpawnSound(), enemy.transform.position);
     }
 
     public void PlayAttackSound(EnemyControllerBase enemy)
     {
-        PlaySound(enemy.GetAttackSound());
+        PlaySound(enemy.GetAttackSound(), enemy.transform.position);
     }
 
     public void PlayDamageSound(EnemyControllerBase enemy)
     {
         // PlaySound(enemy.GetEnemyStats().GetAudioProfile().damagedSound);
-        if (PlayerManager.Instance.attackController.GetAttackType() != AttackType.BOW)
-        {
-            PlaySound(PlayerManager.Instance.GetAttackAudio());
-        }
+        PlaySound(PlayerManager.Instance.GetAttackAudio(), enemy.transform.position);
     }
 
-    private void PlaySound(AudioEffectSO audioEffect)
+    private void PlaySound(AudioEffectSO audioEffect, Vector3 pos)
     {
         if (audioEffect == null) return;
         AudioClip clip = audioEffect.GetRandomClip();
         if (clip == null) return;
-        PlaySoundFXClip(clip, transform.position, 1);
+        PlaySoundFXClip(clip, pos, 1);
     }
 
     public void PlaySoundFXClip(AudioClip audioClip, Vector3 spawnPos, float volume)
