@@ -147,6 +147,15 @@ public class GameManager : MonoBehaviour
         isPaused.SetValue(!isPaused.GetValue());
     }
 
+    public void UnpauseGame()
+    {
+        if (!isPaused.GetValue()) return;
+
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.Locked;
+        isPaused.SetValue(false);
+    }
+
     public float GetGameTimeElapsed() { return timeElapsed.GetValue(); }
 
     public float GetCountdownTimer() { return countdownTimer.GetValue(); }
