@@ -30,7 +30,7 @@ public class PlayerInteractHandler : MonoBehaviour, IPlayerComponent
         nearbyInteractions.Add(id, (item, pos));
     }
 
-    public void RemoveFromNearbyInteractables(IInteractable item, int id)
+    public void RemoveFromNearbyInteractables(int id)
     {
         nearbyInteractions.Remove(id);
     }

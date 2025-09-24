@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class CollectableItem : MonoBehaviour, IInteractable
@@ -81,13 +80,15 @@ public class CollectableItem : MonoBehaviour, IInteractable
 
     public void Despawn()
     {
+        if (playerInteractor != null)
+        {
+            playerInteractor.RemoveFromNearbyInteractables(this);
+        }
+        playerInteractor = null;
+
         if (spawnStrategy != null)
         {
             // ItemSpawner.Instance.DespawnItem(spawnStrategy.itemPrefab);
-            if (playerInteractor != null)
-            {
-                playerInteractor.RemoveFromNearbyInteractables(this);
-            }
             ItemSpawner.Instance.DespawnItem(gameObject, spawnStrategy.itemPrefab);
         }
         else

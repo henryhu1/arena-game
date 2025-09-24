@@ -25,7 +25,8 @@ public class InteractionDetector : MonoBehaviour
     {
         if (other.TryGetComponent<IInteractable>(out var item))
         {
-            interactHandler.RemoveFromNearbyInteractables(item, other.gameObject.GetInstanceID());
+            interactHandler.RemoveFromNearbyInteractables(other.gameObject.GetInstanceID());
+            item.SetInteractor(null);
         }
     }
 }
