@@ -61,6 +61,11 @@ public class PlayerManager : MonoBehaviour
         InitializeAll();
     }
 
+    private void Start()
+    {
+        EnablePlayerInput();
+    }
+
     void InitializeAll()
     {
         health.Initialize(this);

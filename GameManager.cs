@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -46,6 +47,7 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
+        Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
         isCountingDown = false;
         isGameOver = false;
@@ -54,6 +56,11 @@ public class GameManager : MonoBehaviour
         countdownTimer.ResetValue();
         playerScore.ResetValue();
         isPaused.ResetValue();
+    }
+
+    public void LeaveGame()
+    {
+        SceneManager.LoadScene("TitleScene");
     }
 
     void OnEnable()
