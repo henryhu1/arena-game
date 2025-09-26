@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class AudioEffect
@@ -22,6 +23,7 @@ public class SoundFXManager : MonoBehaviour
     [SerializeField] private EnemyEventChannelSO onEnemyDamaged;
 
     const int k_initialPoolSize = 10;
+    private readonly List<(Vector3EventChannelSO evt, UnityAction<Vector3> callback)> _subscriptions = new();
 
     private void Awake()
     {
@@ -42,7 +44,11 @@ public class SoundFXManager : MonoBehaviour
         foreach (AudioEffect effect in effects)
         {
             if (effect.triggerEvent != null)
-                effect.triggerEvent.OnPositionEventRaised += pos => HandlePlay(effect, pos);
+            {
+                void handler(Vector3 pos) => HandlePlay(effect, pos);
+                effect.triggerEvent.OnPositionEventRaised += handler;
+                _subscriptions.Add((effect.triggerEvent, handler));
+            }
         }
 
         onEnemySpawned.OnEnemyEvent += PlaySpawnSound;
@@ -52,11 +58,11 @@ public class SoundFXManager : MonoBehaviour
 
     private void OnDisable()
     {
-        foreach (AudioEffect effect in effects)
+        foreach (var (evt, handler) in _subscriptions)
         {
-            if (effect.triggerEvent != null)
-                effect.triggerEvent.OnPositionEventRaised -= pos => HandlePlay(effect, pos);
+            evt.OnPositionEventRaised -= handler;
         }
+        _subscriptions.Clear();
 
         onEnemySpawned.OnEnemyEvent -= PlaySpawnSound;
         onEnemyAttack.OnEnemyEvent -= PlayAttackSound;
