@@ -1,5 +1,7 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.Tables;
 
 public class MyCanvas : MonoBehaviour
 {
@@ -13,6 +15,13 @@ public class MyCanvas : MonoBehaviour
     [SerializeField] private VoidEventChannelSO onGameOver;
     [SerializeField] private VoidEventChannelSO onGameRestart;
     [SerializeField] private BoolEventChannelSO onGamePauseToggle;
+
+    private StringTable controlsTable;
+
+    private async void Awake()
+    {
+        controlsTable = await LocalizationSettings.StringDatabase.GetTableAsync("Controls").Task;
+    }
 
     private void OnEnable()
     {
@@ -40,7 +49,8 @@ public class MyCanvas : MonoBehaviour
             interactCallToAction.SetActive(true);
             Vector3 screenPos = interactable.GetScreenPos();
             interactCallToAction.transform.position = screenPos;
-            interactText.text = interactable.GetInteractionText();
+            string localizedInteraction = controlsTable.GetEntry(interactable.GetInteractionTextKey()).GetLocalizedString();
+            interactText.text = localizedInteraction;
         }
     }
 

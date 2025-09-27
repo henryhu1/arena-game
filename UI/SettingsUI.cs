@@ -1,9 +1,11 @@
 using UnityEngine;
+using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
 
 public class SettingsUI : MonoBehaviour
 {
-    [Header("UI")]
+    [Header("Volume Sliders")]
     [SerializeField] private Slider mainVolume;
     [SerializeField] private Slider musicVolume;
     [SerializeField] private Slider soundFXVolume;
@@ -13,5 +15,10 @@ public class SettingsUI : MonoBehaviour
         mainVolume.value = SoundMixerManager.Instance.GetMasterVolume();
         musicVolume.value = SoundMixerManager.Instance.GetMusicVolume();
         soundFXVolume.value = SoundMixerManager.Instance.GetSoundFXVolume();
+    }
+
+    public void ChangeLocale(Locale locale)
+    {
+        LocalizationSettings.SelectedLocale = locale;
     }
 }

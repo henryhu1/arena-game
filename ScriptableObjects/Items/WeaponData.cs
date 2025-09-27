@@ -9,7 +9,7 @@ public class WeaponData : ScriptableObject
         LEFT,
     }
 
-    public string weaponName = "Weapon";
+    public string weaponKey = "Weapon";
 
     public AttackType attackType;
     public AudioEffectSO contactAudio;

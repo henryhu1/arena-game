@@ -2,6 +2,8 @@ using System.Collections;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.Tables;
 using UnityEngine.UI;
 
 public class WeaponName : MonoBehaviour
@@ -25,13 +27,16 @@ public class WeaponName : MonoBehaviour
     [SerializeField] private float fadeOutTime = 0.5f;
 
     private Coroutine fadeCoroutine;
+    private StringTable weaponNamesTable;
 
-    private void Awake()
+    private async void Awake()
     {
         originalBackgroundColor = backgroundImage.color;
         transparentBackgroundColor = new Color(originalBackgroundColor.r, originalBackgroundColor.g, originalBackgroundColor.b, 0);
         originalTextColor = text.color;
         transparentTextColor = new Color(originalTextColor.r, originalTextColor.g, originalTextColor.b, 0);
+
+        weaponNamesTable = await LocalizationSettings.StringDatabase.GetTableAsync("WeaponNames").Task;
     }
 
     private void Start()
@@ -55,7 +60,9 @@ public class WeaponName : MonoBehaviour
     private void DisplayWeaponName(Weapon weapon)
     {
         StopAnimation();
-        fadeCoroutine = StartCoroutine(FadeInOutWeaponName(weapon.GetWeaponData().weaponName));
+        string localizedName = weaponNamesTable.GetEntry(weapon.GetWeaponData().weaponKey).GetLocalizedString();
+        text.text = localizedName;
+        fadeCoroutine = StartCoroutine(FadeInOutWeaponName());
     }
 
     private void StopDisplayingWeaponName(Weapon weapon)
@@ -73,10 +80,8 @@ public class WeaponName : MonoBehaviour
         }
     }
 
-    private IEnumerator FadeInOutWeaponName(string weaponName)
+    private IEnumerator FadeInOutWeaponName()
     {
-        text.text = weaponName;
-
         backgroundImage.DOColor(originalBackgroundColor, fadeInTime);
         text.DOColor(originalTextColor, fadeInTime);
 

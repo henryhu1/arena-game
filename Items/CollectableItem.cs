@@ -48,10 +48,9 @@ public class CollectableItem : MonoBehaviour, IInteractable
         onCollectItem.RaiseEvent(this);
     }
 
-    public string GetInteractionText()
+    public string GetInteractionTextKey()
     {
-        // TODO: localization
-        return "Pick up";
+        return "pickUp";
     }
 
     public Vector3 GetScreenPos()
