@@ -3,13 +3,24 @@ using UnityEngine;
 
 public class HealthBar : MonoBehaviour
 {
+    [Header("UI")]
+    [SerializeField] private RectTransform entireRect;
     [SerializeField] private RectTransform bar;
+    [SerializeField] private RectTransform changeBar;
+
+    [Header("Animation")]
+    [SerializeField] private float shakeTime = 1f;
+    [SerializeField] private float shakeMaxDistance = 2f;
+    [SerializeField] private int vibrato = 2;
+    [SerializeField] private float randomness = 45;
+    [SerializeField] private float decreaseBarTime = 1f;
+
     private float originalWidth;
     private Tween healthBarAnimation;
-    const float k_animationTime = 1f;
+    private Sequence healthBarDecreaseSequence;
 
-    [Header("Events")]
-    [SerializeField] private FloatEventChannelSO onPlayerHealthChange;
+    [Header("Data")]
+    [SerializeField] private FloatVariable playerHealth;
 
     private void Awake()
     {
@@ -18,17 +29,35 @@ public class HealthBar : MonoBehaviour
 
     private void OnEnable()
     {
-        onPlayerHealthChange.OnEventRaised += UpdateBarWidth;
+        playerHealth.onValueChanged.OnEventRaised += UpdateBarWidth;
     }
 
     private void OnDisable()
     {
-        onPlayerHealthChange.OnEventRaised -= UpdateBarWidth;
+        playerHealth.onValueChanged.OnEventRaised -= UpdateBarWidth;
     }
 
     private void UpdateBarWidth(float healthPoints)
     {
-        float width = originalWidth * healthPoints / 100;
-        healthBarAnimation = bar.DOSizeDelta(new Vector2(width, bar.sizeDelta.y), k_animationTime, false).SetEase(Ease.OutQuart);
+        float currentWidth = bar.sizeDelta.x;
+        float newWidth = Mathf.Max(originalWidth * healthPoints / playerHealth.initialValue, 0);
+
+        if (newWidth < currentWidth)
+        {
+            float diff = currentWidth - newWidth;
+            float strength = Mathf.Max(diff / playerHealth.initialValue * shakeMaxDistance, 1);
+            entireRect.DOShakeAnchorPos(shakeTime, strength, vibrato, randomness, false, false, ShakeRandomnessMode.Harmonic);
+        }
+
+        bar.sizeDelta = new Vector2(newWidth, bar.sizeDelta.y);
+
+        if (healthBarDecreaseSequence != null && healthBarDecreaseSequence.IsActive())
+        {
+            healthBarDecreaseSequence.Kill();
+        }
+        healthBarDecreaseSequence = DOTween.Sequence().OnKill(()=> healthBarDecreaseSequence = null);
+        healthBarDecreaseSequence.PrependInterval(shakeTime * 2);
+        healthBarDecreaseSequence.Append(changeBar.DOSizeDelta(new Vector2(newWidth, bar.sizeDelta.y), decreaseBarTime, false).SetEase(Ease.OutCubic));
+        healthBarDecreaseSequence.Play();
     }
 }
