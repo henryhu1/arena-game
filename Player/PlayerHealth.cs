@@ -5,11 +5,11 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
 {
     private PlayerManager manager;
 
-    const float k_MaxHealthPoints = 100;
-
-    private float healthPoints;
     private bool isGettingDamaged;
     private bool isDead;
+
+    [SerializeField] private FloatVariable playerHealth;
+
     [SerializeField] private float damageStunTime = 0.3f;
 
     [Header("Events")]
@@ -22,11 +22,6 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
     public void Initialize(PlayerManager manager)
     {
         this.manager = manager;
-    }
-
-    void Awake()
-    {
-        healthPoints = k_MaxHealthPoints;
     }
 
     private void Start()
@@ -46,9 +41,8 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
 
     public void ResetPlayerHealth()
     {
-        healthPoints = k_MaxHealthPoints;
+        playerHealth.ResetValue();
         isDead = false;
-        OnPlayerHealthChange.RaiseEvent(healthPoints);
     }
 
     public bool GetIsGettingDamaged() { return isGettingDamaged; }
@@ -67,10 +61,9 @@ public class PlayerHealth : MonoBehaviour, IPlayerComponent
 
         OnTakeDamage.RaiseEvent(contactPos);
 
-        healthPoints = Mathf.Max(healthPoints - damagePoints, 0);
-        OnPlayerHealthChange.RaiseEvent(healthPoints);
+        playerHealth.SubtractFromValue(damagePoints);
 
-        if (healthPoints <= 0)
+        if (playerHealth.GetValue() <= 0)
         {
             OnDeath.RaiseEvent();
             isDead = true;
