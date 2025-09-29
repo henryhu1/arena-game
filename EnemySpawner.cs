@@ -9,6 +9,7 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Data")]
     [SerializeField] private FloatVariable timeElapsed;
+    [SerializeField] private IntVariable enemiesDefeated;
     [SerializeField] private IntVariable CurrentRound;
 
     [Header("Events")]
@@ -39,6 +40,8 @@ public class EnemySpawner : MonoBehaviour
             strategy.Initialize(this, data);
             activeStrategies[data] = strategy;
         }
+
+        enemiesDefeated.ResetValue();
     }
 
     private void OnEnable()
@@ -106,6 +109,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void HandleEnemyDefeated(EnemyControllerBase enemy)
     {
+        enemiesDefeated.AddToValue(1);
         if (enemy.GetSpawnStrategy() is WaveBasedSpawnStrategy)
         {
             TotalWaveEnemiesAlive--;
