@@ -12,10 +12,9 @@ public class WaveBasedSpawnStrategy : EnemySpawnStrategy
         this.data = data;
     }
 
-    public override void UpdateStrategy(float deltaTime)
+    public override void UpdateStrategy(float deltaTime, int currentRound)
     {
-        int round = GameRoundManager.Instance.CurrentRound;
-        int maxAlive = data.GetMaxAliveForRound(round);
+        int maxAlive = data.GetMaxAliveForRound(currentRound);
         int toSpawn = maxAlive - data.currentAlive;
 
         for (int i = 0; i < toSpawn; i++)

@@ -21,7 +21,7 @@ public class IntVariable : ScriptableObject
         onValueChanged.RaiseEvent(Value);
     }
 
-    public float GetValue() { return Value; }
+    public int GetValue() { return Value; }
 
     public IntEventChannelSO onValueChanged;
 }

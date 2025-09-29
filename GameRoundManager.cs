@@ -5,12 +5,12 @@ public class GameRoundManager : MonoBehaviour
 {
     public static GameRoundManager Instance { get; private set; }
 
-    public int CurrentRound { get; private set; } = 0;
     public float timeBetweenRounds = 5f;
+    [SerializeField] private IntVariable currentRound;
+
     private Coroutine roundBuffer;
 
     [Header("Events")]
-    [SerializeField] private IntEventChannelSO roundStartedEventChannel;
     [SerializeField] private IntEventChannelSO roundEndedEventChannel;
     [SerializeField] private VoidEventChannelSO allWaveEnemiesDefeatedEventChannel;
     [SerializeField] private VoidEventChannelSO onGameOver;
@@ -22,6 +22,7 @@ public class GameRoundManager : MonoBehaviour
             Destroy(Instance);
         else
             Instance = this;
+        currentRound.ResetValue();
     }
 
     private void Start()
@@ -33,29 +34,28 @@ public class GameRoundManager : MonoBehaviour
     {
         allWaveEnemiesDefeatedEventChannel.OnEventRaised += IncrementRound;
         onGameOver.OnEventRaised += GameOverEventHandler;
-        onGameRestart.OnEventRaised += ResetRounds;
+        onGameRestart.OnEventRaised += RestartGame;
     }
 
     private void OnDisable()
     {
         allWaveEnemiesDefeatedEventChannel.OnEventRaised -= IncrementRound;
         onGameOver.OnEventRaised -= GameOverEventHandler;
-        onGameRestart.OnEventRaised -= ResetRounds;
+        onGameRestart.OnEventRaised -= RestartGame;
     }
 
     public void IncrementRound()
     {
-        Debug.Log($"Wave {CurrentRound} completed. Next wave in {timeBetweenRounds} seconds...");
-        roundEndedEventChannel.RaiseEvent(CurrentRound);
+        Debug.Log($"Wave {currentRound.GetValue()} completed. Next wave in {timeBetweenRounds} seconds...");
+        roundEndedEventChannel.RaiseEvent(currentRound.GetValue());
         roundBuffer = StartCoroutine(BetweenRoundsBuffer());
     }
 
     private IEnumerator BetweenRoundsBuffer()
     {
         yield return new WaitForSeconds(timeBetweenRounds);
-        Debug.Log($"Wave {CurrentRound} starting.");
-        CurrentRound++;
-        roundStartedEventChannel.RaiseEvent(CurrentRound);
+        currentRound.AddToValue(1);
+        Debug.Log($"Wave {currentRound.GetValue()} starting.");
     }
 
     private void GameOverEventHandler()
@@ -66,9 +66,9 @@ public class GameRoundManager : MonoBehaviour
         }
     }
 
-    private void ResetRounds()
+    private void RestartGame()
     {
-        CurrentRound = 0;
+        currentRound.ResetValue();
         IncrementRound();
     }
 }

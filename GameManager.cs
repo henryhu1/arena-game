@@ -87,7 +87,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        timeElapsed.AddToValue(Time.deltaTime);
+        if (!isGameOver)
+        {
+            timeElapsed.AddToValue(Time.deltaTime);
+        }
         if (isCountingDown)
         {
             countdownTimer.SubtractFromValue(Time.deltaTime);
@@ -99,8 +102,9 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void RoundStarted(int _)
+    private void RoundStarted(int round)
     {
+        if (round == 0) return;
         isCountingDown = true;
     }
 

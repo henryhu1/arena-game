@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Enemy/Spawn Strategy/Time")]
@@ -17,13 +16,13 @@ public class TimeBasedSpawnStrategySO : EnemySpawnStrategy
         this.data = data;
     }
 
-    public override void UpdateStrategy(float deltaTime)
+    public override void UpdateStrategy(float deltaTime, int currentRound)
     {
         float time = spawner.TimeElapsed;
         float rate = spawnRateOverTime.Evaluate(time);
         spawnCooldown -= deltaTime;
 
-        if (spawnCooldown <= 0f && data.currentAlive < data.GetMaxAliveForRound(GameRoundManager.Instance.CurrentRound))
+        if (spawnCooldown <= 0f && data.currentAlive < data.GetMaxAliveForRound(currentRound))
         {
             int count = Mathf.RoundToInt(spawnCountOverTime.Evaluate(time));
             for (int i = 0; i < count; i++)

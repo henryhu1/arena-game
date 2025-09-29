@@ -6,6 +6,7 @@ public class ItemSpawner : MonoBehaviour
     public static ItemSpawner Instance;
 
     [SerializeField] private List<ItemSpawnStrategy> spawnConfigs;
+    [SerializeField] private IntVariable CurrentRound;
 
     private Dictionary<GameObject, ItemSpawnStrategy> activeStrategies = new();
     private Dictionary<EnemyDropSpawnStrategy, float> itemDropRates = new();
@@ -78,7 +79,7 @@ public class ItemSpawner : MonoBehaviour
 
     private void AttemptItemDrop(Vector3 pos)
     {
-        if (GameRoundManager.Instance.CurrentRound <= 0) return;
+        if (CurrentRound.GetValue() <= 0) return;
 
         float baseAttempt = Random.value;
         if (baseAttempt > baseEnemyDropRate) return;

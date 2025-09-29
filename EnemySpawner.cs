@@ -7,7 +7,9 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField] private List<EnemySpawnData> spawnConfigs;
 
+    [Header("Data")]
     [SerializeField] private FloatVariable timeElapsed;
+    [SerializeField] private IntVariable CurrentRound;
 
     [Header("Events")]
     [SerializeField] private Vector3EventChannelSO spawnEnemyEvent;
@@ -58,12 +60,14 @@ public class EnemySpawner : MonoBehaviour
         foreach (var strategy in activeStrategies.Values)
         {
             if (strategy is not TimeBasedSpawnStrategySO) continue;
-            strategy.UpdateStrategy(Time.deltaTime);
+            strategy.UpdateStrategy(Time.deltaTime, CurrentRound.GetValue());
         }
     }
 
     public void SpawnWave(int round)
     {
+        if (round == 0) return;
+
         foreach (var data in spawnConfigs)
         {
             Debug.Log($"is spawning wave: {data.spawnStrategy is WaveBasedSpawnStrategy}");
@@ -82,7 +86,7 @@ public class EnemySpawner : MonoBehaviour
 
     public void SpawnEnemy(EnemySpawnData data)
     {
-        if (data.currentAlive >= data.GetMaxAliveForRound(GameRoundManager.Instance.CurrentRound))
+        if (data.currentAlive >= data.GetMaxAliveForRound(CurrentRound.GetValue()))
             return;
 
         Vector3 pos = PlayerManager.Instance.GetRandomPositionAroundPlayer(data.minDistanceFromPlayer, data.maxDistanceFromPlayer);
