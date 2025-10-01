@@ -6,7 +6,7 @@ using UnityEngine.Localization.Tables;
 public class MyCanvas : MonoBehaviour
 {
     [Header("UI")]
-    [SerializeField] private GameObject gameOverMenu;
+    [SerializeField] private GameObject gameOverScreen;
     [SerializeField] private GameObject gamePausedMenu;
     [SerializeField] private GameObject interactCallToAction;
     [SerializeField] private TextMeshProUGUI interactText;
@@ -40,7 +40,7 @@ public class MyCanvas : MonoBehaviour
     void Update()
     {
         IInteractable interactable = PlayerManager.Instance.interactHandler.GetClosestInteractable();
-        if (interactable == null || !interactable.IsInteractable())
+        if (GameManager.Instance.IsGameOver() || interactable == null || !interactable.IsInteractable())
         {
             interactCallToAction.SetActive(false);
         }
@@ -61,11 +61,11 @@ public class MyCanvas : MonoBehaviour
 
     private void GameOverEventHandler()
     {
-        gameOverMenu.SetActive(true);
+        gameOverScreen.SetActive(true);
     }
 
     private void GameRestartEventHandler()
     {
-        gameOverMenu.SetActive(false);
+        gameOverScreen.SetActive(false);
     }
 }
