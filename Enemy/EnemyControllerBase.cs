@@ -273,6 +273,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
     protected float GetKnockbackTime() { return enemyStats.knockbackTime * sizeMultiplier; }
     public AudioEffectSO GetSpawnSound() { return enemyStats.audioProfile.spawnSound; }
     public AudioEffectSO GetAttackSound() { return enemyStats.audioProfile.attackSound; }
+    public AudioEffectSO GetDamageSound() { return enemyStats.audioProfile.damagedSound; }
     public EnemySpawnStrategy GetSpawnStrategy() { return spawnData.spawnStrategy; }
     public bool GetIsStunned() { return isStunned; }
 }

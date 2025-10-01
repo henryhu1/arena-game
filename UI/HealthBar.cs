@@ -39,6 +39,8 @@ public class HealthBar : MonoBehaviour
 
     private void UpdateBarWidth(float healthPoints)
     {
+        changeBar.sizeDelta = bar.sizeDelta;
+
         float currentWidth = bar.sizeDelta.x;
         float newWidth = Mathf.Max(originalWidth * healthPoints / playerHealth.initialValue, 0);
 

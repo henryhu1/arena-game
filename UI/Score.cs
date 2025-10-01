@@ -29,15 +29,15 @@ public class Score : MonoBehaviour
     private void OnEnable()
     {
         playerScore.onValueChanged.OnEventRaised += UpdateScoreText;
-        onGameOver.OnEventRaised += MoveToCentre;
-        onGameRestart.OnEventRaised += MoveToOriginalPosition;
+        // onGameOver.OnEventRaised += MoveToCentre;
+        // onGameRestart.OnEventRaised += MoveToOriginalPosition;
     }
 
     private void OnDisable()
     {
         playerScore.onValueChanged.OnEventRaised -= UpdateScoreText;
-        onGameOver.OnEventRaised -= MoveToCentre;
-        onGameRestart.OnEventRaised -= MoveToOriginalPosition;
+        // onGameOver.OnEventRaised -= MoveToCentre;
+        // onGameRestart.OnEventRaised -= MoveToOriginalPosition;
     }
 
     private void UpdateScoreText(float score)

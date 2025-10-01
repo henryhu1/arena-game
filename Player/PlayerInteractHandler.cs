@@ -27,7 +27,10 @@ public class PlayerInteractHandler : MonoBehaviour, IPlayerComponent
 
     public void AddToNearbyInteractables(IInteractable item, int id, Vector3 pos)
     {
-        nearbyInteractions.Add(id, (item, pos));
+        if (!nearbyInteractions.ContainsKey(id))
+        {
+            nearbyInteractions.Add(id, (item, pos));
+        }
     }
 
     public void RemoveFromNearbyInteractables(int id)
