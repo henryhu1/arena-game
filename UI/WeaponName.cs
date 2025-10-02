@@ -26,6 +26,7 @@ public class WeaponName : MonoBehaviour
     [SerializeField] private float displayTime = 2f;
     [SerializeField] private float fadeOutTime = 0.5f;
 
+    private RectTransform rectTransform;
     private Coroutine fadeCoroutine;
     private StringTable weaponNamesTable;
 
@@ -43,6 +44,7 @@ public class WeaponName : MonoBehaviour
     {
         backgroundImage.color = transparentBackgroundColor;
         text.color = transparentTextColor;
+        rectTransform = GetComponent<RectTransform>();
     }
 
     private void OnEnable()
@@ -62,6 +64,7 @@ public class WeaponName : MonoBehaviour
         StopAnimation();
         string localizedName = weaponNamesTable.GetEntry(weapon.GetWeaponData().weaponKey).GetLocalizedString();
         text.text = localizedName;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
         fadeCoroutine = StartCoroutine(FadeInOutWeaponName());
     }
 
