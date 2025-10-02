@@ -93,6 +93,11 @@ public class MainCamera : MonoBehaviour
         rotation = context.ReadValue<Vector2>();
     }
 
+    public void SetSensitivity(float value)
+    {
+        sensitivity = value;
+    }
+
     private void GamePausedToggleHandler(bool isPaused)
     {
         if (isPaused)
