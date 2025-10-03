@@ -126,7 +126,9 @@ public class EnemyAI : MonoBehaviour, IEnemyComponent
         {
             return positionOnNavMesh;
         }
+#if UNITY_EDITOR
         Debug.LogWarning("Could not find NavMesh at the given XZ coordinates.");
+#endif
         return pos;
     }
 

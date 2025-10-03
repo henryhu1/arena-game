@@ -16,7 +16,9 @@ public class BoundsLimiter : MonoBehaviour
         else if (!worldBounds.IsInsideBounds(transform.position))
         {
             // You could trigger events or logic here if the object leaves bounds
+#if UNITY_EDITOR
             Debug.Log($"{name} is outside the world bounds!");
+#endif
         }
     }
 }

@@ -73,13 +73,17 @@ public class EnemySpawner : MonoBehaviour
 
         foreach (var data in spawnConfigs)
         {
+#if UNITY_EDITOR
             Debug.Log($"is spawning wave: {data.spawnStrategy is WaveBasedSpawnStrategy}");
+#endif
             if (data.spawnStrategy is not WaveBasedSpawnStrategy) continue;
 
             int maxThisRound = data.GetMaxAliveForRound(round);
             int toSpawn = maxThisRound - data.currentAlive;
 
+#if UNITY_EDITOR
             Debug.Log($"spawn count: {maxThisRound} - {data.currentAlive} = {toSpawn}");
+#endif
             for (int i = 0; i < toSpawn; i++)
             {
                 SpawnEnemy(data);

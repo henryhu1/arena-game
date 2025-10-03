@@ -46,7 +46,9 @@ public class GameRoundManager : MonoBehaviour
 
     public void IncrementRound()
     {
+#if UNITY_EDITOR
         Debug.Log($"Wave {currentRound.GetValue()} completed. Next wave in {timeBetweenRounds} seconds...");
+#endif
         roundEndedEventChannel.RaiseEvent(currentRound.GetValue());
         roundBuffer = StartCoroutine(BetweenRoundsBuffer());
     }
@@ -55,7 +57,9 @@ public class GameRoundManager : MonoBehaviour
     {
         yield return new WaitForSeconds(timeBetweenRounds);
         currentRound.AddToValue(1);
+#if UNITY_EDITOR
         Debug.Log($"Wave {currentRound.GetValue()} starting.");
+#endif
     }
 
     private void GameOverEventHandler()
