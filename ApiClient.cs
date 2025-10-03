@@ -5,11 +5,31 @@ using System.Collections;
 using Newtonsoft.Json;
 using System.IO;
 using System;
+using System.Runtime.InteropServices;
 
 public class ApiClient : MonoBehaviour
 {
-    const string k_baseUrl = "https://api-b3df3qvfkq-uc.a.run.app/api";
+    const string k_baseUrl = "https://us-central1-arena-game-leaderboard.cloudfunctions.net/api";
     public static ApiClient Instance;
+
+    [DllImport("__Internal")]
+    private static extern void GetAppCheckTokenFromJS(string gameObjectName, string callbackMethod);
+
+    private string appCheckToken;
+
+    public void OnAppCheckToken(string token)
+    {
+        appCheckToken = token;
+    }
+
+    public void RequestToken()
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        GetAppCheckTokenFromJS(gameObject.name, "OnAppCheckToken");
+#else
+        appCheckToken = "token";
+#endif
+    }
 
     void Awake()
     {
@@ -30,7 +50,10 @@ public class ApiClient : MonoBehaviour
             jsonOutput = stringWriter.ToString();
         }
 
+        RequestToken();
+        yield return new WaitUntil(() => !string.IsNullOrEmpty(appCheckToken));
         UnityWebRequest postScoreRequest = GetBaseWebRequest("score", "POST", jsonOutput);
+        postScoreRequest.SetRequestHeader("X-Firebase-AppCheck", appCheckToken);
 
         yield return postScoreRequest.SendWebRequest();
 
@@ -49,7 +72,10 @@ public class ApiClient : MonoBehaviour
 
     public IEnumerator GetPlayerOnLeaderboard(string docId, Action<LeaderboardList> callback)
     {
+        RequestToken();
+        yield return new WaitUntil(() => !string.IsNullOrEmpty(appCheckToken));
         UnityWebRequest getPlayerLeaderboardPosition = GetBaseWebRequest($"leaderboard/{docId}?limit=5", "GET");
+        getPlayerLeaderboardPosition.SetRequestHeader("X-Firebase-AppCheck", appCheckToken);
 
         yield return getPlayerLeaderboardPosition.SendWebRequest();
 
@@ -67,7 +93,10 @@ public class ApiClient : MonoBehaviour
 
     public IEnumerator GetLeaderboardTop(Action<LeaderboardList> callback)
     {
+        RequestToken();
+        yield return new WaitUntil(() => !string.IsNullOrEmpty(appCheckToken));
         UnityWebRequest getLeaderboard = GetBaseWebRequest("leaderboard?limit=5", "GET");
+        getLeaderboard.SetRequestHeader("X-Firebase-AppCheck", appCheckToken);
 
         yield return getLeaderboard.SendWebRequest();
 
@@ -103,7 +132,6 @@ public class ApiClient : MonoBehaviour
         UnityWebRequest request = new(url, method, downloadHandler, uploadHandler);
         request.SetRequestHeader("Content-Type", "application/json");
         request.SetRequestHeader("Accept", "application/json");
-        request.SetRequestHeader("X-Firebase-AppCheck", FirebaseAppCheckHandler.AddAuthentication());
 
         return request;
     }
