@@ -64,6 +64,8 @@ public class WeaponName : MonoBehaviour
         StopAnimation();
         string localizedName = weaponNamesTable.GetEntry(weapon.GetWeaponData().weaponKey).GetLocalizedString();
         text.text = localizedName;
+        backgroundImage.enabled = true;
+        text.enabled = true;
         LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
         fadeCoroutine = StartCoroutine(FadeInOutWeaponName());
     }
@@ -78,9 +80,11 @@ public class WeaponName : MonoBehaviour
         if (fadeCoroutine != null)
         {
             StopCoroutine(fadeCoroutine);
-            backgroundImage.color = transparentBackgroundColor;
-            text.color = transparentTextColor;
         }
+        backgroundImage.color = transparentBackgroundColor;
+        text.color = transparentTextColor;
+        backgroundImage.enabled = false;
+        text.enabled = false;
     }
 
     private IEnumerator FadeInOutWeaponName()
