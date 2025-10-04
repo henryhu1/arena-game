@@ -126,21 +126,25 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
 
     public void DropItem(bool shouldWeaponDespawn = false)
     {
-        if (shouldWeaponDespawn && heldItem != null)
+        if (heldItem is Weapon heldWeapon)
         {
-            heldItem.Despawn();
-        }
-        else if (heldItem is Weapon heldWeapon)
-        {
-            heldWeapon.transform.SetParent(null);
-            heldWeapon.StartPhysics();
-            if (heldWeapon.GetRemainingUses() > 0)
-            {
-                heldItem.SetInteractable();
-            }
-            dropWeaponEvent.RaiseEvent(heldWeapon);
             onWeaponChange.RaiseEvent(null);
-            heldArrow.SetActive(false);
+
+            if (shouldWeaponDespawn && heldItem != null)
+            {
+                heldItem.Despawn();
+            }
+            else
+            {
+                heldWeapon.transform.SetParent(null);
+                heldWeapon.StartPhysics();
+                if (heldWeapon.GetRemainingUses() > 0)
+                {
+                    heldItem.SetInteractable();
+                }
+                dropWeaponEvent.RaiseEvent(heldWeapon);
+                heldArrow.SetActive(false);
+            }
         }
         else if (heldItem)
         {
