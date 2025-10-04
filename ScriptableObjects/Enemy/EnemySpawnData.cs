@@ -16,6 +16,7 @@ public class EnemySpawnData : ScriptableObject
     public int baseMaxAlive = 10;
     public EnemyMaxAliveIncrease maxIncreaseType = EnemyMaxAliveIncrease.ADDITIVE;
     public float increaseRate = 2;
+    public int startAfterRound = 0;
 
     public int currentAlive = 0;
 

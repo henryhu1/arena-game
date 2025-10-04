@@ -77,8 +77,9 @@ public class EnemySpawner : MonoBehaviour
             Debug.Log($"is spawning wave: {data.spawnStrategy is WaveBasedSpawnStrategy}");
 #endif
             if (data.spawnStrategy is not WaveBasedSpawnStrategy) continue;
+            if (data.startAfterRound >= round) continue;
 
-            int maxThisRound = data.GetMaxAliveForRound(round);
+            int maxThisRound = data.GetMaxAliveForRound(round - data.startAfterRound);
             int toSpawn = maxThisRound - data.currentAlive;
 
 #if UNITY_EDITOR
