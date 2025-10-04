@@ -19,6 +19,9 @@ public class EnemyStats : ScriptableObject
     public float attackEnd = 0.4f;
     public float attackCooldown = 1;
 
+    [Header("Drop Rate")]
+    [Range(0, 1)] public float dropRate = 0.5f;
+
     [Header("Knockback Stats")]
     public float knockbackTime = 1f;
     public float knockbackDistance = 3f;

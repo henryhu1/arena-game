@@ -243,6 +243,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
     private void Despawn()
     {
         EnemySpawner.Instance.DespawnEnemy(gameObject, spawnData);
+        ItemSpawner.Instance.AttemptItemDrop(GetDropRate(), transform.position);
     }
 
     public virtual void OnSpawned(Vector3 pos)
@@ -268,6 +269,7 @@ public abstract class EnemyControllerBase : MonoBehaviour, IPoolable, IHittable
     public float GetAttackStart() { return enemyStats.attackStart; }
     public float GetAttackEnd() { return enemyStats.attackEnd; }
     public float GetAttackCooldown() { return enemyStats.attackCooldown; }
+    public float GetDropRate() { return enemyStats.dropRate * sizeMultiplier; }
     public float GetMoveSpeed() { return enemyStats.moveSpeed / sizeMultiplier; }
     public float GetKnockbackDistance() { return enemyStats.knockbackDistance * sizeMultiplier; }
     protected float GetKnockbackTime() { return enemyStats.knockbackTime * sizeMultiplier; }

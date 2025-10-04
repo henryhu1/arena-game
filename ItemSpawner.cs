@@ -11,11 +11,7 @@ public class ItemSpawner : MonoBehaviour
     private Dictionary<GameObject, ItemSpawnStrategy> activeStrategies = new();
     private Dictionary<EnemyDropSpawnStrategy, float> itemDropRates = new();
 
-    // TODO: may want each enemy to have their own base drop rate;
-    [SerializeField] private float baseEnemyDropRate = 0.5f;
-
     [Header("Events")]
-    [SerializeField] private Vector3EventChannelSO onEnemyDespawn;
     [SerializeField] private Vector3EventChannelSO itemSpawnEvent;
 
     private void Awake()
@@ -46,16 +42,6 @@ public class ItemSpawner : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        onEnemyDespawn.OnPositionEventRaised += AttemptItemDrop;
-    }
-
-    private void OnDisable()
-    {
-        onEnemyDespawn.OnPositionEventRaised -= AttemptItemDrop;
-    }
-
     private void Update()
     {
         if (GameManager.Instance.IsGameOver()) return;
@@ -77,12 +63,12 @@ public class ItemSpawner : MonoBehaviour
         ObjectPoolManager.Instance.Despawn(obj, prefab);
     }
 
-    private void AttemptItemDrop(Vector3 pos)
+    public void AttemptItemDrop(float dropProbability, Vector3 pos)
     {
         if (CurrentRound.GetValue() <= 0) return;
 
         float baseAttempt = Random.value;
-        if (baseAttempt > baseEnemyDropRate) return;
+        if (dropProbability > baseAttempt) return;
 
         float itemDropAttempt = Random.value;
         float accumulation = 0;
