@@ -15,13 +15,22 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private bool isAttacking;
     private float attackCooldownTimer;
 
-    const float k_enemyReach = 1.3f;
+    const float k_checkSphereBuffer = 1.7f;
 
+    private Collider[] hitColliders;
+    private int playerLayerMask;
+    private float attackRange;
     private Coroutine attackingCoroutine;
 
     public void Initialize(EnemyControllerBase controllerBase)
     {
         this.controllerBase = controllerBase;
+    }
+
+    private void Start()
+    {
+        hitColliders = new Collider[1];
+        playerLayerMask = LayerMask.GetMask("Player");
     }
 
     private void OnEnable()
@@ -37,11 +46,17 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private void Update()
     {
         if (PlayerManager.Instance == null) return;
-
-        float distanceToPlayer = Vector3.Distance(transform.position, PlayerManager.Instance.transform.position);
         attackCooldownTimer -= Time.deltaTime;
 
-        if (distanceToPlayer <= controllerBase.GetAttackRange() * k_enemyReach &&
+        float checkDist = attackRange / k_checkSphereBuffer;
+        int hits = Physics.OverlapSphereNonAlloc(
+            transform.position + (transform.forward + Vector3.up) * checkDist,
+            checkDist,
+            hitColliders,
+            playerLayerMask
+        );
+
+        if (hits > 0 &&
             attackCooldownTimer <= 0f &&
             !isAttacking &&
             controllerBase.CanAttack())
@@ -53,6 +68,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     public void Setup()
     {
         hitbox.Setup(controllerBase.GetDamage(), controllerBase.GetAttackRange());
+        attackRange = controllerBase.GetAttackRange();
     }
 
     public IEnumerator PerformAttack()
