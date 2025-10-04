@@ -87,7 +87,7 @@ public class SoundFXManager : MonoBehaviour
     {
         if (effect.audioData == null) return;
 
-        PlaySoundFXClip(effect.audioData.GetRandomClip(), pos, 1f);
+        PlaySoundFXClip(effect.audioData.GetRandomClip(), pos, effect.audioData.volume);
     }
 
     public void PlaySpawnSound(EnemyControllerBase enemy)
@@ -121,7 +121,7 @@ public class SoundFXManager : MonoBehaviour
         if (audioEffect == null) return;
         AudioClip clip = audioEffect.GetRandomClip();
         if (clip == null) return;
-        PlaySoundFXClip(clip, pos, 1);
+        PlaySoundFXClip(clip, pos, audioEffect.volume);
     }
 
     public void PlaySoundFXClip(AudioClip audioClip, Vector3 spawnPos, float volume)
