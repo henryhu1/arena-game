@@ -22,6 +22,14 @@ public class SoundFXManager : MonoBehaviour
     [SerializeField] private EnemyEventChannelSO onEnemyAttack;
     [SerializeField] private EnemyEventChannelSO onEnemyDamaged;
 
+    [Header("Item Events")]
+    [SerializeField] private WeaponEventChannelSO onWeaponEquip;
+    [SerializeField] private WeaponEventChannelSO onWeaponDrop;
+
+    [Header("Item Audio")]
+    [SerializeField] private AudioEffectSO weaponEquipEffect;
+    [SerializeField] private AudioEffectSO weaponDropEffect;
+
     const int k_initialPoolSize = 10;
     private readonly List<(Vector3EventChannelSO evt, UnityAction<Vector3> callback)> _subscriptions = new();
 
@@ -54,6 +62,9 @@ public class SoundFXManager : MonoBehaviour
         onEnemySpawned.OnEnemyEvent += PlaySpawnSound;
         onEnemyAttack.OnEnemyEvent += PlayAttackSound;
         onEnemyDamaged.OnEnemyEvent += PlayDamageSound;
+
+        onWeaponEquip.OnWeaponEvent += PlayWeaponEquipSound;
+        onWeaponDrop.OnWeaponEvent += PlayWeaponDropSound;
     }
 
     private void OnDisable()
@@ -67,6 +78,9 @@ public class SoundFXManager : MonoBehaviour
         onEnemySpawned.OnEnemyEvent -= PlaySpawnSound;
         onEnemyAttack.OnEnemyEvent -= PlayAttackSound;
         onEnemyDamaged.OnEnemyEvent -= PlayDamageSound;
+
+        onWeaponEquip.OnWeaponEvent -= PlayWeaponEquipSound;
+        onWeaponDrop.OnWeaponEvent -= PlayWeaponDropSound;
     }
 
     private void HandlePlay(AudioEffect effect, Vector3 pos)
@@ -90,6 +104,16 @@ public class SoundFXManager : MonoBehaviour
     {
         // PlaySound(enemy.GetEnemyStats().GetAudioProfile().damagedSound);
         PlaySound(PlayerManager.Instance.GetAttackAudio(), enemy.transform.position);
+    }
+
+    public void PlayWeaponEquipSound(Weapon weapon)
+    {
+        PlaySound(weaponEquipEffect, weapon.transform.position);
+    }
+
+    public void PlayWeaponDropSound(Weapon weapon)
+    {
+        PlaySound(weaponDropEffect, weapon.transform.position);
     }
 
     private void PlaySound(AudioEffectSO audioEffect, Vector3 pos)

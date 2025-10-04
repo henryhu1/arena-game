@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     [SerializeField] private FloatVariable timeElapsed;
     [SerializeField] private FloatVariable countdownTimer;
+    [SerializeField] private float warningTimeAt = 10f;
     [SerializeField] private FloatVariable playerScore;
     [SerializeField] private BoolVariable isPaused;
 
@@ -93,10 +94,15 @@ public class GameManager : MonoBehaviour
         }
         if (isCountingDown)
         {
+            float previous = countdownTimer.GetValue();
             countdownTimer.SubtractFromValue(Time.deltaTime);
             if (countdownTimer.GetValue() <= 0)
             {
                 TimeRanOut();
+            }
+            else if (countdownTimer.GetValue() <= warningTimeAt && Mathf.Floor(previous) != Mathf.Floor(countdownTimer.GetValue()))
+            {
+                MyCanvas.Instance.PlayTimerDecreaseEffect();
             }
         }
 
@@ -127,6 +133,11 @@ public class GameManager : MonoBehaviour
         GameOver();
     }
 
+    public float GetWarningTimeAt()
+    {
+        return warningTimeAt;
+    }
+
     private void TimeRanOut()
     {
         onTimeRunOut.RaiseEvent();
@@ -149,11 +160,13 @@ public class GameManager : MonoBehaviour
         {
             Time.timeScale = 1;
             Cursor.lockState = CursorLockMode.Locked;
+            MyCanvas.Instance.PlayUnpauseAudio();
         }
         else
         {
             Time.timeScale = 0;
             Cursor.lockState = CursorLockMode.None;
+            MyCanvas.Instance.PlayPauseAudio();
         }
         isPaused.SetValue(!isPaused.GetValue());
     }
@@ -164,6 +177,7 @@ public class GameManager : MonoBehaviour
 
         Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
+        MyCanvas.Instance.PlayUnpauseAudio();
         isPaused.SetValue(false);
     }
 

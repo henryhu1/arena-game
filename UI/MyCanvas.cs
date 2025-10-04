@@ -5,6 +5,8 @@ using UnityEngine.Localization.Tables;
 
 public class MyCanvas : MonoBehaviour
 {
+    public static MyCanvas Instance;
+
     [Header("UI")]
     [SerializeField] private GameObject gameOverScreen;
     [SerializeField] private GameObject gamePausedMenu;
@@ -16,11 +18,30 @@ public class MyCanvas : MonoBehaviour
     [SerializeField] private VoidEventChannelSO onGameRestart;
     [SerializeField] private BoolEventChannelSO onGamePauseToggle;
 
+    [Header("Audio")]
+    [SerializeField] private AudioEffectSO arrowEffect;
+    [SerializeField] private AudioEffectSO timerDecreaseEffect;
+    [SerializeField] private AudioEffectSO unpauseEffect;
+    [SerializeField] private AudioEffectSO pauseEffect;
+
     private StringTable controlsTable;
+
+    private AudioSource audioSource;
 
     private async void Awake()
     {
+        if (Instance != this)
+        {
+            Destroy(Instance);
+        }
+        Instance = this;
+
         controlsTable = await LocalizationSettings.StringDatabase.GetTableAsync("Controls").Task;
+    }
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
@@ -67,5 +88,30 @@ public class MyCanvas : MonoBehaviour
     private void GameRestartEventHandler()
     {
         gameOverScreen.SetActive(false);
+    }
+
+    public void PlayAudio(AudioEffectSO audioEffect)
+    {
+        audioSource.PlayOneShot(audioEffect.GetRandomClip());
+    }
+
+    public void PlayArrowAudio()
+    {
+        audioSource.PlayOneShot(arrowEffect.GetRandomClip());
+    }
+
+    public void PlayTimerDecreaseEffect()
+    {
+        audioSource.PlayOneShot(timerDecreaseEffect.GetRandomClip());
+    }
+
+    public void PlayPauseAudio()
+    {
+        audioSource.PlayOneShot(pauseEffect.GetRandomClip());
+    }
+
+    public void PlayUnpauseAudio()
+    {
+        audioSource.PlayOneShot(unpauseEffect.GetRandomClip());
     }
 }

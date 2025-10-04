@@ -10,8 +10,6 @@ public class Countdown : MonoBehaviour
     [SerializeField] private FloatVariable countdownTimer;
     [SerializeField] private Image background;
 
-    [SerializeField] private float warningTimeAt = 10f;
-
     [SerializeField] private float colorPulseTime = 1.5f;
 
     [Header("Events")]
@@ -45,7 +43,7 @@ public class Countdown : MonoBehaviour
         float seconds = Mathf.Ceil(timer % 60);
         timerText.text = $"{(minutes > 0 ? $"{minutes}:" : "")}{(0 < seconds && seconds < 10 ? "0" : "")}{seconds}";
 
-        if (0 < time && time <= warningTimeAt)
+        if (0 < time && time <= GameManager.Instance.GetWarningTimeAt())
         {
             timeWarning ??= StartCoroutine(LowTimeWarning());
         }

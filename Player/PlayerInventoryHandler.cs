@@ -67,6 +67,7 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
         if (item.TryGetComponent(out Arrow pickedUpArrow))
         {
             inventory.arrowCount.AddToValue(1);
+            MyCanvas.Instance.PlayArrowAudio();
         }
     }
 
