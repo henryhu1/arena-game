@@ -15,7 +15,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
     private bool isAttacking;
     private float attackCooldownTimer;
 
-    const float k_checkSphereBuffer = 1.7f;
+    const float k_checkSphereBuffer = 2.2f;
 
     private Collider[] hitColliders;
     private int playerLayerMask;
@@ -76,30 +76,25 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         isAttacking = true;
         controllerBase.SetAttackState();
 
-        while (!controllerBase.IsAnimationPlaying(EnemyAnimation.Attack))
-        {
-            yield return null;
-        }
+        yield return new WaitUntil(() => controllerBase.IsAnimationPlaying(EnemyAnimation.Attack));
 
-        float animationTime = controllerBase.GetAnimatorNormalizedTime();
-        while (animationTime < controllerBase.GetAttackStart())
-        {
-            animationTime = controllerBase.GetAnimatorNormalizedTime();
-            yield return null;
-        }
+        yield return new WaitUntil(() => {
+            float animationTime = controllerBase.GetAnimatorNormalizedTime();
+            return animationTime >= controllerBase.GetAttackStart();
+        });
 
         attackEvent.RaiseEvent(controllerBase);
         hitbox.StartAttack();
 
-        while (animationTime < controllerBase.GetAttackEnd())
-        {
-            animationTime = controllerBase.GetAnimatorNormalizedTime();
-            yield return null;
-        }
+        yield return new WaitUntil(() => {
+            float animationTime = controllerBase.GetAnimatorNormalizedTime();
+            return animationTime >= controllerBase.GetAttackEnd();
+        });
 
         hitbox.EndAttack();
         attackCooldownTimer = controllerBase.GetAttackCooldown();
         isAttacking = false;
+        attackingCoroutine = null;
     }
 
     private void DamagedEvent_CancelAttack(EnemyControllerBase _)
@@ -107,6 +102,7 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         if (attackingCoroutine != null)
         {
             StopCoroutine(attackingCoroutine);
+            attackingCoroutine = null;
         }
         hitbox.EndAttack();
         isAttacking = false;
