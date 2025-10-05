@@ -25,7 +25,6 @@ public class EndGameUI : MonoBehaviour
     [Header("Input")]
     [SerializeField] private TMP_InputField nameInput;
 
-    private Coroutine callingApi;
     private string playerName;
     private LeaderboardList scoresAroundPlayer;
     private LeaderboardList topScores;
@@ -78,7 +77,7 @@ public class EndGameUI : MonoBehaviour
             EnemiesDefeated.GetValue(),
             InGameTime.GetValue()
         );
-        callingApi = StartCoroutine(PostToApi(data));
+        StartCoroutine(PostToApi(data));
     }
 
     private IEnumerator PostToApi(SubmitScoreData data)

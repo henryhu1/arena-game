@@ -59,7 +59,8 @@ public class EnemyMeleeAttack : MonoBehaviour, IEnemyAttackBehavior
         if (hits > 0 &&
             attackCooldownTimer <= 0f &&
             !isAttacking &&
-            controllerBase.CanAttack())
+            controllerBase.CanAttack() &&
+            attackingCoroutine == null)
         {
             attackingCoroutine = StartCoroutine(PerformAttack());
         }
