@@ -7,6 +7,7 @@ public class Crosshair : MonoBehaviour
 
     [Header("Events")]
     [SerializeField] private WeaponEventChannelSO onPlayerWeaponChange;
+    [SerializeField] private WeaponEventChannelSO onPlayerWeaponDrop;
     [SerializeField] private VoidEventChannelSO onGameOver;
 
     private void Start()
@@ -17,30 +18,36 @@ public class Crosshair : MonoBehaviour
     private void OnEnable()
     {
         onPlayerWeaponChange.OnWeaponEvent += ToggleDisplay;
+        onPlayerWeaponDrop.OnWeaponEvent += RemoveDisplay;
         onGameOver.OnEventRaised += RemoveDisplay;
     }
 
     private void OnDisable()
     {
         onPlayerWeaponChange.OnWeaponEvent -= ToggleDisplay;
+        onPlayerWeaponDrop.OnWeaponEvent -= RemoveDisplay;
         onGameOver.OnEventRaised -= RemoveDisplay;
     }
 
     private void ToggleDisplay(Weapon weapon)
     {
-        // not directly using condition as arg in SetActive for readability;
         if (weapon == null || !weapon.GetWeaponData().IsWeaponOfType(AttackType.BOW))
-        {
-            display.SetActive(false);
-        }
-        else
         {
             RemoveDisplay();
         }
+        else
+        {
+            display.SetActive(true);
+        }
+    }
+
+    private void RemoveDisplay(Weapon _)
+    {
+        RemoveDisplay();
     }
 
     private void RemoveDisplay()
     {
-        display.SetActive(true);
+        display.SetActive(false);
     }
 }
