@@ -7,6 +7,7 @@ public class Crosshair : MonoBehaviour
 
     [Header("Events")]
     [SerializeField] private WeaponEventChannelSO onPlayerWeaponChange;
+    [SerializeField] private VoidEventChannelSO onGameOver;
 
     private void Start()
     {
@@ -16,11 +17,13 @@ public class Crosshair : MonoBehaviour
     private void OnEnable()
     {
         onPlayerWeaponChange.OnWeaponEvent += ToggleDisplay;
+        onGameOver.OnEventRaised += RemoveDisplay;
     }
 
     private void OnDisable()
     {
         onPlayerWeaponChange.OnWeaponEvent -= ToggleDisplay;
+        onGameOver.OnEventRaised -= RemoveDisplay;
     }
 
     private void ToggleDisplay(Weapon weapon)
@@ -32,7 +35,12 @@ public class Crosshair : MonoBehaviour
         }
         else
         {
-            display.SetActive(true);
+            RemoveDisplay();
         }
+    }
+
+    private void RemoveDisplay()
+    {
+        display.SetActive(true);
     }
 }

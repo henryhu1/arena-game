@@ -128,8 +128,6 @@ public class PlayerInventoryHandler : MonoBehaviour, IPlayerComponent
     {
         if (heldItem is Weapon heldWeapon)
         {
-            onWeaponChange.RaiseEvent(null);
-
             if (shouldWeaponDespawn && heldItem != null)
             {
                 heldItem.Despawn();
