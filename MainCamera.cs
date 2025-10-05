@@ -11,7 +11,9 @@ public class MainCamera : MonoBehaviour
 
     [Header("Control")]
     [SerializeField] private PlayerInput cameraControl;
-    public bool isInverted = false;
+    
+    // TODO: use SO data, as setting configs
+    public bool isInverted = true;
 
     [Header("Values")]
     [SerializeField] private float sensitivity = 0.1f;
@@ -69,7 +71,7 @@ public class MainCamera : MonoBehaviour
         Vector3 followingObjectPosition = objectToOrbit.GetFocusPointPosition();
         transform.RotateAround(followingObjectPosition, Vector3.up, rotation.x * sensitivity);
 
-        int vertical = isInverted ? -1 : 1;
+        int vertical = isInverted ? 1 : -1;
 
         float pitchChange = vertical * rotation.y * sensitivity;
         float newPitch = Mathf.Clamp(currentPitch + pitchChange, -verticalRotationLimit, verticalRotationLimit);
