@@ -68,7 +68,7 @@ public class MyCanvas : MonoBehaviour
         else
         {
             interactCallToAction.SetActive(true);
-            Vector3 screenPos = interactable.GetScreenPos();
+            Vector3 screenPos = interactable.GetScreenPos() - new Vector3(0, 30f, 0);
             interactCallToAction.transform.position = screenPos;
             string localizedInteraction = controlsTable.GetEntry(interactable.GetInteractionTextKey()).GetLocalizedString();
             interactText.text = localizedInteraction;
