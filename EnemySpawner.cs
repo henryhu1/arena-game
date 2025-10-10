@@ -127,6 +127,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Reset()
     {
+        enemiesDefeated.ResetValue();
         TotalWaveEnemiesAlive = 0;
         foreach (var data in spawnConfigs)
         {
